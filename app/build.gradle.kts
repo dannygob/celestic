@@ -38,17 +38,6 @@ android {
             )
         }
     }
-
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -56,7 +45,9 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-
+    buildFeatures {
+        compose = true // Habilitar soporte para Jetpack Compose
+    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}" // Exclusión de recursos innecesarios
