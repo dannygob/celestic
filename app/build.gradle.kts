@@ -18,6 +18,27 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    buildFeatures {
+        compose = true // Activa Jetpack Compose
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.3" // Usa una versión compatible con tu configuración
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
 
     buildTypes {
         release {
@@ -34,6 +55,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}" // Exclusión de recursos innecesarios
+        }
     }
 }
 
