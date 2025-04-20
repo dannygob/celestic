@@ -13,10 +13,10 @@ activity = "1.10.1"
 constraintlayout = "2.2.1"
 opencv = "4.9.0"
 lifecycleRuntimeKtx = "2.8.7" # Última versión estable de Lifecycle Runtime KTX
-compose = "1.5.3" # Versión estable de Jetpack Compose
+compose = "1.7.8" # Versión estable de Jetpack Compose
 navigationCompose = "2.8.9" # Última versión estable de Navigation Compose
 navigationUiKtx = "2.8.9" # Última versión estable de Navigation UI KTX
-composeUiTest = "1.5.3" # Asegúrate de que coincide con la versión de Jetpack Compose que usas
+composeUiTest = "1.7.8" # Asegúrate de que coincide con la versión de Jetpack Compose que usas
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose" }
