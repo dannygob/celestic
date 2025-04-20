@@ -22,7 +22,7 @@ android {
         compose = true // Activa Jetpack Compose
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3" // Usa una versión compatible con tu configuración
+        kotlinCompilerExtensionVersion = "1.7.8" // Usa una versión compatible con tu configuración
     }
     packaging {
         resources {
