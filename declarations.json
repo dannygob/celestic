@@ -1,0 +1,77 @@
+[
+  {
+    "filePath": "app/src/main/java/com/example/celestic/MainActivity.kt",
+    "declarations": [
+      "class MainActivity : ComponentActivity()",
+      "override fun onCreate(savedInstanceState: Bundle?)"
+    ]
+  },
+  {
+    "filePath": "app/src/main/java/com/example/celestic/models/DetectionItem.kt",
+    "declarations": [
+      "data class DetectionItem(...)"
+    ]
+  },
+  {
+    "filePath": "app/src/main/java/com/example/celestic/navigation/AppNavigation.kt",
+    "declarations": [
+      "@Composable fun AppNavigation(...)"
+    ]
+  },
+  {
+    "filePath": "app/src/main/java/com/example/celestic/opencv/CameraHandler.kt",
+    "declarations": [
+      "class CameraHandler(context: Context) : JavaCameraView(context, CAMERA_ID_BACK), CameraBridgeViewBase.CvCameraViewListener2",
+      "fun addFrameProcessor(processor: (Mat) -> Unit)",
+      "override fun onCameraViewStarted(width: Int, height: Int)",
+      "override fun onCameraViewStopped()",
+      "override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame?): Mat",
+      "fun switchCamera(cameraId: Int)",
+      "fun hasCameraPermission(context: Context): Boolean"
+    ]
+  },
+  {
+    "filePath": "app/src/main/java/com/example/celestic/opencv/Holedetector.kt",
+    "declarations": [
+      "object HoleDetector",
+      "fun detectHoles(frame: Mat, gray: Mat): List<DetectionItem>"
+    ]
+  },
+  {
+    "filePath": "app/src/main/java/com/example/celestic/opencv/SteelSheetDetector.kt",
+    "declarations": [
+      "object SteelSheetDetector",
+      "fun detectSteelSheet(frame: Mat): DetectionItem?"
+    ]
+  },
+  {
+    "filePath": "app/src/main/java/com/example/celestic/opencv/counterSinkDetector.kt",
+    "declarations": [
+      "object CountersinkDetector",
+      "fun classifyHoles(frame: Mat, holes: List<DetectionItem>): List<DetectionItem>",
+      "private fun determineHoleType(center: Point, radius: Int, frame: Mat): String",
+      "private fun getColorAtPoint(center: Point, frame: Mat): Scalar",
+      "private fun isAnodized(color: Scalar): Boolean",
+      "private fun isCountersink(center: Point, radius: Int, frame: Mat): Boolean"
+    ]
+  },
+  {
+    "filePath": "app/src/main/java/com/example/celestic/ui/screens/CameraView.kt",
+    "declarations": [
+      "@Composable fun CameraView(navController: NavController)"
+    ]
+  },
+  {
+    "filePath": "app/src/main/java/com/example/celestic/ui/screens/DetailsHoleScreen.kt",
+    "declarations": [
+      "@Composable fun DetailsHoleScreen(...)"
+    ]
+  },
+  {
+    "filePath": "app/src/main/java/com/example/celestic/utils/OpenCVInitializer.kt",
+    "declarations": [
+      "object OpenCVInitializer",
+      "fun initOpenCV(context: Context): Boolean"
+    ]
+  }
+]

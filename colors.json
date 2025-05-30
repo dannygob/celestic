@@ -1,0 +1,10 @@
+[
+  {
+    "name": "black",
+    "hexValue": "#FF000000"
+  },
+  {
+    "name": "white",
+    "hexValue": "#FFFFFFFF"
+  }
+]
