@@ -6,13 +6,13 @@ import com.example.celestic.models.DetectionItem
 
 object HoleDetector {
 
-    fun detectHoles(frame: Mat, gray: Mat): List<DetectionItem> {
+    fun detectHoles(grayFrame: Mat): List<DetectionItem> { // Renamed gray to grayFrame for clarity, removed unused 'frame'
         val circles = Mat()
         val detectedHoles = mutableListOf<DetectionItem>()
 
         Imgproc.HoughCircles(
-            gray, circles, Imgproc.CV_HOUGH_GRADIENT, 1.0, gray.rows() / 4.0,
-            100.0, 30.0, 10, 50
+            grayFrame, circles, Imgproc.CV_HOUGH_GRADIENT, 1.0, grayFrame.rows() / 4.0, // Use grayFrame.rows()
+            100.0, 30.0, 10, 50 // Parameters might need tuning
         )
 
         if (circles.cols() > 0) {
@@ -22,14 +22,12 @@ object HoleDetector {
                 val radius = data[2].toInt()
                 val diameter = radius * 2
 
-                // Dibujar el agujero detectado
-                Imgproc.circle(frame, center, radius, Scalar(0.0, 255.0, 0.0), 2)
-                Imgproc.circle(frame, center, 3, Scalar(0.0, 0.0, 255.0), 2)
-
                 // Agregar el agujero a la lista de detecciones
+                // Drawing is now handled by CameraHandler
                 detectedHoles.add(DetectionItem(type = "agujero", position = center, diameter = diameter))
             }
         }
+        circles.release() // Release the Mat object when done
         return detectedHoles
     }
 }
