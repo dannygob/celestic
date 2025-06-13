@@ -1,42 +1,53 @@
 package com.example.celestic
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.material3.*
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.celestic.models.DetectionItem
-import com.example.celestic.utils.OpenCVInitializer
+import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
+// It's good practice to import R specifically from the app's package
+import com.example.celestic.R
 
-class MainActivity : ComponentActivity() {
-
-    private val detectionItems = mutableListOf<DetectionItem>() // Almacena elementos detectados
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            val navController = rememberNavController()
+        setContentView(R.layout.activity_main) // Use the XML layout
 
-            // Definición de las rutas de la aplicación
-            NavHost(navController = navController, startDestination = "camera") {
-                composable("camera") { CameraView(navController = navController) }
-                composable("detailsHole/{index}") { backStackEntry ->
-                    val index = backStackEntry.arguments?.getString("index")?.toIntOrNull() ?: 0
-                    DetailsHoleScreen(index = index, detectionItems = detectionItems, navController = navController)
-                }
-            }
+        // Initialize OpenCV if needed (retaining this part from original if relevant)
+        // Commenting out OpenCV parts for now as they might interfere or be out of scope
+        // if (!OpenCVInitializer.initOpenCV(this)) {
+        //     Log.e("OpenCV", "Error initializing OpenCV.")
+        //     Toast.makeText(this, "Error initializing OpenCV", Toast.LENGTH_SHORT).show()
+        // } else {
+        //     Log.d("OpenCV", "OpenCV initialized successfully.")
+        // }
+
+        val detectHoleButton = findViewById<Button>(R.id.button_detect_hole)
+        detectHoleButton.setOnClickListener {
+            val intent = Intent(this, DetailActivity::class.java)
+            intent.putExtra("SCREEN_TYPE", "HOLE_DETECTION")
+            startActivity(intent)
         }
 
-        // Verificar y cargar OpenCV
-        if (!OpenCVInitializer.initOpenCV(this)) {
-            Log.e("OpenCV", "Error initializing OpenCV.")
-            Toast.makeText(this, "Error initializing OpenCV", Toast.LENGTH_SHORT).show()
-        } else {
-            Log.d("OpenCV", "OpenCV initialized successfully.")
+        val detectAlodineButton = findViewById<Button>(R.id.button_detect_alodine)
+        detectAlodineButton.setOnClickListener {
+            val intent = Intent(this, DetailActivity::class.java)
+            intent.putExtra("SCREEN_TYPE", "ALODINE_DETECTION")
+            startActivity(intent)
+        }
+
+        val detectCountersinkButton = findViewById<Button>(R.id.button_detect_countersink)
+        detectCountersinkButton.setOnClickListener {
+            val intent = Intent(this, DetailActivity::class.java)
+            intent.putExtra("SCREEN_TYPE", "COUNTERSINK_DETECTION")
+            startActivity(intent)
+        }
+
+        val statusButton = findViewById<Button>(R.id.button_status)
+        statusButton.setOnClickListener {
+            val intent = Intent(this, DetailActivity::class.java)
+            intent.putExtra("SCREEN_TYPE", "STATUS")
+            startActivity(intent)
         }
     }
 }
