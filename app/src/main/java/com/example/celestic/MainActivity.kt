@@ -19,13 +19,28 @@ import androidx.camera.view.PreviewView
 import com.google.common.util.concurrent.ListenableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.nio.ByteBuffer // For ImageProxy conversion
+import org.opencv.core.Mat // OpenCV Mat
+import org.opencv.core.CvType // OpenCV CvType
+import org.opencv.core.Core // For image rotation
+import org.opencv.imgproc.Imgproc // OpenCV Imgproc
+import org.opencv.imgcodecs.Imgcodecs // For saving Mat to file
+import com.example.celestic.opencv.HoleDetector
+import com.example.celestic.models.DetectionItem // For Parcelable DetectionItem
+import com.example.celestic.opencv.HoleDetectionResult // Though items are extracted, good for context
+import java.io.File // For file operations
+import java.util.ArrayList // For parcelable list
 // It's good practice to import R specifically from the app's package
 import com.example.celestic.R
-import com.example.celestic.utils.OpenCVInitializer // Added import for OpenCVInitializer
+import com.example.celestic.utils.OpenCVInitializer
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var cameraExecutor: ExecutorService
+    // Member variables to store latest detection results for Hole Detection
+    private var latestDetectionItemsForHole: ArrayList<DetectionItem>? = null
+    @Volatile private var latestProcessedImageFilePathForHole: String? = null
+
 
     companion object {
         private const val CAMERA_REQUEST_CODE = 100
@@ -45,6 +60,22 @@ class MainActivity : AppCompatActivity() {
         detectHoleButton.setOnClickListener {
             val intent = Intent(this, DetailActivity::class.java)
             intent.putExtra("SCREEN_TYPE", "HOLE_DETECTION")
+
+            // Retrieve the latest results (thread-safely if getter is synchronized or values are volatile)
+            val itemsToPass: ArrayList<DetectionItem>?
+            val imagePathToPass: String?
+            synchronized(this) { // Synchronize access to shared variables
+                itemsToPass = this.latestDetectionItemsForHole
+                imagePathToPass = this.latestProcessedImageFilePathForHole
+            }
+
+            if (imagePathToPass != null && itemsToPass != null) {
+                intent.putExtra("PROCESSED_IMAGE_PATH", imagePathToPass)
+                intent.putParcelableArrayListExtra("DETECTED_ITEMS", itemsToPass) // Changed key to "DETECTED_ITEMS"
+                Log.d("MainActivity", "Passing image path: $imagePathToPass and ${itemsToPass?.size} items to DetailActivity.")
+            } else {
+                Log.d("MainActivity", "No processed image or detection items available to pass for HOLE_DETECTION.")
+            }
             startActivity(intent)
         }
 
@@ -134,10 +165,65 @@ class MainActivity : AppCompatActivity() {
                 .also {
                     it.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { imageProxy ->
                         val rotationDegrees = imageProxy.imageInfo.rotationDegrees
-                        // Log frame information
-                        Log.d("MainActivity", "ImageAnalysis: Frame received - Timestamp: ${imageProxy.imageInfo.timestamp}, Resolution: ${imageProxy.width}x${imageProxy.height}, Rotation: $rotationDegrees")
+                        // Log.d("MainActivity", "ImageAnalysis: Frame received - Timestamp: ${imageProxy.imageInfo.timestamp}, Resolution: ${imageProxy.width}x${imageProxy.height}, Rotation: $rotationDegrees")
 
-                        // IMPORTANT: Close the imageProxy to allow a new image to be delivered
+                        val tempMat = imageProxyToMat(imageProxy)
+
+                        if (tempMat.empty()) {
+                            Log.e("MainActivity", "ImageAnalysis: Converted Mat (tempMat) is empty.")
+                            imageProxy.close() // Close proxy if mat conversion failed early
+                            return@Analyzer
+                        }
+
+                        val rotatedMat: Mat
+                        // val rotationDegrees = imageProxy.imageInfo.rotationDegrees // Already have this
+                        if (rotationDegrees == 0) {
+                            rotatedMat = tempMat // No rotation, use directly
+                            Log.d("MainActivity", "ImageAnalysis: No rotation needed for Mat.")
+                        } else {
+                            rotatedMat = Mat() // Create new Mat for rotated image
+                            when (rotationDegrees) {
+                                90 -> Core.rotate(tempMat, rotatedMat, Core.ROTATE_90_CLOCKWISE)
+                                180 -> Core.rotate(tempMat, rotatedMat, Core.ROTATE_180)
+                                270 -> Core.rotate(tempMat, rotatedMat, Core.ROTATE_90_COUNTERCLOCKWISE)
+                                else -> { // Should not happen if rotationDegrees is one of 0, 90, 180, 270
+                                    Log.w("MainActivity", "ImageAnalysis: Unexpected rotationDegrees: $rotationDegrees. Using original mat.")
+                                    rotatedMat = tempMat // Fallback to original if unexpected degree
+                                }
+                            }
+                            Log.d("MainActivity", "ImageAnalysis: Mat rotated by $rotationDegrees degrees.")
+                            if (rotatedMat !== tempMat) { // Check if tempMat was not assigned to rotatedMat (i.e. actual rotation happened)
+                                tempMat.release() // Release the original tempMat as rotatedMat holds the data now
+                            }
+                        }
+
+                        // Now, rotatedMat is the one to use. It will be modified by HoleDetector.
+                        // Log Mat details
+                        Log.d("MainActivity", "ImageAnalysis: Mat for detection - Size: ${rotatedMat.width()}x${rotatedMat.height()}, Channels: ${rotatedMat.channels()}, Type: ${CvType.typeToString(rotatedMat.type())}")
+
+                        val detectionResult = HoleDetector.detectHoles(rotatedMat) // rotatedMat is modified here
+
+                        // Store detection items and save the processed frame
+                        val items = ArrayList(detectionResult.items)
+                        // detectionResult.processedFrame is rotatedMat
+                        val tempFile = File(cacheDir, "processed_hole_img.jpg")
+                        Imgcodecs.imwrite(tempFile.absolutePath, detectionResult.processedFrame)
+
+                        synchronized(this@MainActivity) {
+                            this@MainActivity.latestDetectionItemsForHole = items
+                            this@MainActivity.latestProcessedImageFilePathForHole = tempFile.absolutePath
+                        }
+
+                        Log.d("MainActivity", "HoleDetection: Detected ${items.size} holes. Image saved to ${tempFile.absolutePath}")
+                        if (items.isNotEmpty()) {
+                            val firstHole = items[0]
+                            Log.d("MainActivity", "HoleDetection: First hole - PosX: ${firstHole.x}, PosY: ${firstHole.y}, Diameter: ${firstHole.diameter}")
+                        }
+
+                        rotatedMat.release() // Release the Mat that was processed and saved
+                                             // If rotationDegrees was 0, rotatedMat was tempMat, so it's released.
+                                             // If rotation occurred and tempMat was not rotatedMat, tempMat was released earlier.
+
                         imageProxy.close()
                     })
                 }
@@ -165,5 +251,45 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
+    }
+
+    private fun imageProxyToMat(image: ImageProxy): Mat {
+        // Ensure image format is YUV_420_888
+        if (image.format != android.graphics.ImageFormat.YUV_420_888) {
+            Log.e("MainActivity", "Unsupported image format: ${image.format}. Expected YUV_420_888.")
+            // Return an empty Mat or throw an exception
+            return Mat()
+        }
+
+        val planes = image.planes
+        val yBuffer = planes[0].buffer // Y
+        val uBuffer = planes[1].buffer // U
+        val vBuffer = planes[2].buffer // V
+
+        val ySize = yBuffer.remaining()
+        val uSize = uBuffer.remaining()
+        val vSize = vBuffer.remaining()
+
+        val nv21 = ByteArray(ySize + uSize + vSize)
+
+        // Copy Y, V, U planes to nv21 byte array
+        // Y plane first
+        yBuffer.get(nv21, 0, ySize)
+        // V plane next (NV21 expects V before U)
+        vBuffer.get(nv21, ySize, vSize)
+        // U plane last
+        uBuffer.get(nv21, ySize + vSize, uSize)
+
+        // Workaround for potential issues with direct NV21 put on certain devices or OpenCV versions
+        // Create the YUV Mat with the correct dimensions for YUV_420_888 (NV21)
+        // Height is 1.5 times the image height (height for Y, height/2 for UV interleaved)
+        val yuvImage = Mat(image.height + image.height / 2, image.width, CvType.CV_8UC1)
+        yuvImage.put(0, 0, nv21)
+
+        val bgrMat = Mat()
+        Imgproc.cvtColor(yuvImage, bgrMat, Imgproc.COLOR_YUV2BGR_NV21)
+
+        yuvImage.release() // Release intermediate Mat
+        return bgrMat
     }
 }
