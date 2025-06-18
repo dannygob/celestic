@@ -101,4 +101,11 @@ dependencies {
     // OpenCV
     implementation(libs.opencv) // Biblioteca de OpenCV para procesamiento de imágenes
 
+    // CameraX dependencies
+    val cameraxVersion = "1.3.1" // Check for the latest version
+    implementation("androidx.camera:camera-core:${cameraxVersion}")
+    implementation("androidx.camera:camera-camera2:${cameraxVersion}")
+    implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
+    implementation("androidx.camera:camera-view:${cameraxVersion}")
+    implementation("androidx.camera:camera-extensions:${cameraxVersion}") // Optional, for extensions
 }
