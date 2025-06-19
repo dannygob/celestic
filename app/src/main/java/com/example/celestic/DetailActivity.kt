@@ -97,3 +97,6 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 }
+
+// Helper extension function for formatting Doubles
+private fun Double.format(digits: Int) = "%.${digits}f".format(this)
