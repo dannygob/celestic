@@ -26,6 +26,8 @@ import org.opencv.core.Core // For image rotation
 import org.opencv.imgproc.Imgproc // OpenCV Imgproc
 import org.opencv.imgcodecs.Imgcodecs // For saving Mat to file
 import com.example.celestic.opencv.HoleDetector
+import com.example.celestic.opencv.AlodineDetector // Import AlodineDetector
+import com.example.celestic.opencv.AlodineDetectionResult // Import AlodineDetectionResult
 import com.example.celestic.models.DetectionItem // For Parcelable DetectionItem
 import com.example.celestic.opencv.HoleDetectionResult // Though items are extracted, good for context
 import java.io.File // For file operations
@@ -37,9 +39,10 @@ import com.example.celestic.utils.OpenCVInitializer
 class MainActivity : AppCompatActivity() {
 
     private lateinit var cameraExecutor: ExecutorService
-    // Member variables to store latest detection results for Hole Detection
+    // Member variables to store latest detection results
     private var latestDetectionItemsForHole: ArrayList<DetectionItem>? = null
-    @Volatile private var latestProcessedImageFilePathForHole: String? = null
+    private var latestDetectionItemsForAlodine: ArrayList<DetectionItem>? = null
+    @Volatile private var latestProcessedImageFilePathForHole: String? = null // Will be used for combined image
 
 
     companion object {
@@ -83,6 +86,34 @@ class MainActivity : AppCompatActivity() {
         detectAlodineButton.setOnClickListener {
             val intent = Intent(this, DetailActivity::class.java)
             intent.putExtra("SCREEN_TYPE", "ALODINE_DETECTION")
+
+            var imagePath: String? = null
+            var alodineItemsList: ArrayList<DetectionItem>? = null
+
+            synchronized(this@MainActivity) {
+                imagePath = this@MainActivity.latestProcessedImageFilePathForHole // Reusing this path
+                // Create a new ArrayList for safety, or ensure DetailActivity can handle the original list type if not ArrayList
+                this@MainActivity.latestDetectionItemsForAlodine?.let { items ->
+                    alodineItemsList = ArrayList(items)
+                }
+            }
+
+            if (imagePath != null) {
+                intent.putExtra("PROCESSED_IMAGE_PATH", imagePath)
+                Log.d("MainActivity", "Passing image path for Alodine: $imagePath")
+            } else {
+                Log.d("MainActivity", "No processed image path available for Alodine.")
+            }
+
+            // Pass alodine items, or an empty list if null
+            if (alodineItemsList != null) {
+                intent.putParcelableArrayListExtra("DETECTED_ALODINE_ITEMS", alodineItemsList)
+                Log.d("MainActivity", "Passing ${alodineItemsList?.size} alodine items to DetailActivity.")
+            } else {
+                intent.putParcelableArrayListExtra("DETECTED_ALODINE_ITEMS", ArrayList<DetectionItem>())
+                Log.d("MainActivity", "No alodine items detected, passing empty list to DetailActivity.")
+            }
+
             startActivity(intent)
         }
 
@@ -198,31 +229,49 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         // Now, rotatedMat is the one to use. It will be modified by HoleDetector.
-                        // Log Mat details
-                        Log.d("MainActivity", "ImageAnalysis: Mat for detection - Size: ${rotatedMat.width()}x${rotatedMat.height()}, Channels: ${rotatedMat.channels()}, Type: ${CvType.typeToString(rotatedMat.type())}")
+                        Log.d("MainActivity", "ImageAnalysis: Mat for hole detection - Size: ${rotatedMat.width()}x${rotatedMat.height()}")
 
-                        val detectionResult = HoleDetector.detectHoles(rotatedMat) // rotatedMat is modified here
+                        val holeDetectionResult = HoleDetector.detectHoles(rotatedMat) // rotatedMat is modified by HoleDetector
+                        val holeItems = ArrayList(holeDetectionResult.items)
+                        // frameAfterHoleDetection is rotatedMat, which now has hole drawings
+                        val frameAfterHoleDetection = holeDetectionResult.processedFrame
+                        Log.d("MainActivity", "HoleDetection: Detected ${holeItems.size} holes.")
+                        if (holeItems.isNotEmpty()) {
+                             val firstHole = holeItems[0]
+                             Log.d("MainActivity", "HoleDetection: First hole - PosX: ${firstHole.x}, PosY: ${firstHole.y}, Diameter: ${firstHole.diameter}")
+                        }
 
-                        // Store detection items and save the processed frame
-                        val items = ArrayList(detectionResult.items)
-                        // detectionResult.processedFrame is rotatedMat
-                        val tempFile = File(cacheDir, "processed_hole_img.jpg")
-                        Imgcodecs.imwrite(tempFile.absolutePath, detectionResult.processedFrame)
+                        // Now, detect alodine rings using the frame with holes already drawn
+                        // AlodineDetector clones frameAfterHoleDetection, so frameAfterHoleDetection (rotatedMat) is not further modified by AlodineDetector
+                        val alodineDetectionResult = AlodineDetector.detect(frameAfterHoleDetection, holeItems)
+                        val alodineItems = ArrayList(alodineDetectionResult.items)
+                        val finalProcessedFrame = alodineDetectionResult.processedFrame // This is a new Mat (clone) with alodine drawings
+
+                        Log.d("MainActivity", "AlodineDetection: Detected ${alodineItems.size} alodine rings.")
+                        if (alodineItems.isNotEmpty()) {
+                            val firstAlodine = alodineItems[0]
+                            Log.d("MainActivity", "AlodineDetection: First alodine - PosX: ${firstAlodine.x}, PosY: ${firstAlodine.y}, Diameter: ${firstAlodine.diameter}")
+                        }
+
+                        // Save the finalProcessedFrame to a temporary file
+                        val tempFile = File(cacheDir, "processed_detection_img.jpg") // Generic name for combined image
+                        Imgcodecs.imwrite(tempFile.absolutePath, finalProcessedFrame)
 
                         synchronized(this@MainActivity) {
-                            this@MainActivity.latestDetectionItemsForHole = items
-                            this@MainActivity.latestProcessedImageFilePathForHole = tempFile.absolutePath
+                            this@MainActivity.latestDetectionItemsForHole = holeItems
+                            this@MainActivity.latestDetectionItemsForAlodine = alodineItems
+                            this@MainActivity.latestProcessedImageFilePathForHole = tempFile.absolutePath // Update path
                         }
 
-                        Log.d("MainActivity", "HoleDetection: Detected ${items.size} holes. Image saved to ${tempFile.absolutePath}")
-                        if (items.isNotEmpty()) {
-                            val firstHole = items[0]
-                            Log.d("MainActivity", "HoleDetection: First hole - PosX: ${firstHole.x}, PosY: ${firstHole.y}, Diameter: ${firstHole.diameter}")
-                        }
-
-                        rotatedMat.release() // Release the Mat that was processed and saved
-                                             // If rotationDegrees was 0, rotatedMat was tempMat, so it's released.
-                                             // If rotation occurred and tempMat was not rotatedMat, tempMat was released earlier.
+                        // Release Mats:
+                        // finalProcessedFrame is the Mat returned by AlodineDetector (a clone). It must be released.
+                        finalProcessedFrame.release()
+                        // rotatedMat (which is frameAfterHoleDetection) was processed by HoleDetector.
+                        // It was either tempMat or a new Mat if rotation occurred.
+                        // Its lifecycle management ensures it's released correctly:
+                        // - if rotationDegrees == 0, rotatedMat is tempMat. tempMat is NOT released earlier. rotatedMat.release() handles it.
+                        // - if rotation occurred, tempMat was released, rotatedMat is the new one. rotatedMat.release() handles it.
+                        rotatedMat.release()
 
                         imageProxy.close()
                     })
