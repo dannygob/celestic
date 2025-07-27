@@ -1,0 +1,55 @@
+package com.example.celestic.ui.screen
+
+import android.util.Log
+import org.opencv.core.Mat
+import org.opencv.core.MatOfPoint
+import org.opencv.core.Scalar
+import org.opencv.core.Size
+import org.opencv.imgproc.Imgproc
+
+class FrameAnalyzer {
+
+    data class AnalysisResult(
+        val contours: List<MatOfPoint>,
+        val annotatedMat: Mat,
+    )
+
+    fun analyze(mat: Mat): AnalysisResult {
+        val grayMat = Mat()
+        val edges = Mat()
+        val contours = mutableListOf<MatOfPoint>()
+
+        try {
+            // Preprocesamiento
+            Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_GRAY2BGR)
+            Imgproc.cvtColor(grayMat, grayMat, Imgproc.COLOR_BGR2GRAY)
+            Imgproc.GaussianBlur(grayMat, grayMat, Size(5.0, 5.0), 0.0)
+            Imgproc.Canny(grayMat, edges, 100.0, 200.0)
+
+            // Detectar contornos
+            val contourList = ArrayList<MatOfPoint>()
+            val hierarchy = Mat()
+            Imgproc.findContours(
+                edges,
+                contourList,
+                hierarchy,
+                Imgproc.RETR_EXTERNAL,
+                Imgproc.CHAIN_APPROX_SIMPLE
+            )
+            contours.addAll(contourList)
+
+            // Dibujar resultados en una copia
+            val annotatedMat = mat.clone()
+            Imgproc.drawContours(annotatedMat, contours, -1, Scalar(0.0, 255.0, 0.0), 2)
+
+            return AnalysisResult(contours, annotatedMat)
+
+        } catch (e: Exception) {
+            Log.e("FrameAnalyzer", "Error al analizar frame", e)
+            return AnalysisResult(emptyList(), mat)
+        } finally {
+            grayMat.release()
+            edges.release()
+        }
+    }
+}
