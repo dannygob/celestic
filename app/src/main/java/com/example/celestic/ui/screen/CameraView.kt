@@ -1,5 +1,13 @@
 package com.example.celestic.ui.screen
 
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -28,6 +36,8 @@ import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+
+
 
 @Composable
 fun CameraView(
@@ -150,4 +160,5 @@ private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
     rgbMat.release()
 
     return bmp
+
 }
