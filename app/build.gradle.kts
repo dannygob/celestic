@@ -1,37 +1,50 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("com.android.application") version "8.1.4" apply false
-    id("org.jetbrains.kotlin.android") version "2.0.21" apply false
+    alias(libs.plugins.kotlin.compose)
+    id("kotlin-parcelize")
 }
 
 android {
-    namespace = "com.example.myapplication"
+    namespace = "com.example.celestica"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.myapplication"
+        applicationId = "com.example.celestica"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
         vectorDrawables {
-            useSupportLibrary = true // Soporte para drawables vectoriales
+            useSupportLibrary = true
         }
     }
+
     buildFeatures {
-        compose = true // Activa Jetpack Compose
+        compose = true
     }
+
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.7.8" // Usa una versión compatible con tu configuración
+        kotlinCompilerExtensionVersion = "1.7.8" // versión definida en tu TOML
     }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -41,71 +54,42 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true // Habilitar soporte para Jetpack Compose
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}" // Exclusión de recursos innecesarios
-        }
-    }
 }
 
 dependencies {
+    // Jetpack Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
 
-    implementation(libs.androidx.activity)
-    implementation(platform(libs.androidx.compose.bom.v20230100))
+    // Android core
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
-
-    // Core Android
-    implementation(libs.androidx.core.ktx) // Extensiones de Core KTX
-    implementation(libs.androidx.lifecycle.runtime.ktx) // Extensiones para ciclo de vida
-    implementation(libs.androidx.activity.compose) // Actividad Compose
-
-    // Compose BOM (Bill of Materials)
-    implementation(platform(libs.androidx.compose.bom)) // BOM para versión unificada de Compose
-    implementation(libs.androidx.ui) // Extensiones de UI
-    implementation(libs.androidx.ui.graphics) // Utilidades gráficas
-    implementation(libs.androidx.ui.tooling.preview) // Herramientas para previsualización
-    implementation(libs.androidx.material3) // Componentes Material Design 3
-
-    // Navigation Compose
-    implementation(libs.navigation.compose) // Dependencia de Navigation Compose
-    implementation(libs.navigation.ui.ktx) // Navegación UI
-
-    // Material y compatibility UI
-    implementation(libs.androidx.appcompat) // Compatibilidad con versiones antiguas de Android
-    implementation(libs.material) // Material Design
-
-    // Constraint Layout (Si lo usas en XML)
-    implementation(libs.androidx.constraintlayout)
-
-    // Testing
-    testImplementation(libs.junit) // Framework de pruebas unitarias
-    androidTestImplementation(libs.androidx.junit) // Pruebas instrumentadas
-    androidTestImplementation(libs.androidx.espresso.core) // Framework Espresso para UI
-    androidTestImplementation(platform(libs.androidx.compose.bom)) // Pruebas en Compose
-    androidTestImplementation(libs.androidx.ui.test.junit4) // Pruebas con JUnit4
-
-    // Debugging
-    debugImplementation(libs.androidx.ui.tooling) // Herramientas de Compose para debugging
-    debugImplementation(libs.androidx.ui.test.manifest) // Manifesto para pruebas UI
+    implementation(libs.androidx.activity.compose)
 
     // OpenCV
-    implementation(libs.opencv) // Biblioteca de OpenCV para procesamiento de imágenes
+    implementation(libs.opencv)
 
-    // CameraX dependencies
-    val cameraxVersion = "1.3.1" // Check for the latest version
-    implementation("androidx.camera:camera-core:${cameraxVersion}")
-    implementation("androidx.camera:camera-camera2:${cameraxVersion}")
-    implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
-    implementation("androidx.camera:camera-view:${cameraxVersion}")
-    implementation("androidx.camera:camera-extensions:${cameraxVersion}") // Optional, for extensions
+    // CameraX
+
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.extensions)
+    implementation(libs.androidx.navigation.runtime.android)
+
+    // Testing
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    // Debug
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }

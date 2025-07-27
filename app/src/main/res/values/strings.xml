@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Celestic Detector</string>
+    <string name="back">Atrás</string>
+    <string name="details_title_hole">Detalle de Agujero</string>
+    <string name="details_title_alodine">Detalle de Alodine</string>
+    <string name="details_title_countersink">Detalle de Avellanado</string>
+    <string name="welcome_message">Bienvenido al detector celestial</string>
+    <string name="scan_button">Escanear componente</string>
+    <string name="report_issue">Reportar problema</string>
+    <string name="loading">Cargando...</string>
 </resources>
