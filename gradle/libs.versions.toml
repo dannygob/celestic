@@ -13,6 +13,12 @@ appcompat = "1.6.1"
 
 opencv = "4.12.0"
 navigationRuntimeAndroid = "2.9.2"
+roomCompiler = "2.7.2"
+roomCommonJvm = "2.7.2"
+roomRuntimeAndroid = "2.7.2"
+litert = "1.4.0"
+navigationComposeJvmstubs = "2.9.2"
+firebaseCrashlyticsBuildtools = "3.0.5"
 
 
 
@@ -42,6 +48,12 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 
 opencv = { module = "org.opencv:opencv", version.ref = "opencv" }
 androidx-navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-android", version.ref = "navigationRuntimeAndroid" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
+androidx-room-runtime-android = { group = "androidx.room", name = "room-runtime-android", version.ref = "roomRuntimeAndroid" }
+litert = { group = "com.google.ai.edge.litert", name = "litert", version.ref = "litert" }
+androidx-navigation-compose-jvmstubs = { group = "androidx.navigation", name = "navigation-compose-jvmstubs", version.ref = "navigationComposeJvmstubs" }
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
