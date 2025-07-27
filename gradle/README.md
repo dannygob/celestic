@@ -54,6 +54,133 @@ includes:
 | 🔟 | Code scanning | ✅ Active | ML Kit or Android pyzbar |
 | 🧩 | Inspection saved | 🔲 Pending | Room or local .json export |
 | 📄 | Report generation | 🟡 In design | PDF/Word export on request |
+✅ Celestic Construction Checklist – By Technical Stages
+
+🧱 1. Basic Project Structure
+📦 Files and folders:
+
+- MainActivity.kt
+- AppNavigation.kt
+- ui/ folder
+- model/ folder
+- data/ folder
+- theme/ folder
+- utils/ folder
+  🎨 XML Resources:
+- colors.xml
+- strings.xml
+- dimens.xml
+- themes.xml
+  🎨 Theme and styles:
+- CelesticTheme.kt
+- Typography.kt
+- Shape.kt (optional for borders)
+
+🧩 2. Data Model + Persistence
+📄 Models:
+
+- DetectionItem.kt
+- DetectionStatus.kt (enum 🟢🟡🔴)
+- BoundingBox.kt
+- ReportEntry.kt
+- CameraCalibrationData.kt
+- DetectedFeature.kt
+- ReportConfig.kt
+  🗃️ Room Database:
+- DetectionDao.kt
+- DetectionDatabase.kt
+- DetectionRepository.kt
+  📁 External Files:
+- calibration.json
+- traceability.json (for QR code reading)
+- config_report.json (user settings)
+
+🎥 3. Camera + Image Analysis Module
+📷 Capture:
+
+- CameraView.kt
+- CameraUtils.kt
+  🔍 Processing:
+- FrameAnalyzer.kt
+- Function: detectEdges()
+- Function: detectMarkers()
+- Function: classifyImageAI()
+- Function: applyCalibration()
+- Function: extractDimensionsFromContours()
+  📐 Calibration:
+- CalibrationManager.kt
+- detectCharucoPattern()
+- generateCalibrationMatrix()
+- saveCalibrationToJson()
+- loadCalibrationFromJson()
+
+🧠 4. Integrated Artificial Intelligence
+🧠 Android AI:
+
+- .tflite or .pt model saved in assets/
+- ImageClassifier.kt
+- Function: runInference(bitmap)
+- Function: mapPredictionToFeatureType()
+  🐍 Python AI:
+- Training script train_model.py
+- Labeled dataset data/train_images/
+- Android-compatible export
+
+📊 5. Interface and Screens
+🖼️ Compose Screens:
+
+- DashboardScreen.kt
+- CameraScreen.kt
+- DetailsScreen.kt
+- ReportRequestDialog.kt
+- InspectionPreviewScreen.kt (optional preview)
+- CalibrationScreen.kt (for manual configuration)
+  📦 Composable Components:
+- FeatureCard.kt
+- StatusIndicator.kt
+- MeasurementOverlay.kt
+  📍 Navigation:
+- NavigationRoutes.kt
+- NavigationGraph.kt
+
+🧾 6. QR / ArUco / AprilTag Traceability
+🧾 Scanning:
+
+- QRScanner.kt
+- Function: startQrScan()
+- Function: decodeBarcode()
+- Linking to DetectionItem
+  🔲 Markers:
+- ArUcoManager.kt
+- AprilTagManager.kt (via JNI or integrated library)
+  🗃️ Linked Data:
+- Traceability.json database
+- Visual connection in DetailsScreen.kt
+
+📄 7. Inspection Report (PDF / Word / JSON)
+📄 Generation:
+
+- ReportGenerator.kt
+- generatePdfFromDetections()
+- generateWordFromDetections()
+- exportJsonSummary()
+- filterDetectionsByStatus()
+  🖼️ UI:
+- Button in DashboardScreen.kt or DetailsScreen.kt
+- Selector: PDF, Word or JSON
+  📁 Export:
+- Folder /storage/emulated/0/Celestic/Reports/
+- Suggested name: ReporteCelestic_Lote123.pdf
+
+🎨 8. Visual Resources
+📷 Image / Icons in drawable/:
+
+- charuco_pattern.png
+- logo_celestic.png
+- icon_inspection.png
+- icon_pdf.png, icon_word.png
+- status_green.png, status_yellow.png, status_red.png
+- graph_placeholder.png
 
 🔹 Celestic – Proyecto Android de Inspección Visual Inteligente
 
@@ -111,6 +238,134 @@ Su evolución contempla:
 | 🔟 | Escaneo de códigos | ✅ | ML Kit o pyzbar Android |
 | 🧩 | Guardado de inspección | 🔲 Pendiente | Room o export .json local |
 | 📄 | Generación de reporte | 🟡 En diseño | Exportador PDF/Word por solicitud | 
+
+✅ Checklist Constructivo de Celestic – Por Etapas Técnicas
+
+🧱 1. Estructura Base del Proyecto
+📦 Archivos y carpetas:
+
+- MainActivity.kt
+- AppNavigation.kt
+- Carpeta ui/
+- Carpeta model/
+- Carpeta data/
+- Carpeta theme/
+- Carpeta utils/
+  🎨 Recursos XML:
+- colors.xml
+- strings.xml
+- dimens.xml
+- themes.xml
+  🎨 Tema y estilos:
+- CelesticTheme.kt
+- Typography.kt
+- Shape.kt (opcional para bordes)
+
+🧩 2. Modelo de Datos + Persistencia
+📄 Modelos:
+
+- DetectionItem.kt
+- DetectionStatus.kt (enum 🟢🟡🔴)
+- BoundingBox.kt
+- ReportEntry.kt
+- CameraCalibrationData.kt
+- DetectedFeature.kt
+- ReportConfig.kt
+  🗃️ Room Database:
+- DetectionDao.kt
+- DetectionDatabase.kt
+- DetectionRepository.kt
+  📁 Archivos externos:
+- calibration.json
+- trazabilidad.json (por lectura QR)
+- config_report.json (configuraciones por usuario)
+
+🎥 3. Módulo Cámara + Análisis de Imagen
+📷 Captura:
+
+- CameraView.kt
+- CameraUtils.kt
+  🔍 Procesamiento:
+- FrameAnalyzer.kt
+- Función: detectEdges()
+- Función: detectMarkers()
+- Función: classifyImageAI()
+- Función: applyCalibration()
+- Función: extractDimensionsFromContours()
+  📐 Calibración:
+- CalibrationManager.kt
+- detectCharucoPattern()
+- generateCalibrationMatrix()
+- saveCalibrationToJson()
+- loadCalibrationFromJson()
+
+🧠 4. Inteligencia Artificial integrada
+🧠 IA Android:
+
+- Modelo .tflite o .pt guardado en assets/
+- ImageClassifier.kt
+- Función: runInference(bitmap)
+- Función: mapPredictionToFeatureType()
+  🐍 IA Python:
+- Script de entrenamiento train_model.py
+- Dataset etiquetado data/train_images/
+- Exportación compatible con Android
+
+📊 5. Interfaz y Pantallas
+🖼️ Pantallas Compose:
+
+- DashboardScreen.kt
+- CameraScreen.kt
+- DetailsScreen.kt
+- ReportRequestDialog.kt
+- InspectionPreviewScreen.kt (opcional visualización previa)
+- CalibrationScreen.kt (para configuración manual)
+  📦 Componentes Composables:
+- FeatureCard.kt
+- StatusIndicator.kt
+- MeasurementOverlay.kt
+  📍 Navegación:
+- NavigationRoutes.kt
+- NavigationGraph.kt
+
+🧾 6. Trazabilidad QR / ArUco / AprilTag
+🧾 Escaneo:
+
+- QRScanner.kt
+- Función: startQrScan()
+- Función: decodeBarcode()
+- Vinculación con DetectionItem
+  🔲 Marcadores:
+- ArUcoManager.kt
+- AprilTagManager.kt (via JNI o librería integrada)
+  🗃️ Datos enlazados:
+- Base de datos trazabilidad.json
+- Conexión visual en DetailsScreen.kt
+
+📄 7. Reporte de inspección (PDF / Word / JSON)
+📄 Generación:
+
+- ReportGenerator.kt
+- generatePdfFromDetections()
+- generateWordFromDetections()
+- exportJsonSummary()
+- filterDetectionsByStatus()
+  🖼️ UI:
+- Botón en DashboardScreen.kt o DetailsScreen.kt
+- Selector: PDF, Word o JSON
+  📁 Exportación:
+- Carpeta /storage/emulated/0/Celestic/Reports/
+- Nombre sugerido: ReporteCelestic_Lote123.pdf
+
+🎨 8. Recursos Visuales
+📷 Imagen / Iconos en drawable/:
+
+- charuco_pattern.png
+- logo_celestic.png
+- icon_inspection.png
+- icon_pdf.png, icon_word.png
+- status_green.png, status_yellow.png, status_red.png
+- graph_placeholder.png
 
 
 
