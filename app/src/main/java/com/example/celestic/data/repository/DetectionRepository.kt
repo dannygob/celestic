@@ -2,6 +2,7 @@ package com.example.celestic.data.repository
 
 
 import com.example.celestic.data.dao.DetectionDao
+import com.example.celestic.models.DetectionItem
 import com.example.celestic.models.calibration.DetectedFeature
 
 class DetectionRepository(private val detectionDao: DetectionDao) {
@@ -21,4 +22,14 @@ class DetectionRepository(private val detectionDao: DetectionDao) {
     suspend fun clearAllDetections() {
         detectionDao.clearDetections()
     }
+
+    suspend fun insertDetection(item: DetectionItem) = dao.insertDetection(item)
+
+    suspend fun deleteDetection(item: DetectionItem) = dao.deleteDetection(item)
+
+    suspend fun clearAll() = dao.clearAll()
+
+
+
+
 }

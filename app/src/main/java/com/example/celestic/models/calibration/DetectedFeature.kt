@@ -29,4 +29,7 @@ data class DetectedFeature(
 
     @ColumnInfo(name = "timestamp")
     val timestamp: Long, // Epoch time en milisegundos
+
+    @ColumnInfo(name = "timestamp")
+    val measurements: Map<String, Float> = emptyMap(),
 ) : Parcelable

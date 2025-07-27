@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.litert)
     implementation(libs.androidx.navigation.compose.jvmstubs)
     implementation(libs.firebase.crashlytics.buildtools)
+    implementation(libs.androidx.databinding.adapters)
 
     // Testing
     testImplementation(libs.junit)

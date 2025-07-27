@@ -30,4 +30,15 @@ data class ReportConfig(
 
     @ColumnInfo(name = "generation_date")
     val generationDate: String, // "YYYY-MM-DD HH:mm"
-) : Parcelable
+
+    @ColumnInfo(name = "include_raw_features")
+    val includeImages: Boolean,
+
+    @ColumnInfo(name = "include_raw_features")
+    val outputFormat: String, // "PDF", "Word", "JSON"
+
+    @ColumnInfo(name = "include_raw_features")
+    val includeMeasurements: Boolean,
+
+
+    ) : Parcelable

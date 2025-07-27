@@ -19,6 +19,7 @@ roomRuntimeAndroid = "2.7.2"
 litert = "1.4.0"
 navigationComposeJvmstubs = "2.9.2"
 firebaseCrashlyticsBuildtools = "3.0.5"
+databindingAdapters = "8.11.1"
 
 
 
@@ -54,6 +55,7 @@ androidx-room-runtime-android = { group = "androidx.room", name = "room-runtime-
 litert = { group = "com.google.ai.edge.litert", name = "litert", version.ref = "litert" }
 androidx-navigation-compose-jvmstubs = { group = "androidx.navigation", name = "navigation-compose-jvmstubs", version.ref = "navigationComposeJvmstubs" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
+androidx-databinding-adapters = { group = "androidx.databinding", name = "databinding-adapters", version.ref = "databindingAdapters" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
