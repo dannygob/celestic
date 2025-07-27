@@ -10,6 +10,13 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "detection_items")
 @Parcelize
 data class DetectionItem(
+
+    val id: String,
+    val type: String,
+    val description: String,
+    val imageUrl: String
+) : Parcelable
+
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val frameId: String,
     val type: DetectionType,
@@ -21,3 +28,4 @@ data class DetectionItem(
     val linkedQrCode: String? = null,
     val notes: String = "",
 ) : Parcelable
+
