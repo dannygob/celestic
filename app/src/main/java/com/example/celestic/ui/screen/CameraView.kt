@@ -30,6 +30,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.celestic.manager.ImageClassifier
 import com.example.celestic.utils.OpenCVInitializer
+import com.example.celestic.utils.getCameraProvider
+import com.example.celestic.utils.hasCameraPermission
 import com.example.celestic.viewmodel.MainViewModel
 import org.opencv.android.Utils
 import org.opencv.core.CvType
@@ -47,16 +49,11 @@ fun CameraView(
 ) {
     val context = LocalContext.current
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
-    var permissionGranted by remember { mutableStateOf(false) }
+    var permissionGranted by remember { mutableStateOf(hasCameraPermission(context)) }
 
-    LaunchedEffect(Unit) {
-        permissionGranted = ContextCompat.checkSelfPermission(
-            context, Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED
-
-        if (!permissionGranted) {
-            Log.e("CameraView", "Permiso de cámara no concedido.")
-        }
+    if (!permissionGranted) {
+        // TODO: Request permission
+        Log.e("CameraView", "Permiso de cámara no concedido.")
     }
 
     LaunchedEffect(Unit) {
@@ -98,7 +95,7 @@ private fun startCamera(
     cameraExecutor: ExecutorService,
     viewModel: MainViewModel,
 ) {
-    val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+    val cameraProviderFuture = getCameraProvider(context)
     cameraProviderFuture.addListener({
         val cameraProvider = cameraProviderFuture.get()
 

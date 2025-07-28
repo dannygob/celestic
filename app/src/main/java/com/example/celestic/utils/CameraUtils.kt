@@ -1,8 +1,13 @@
 package com.example.celestic.utils
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.camera.core.ImageProxy
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.content.ContextCompat
+import com.google.common.util.concurrent.ListenableFuture
 import org.opencv.android.Utils
 import org.opencv.core.CvType
 import org.opencv.core.Mat
@@ -27,4 +32,15 @@ fun imageProxyToBitmap(image: ImageProxy): Bitmap {
     rgbMat.release()
 
     return bmp
+}
+
+fun hasCameraPermission(context: Context): Boolean {
+    return ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.CAMERA
+    ) == PackageManager.PERMISSION_GRANTED
+}
+
+fun getCameraProvider(context: Context): ListenableFuture<ProcessCameraProvider> {
+    return ProcessCameraProvider.getInstance(context)
 }
