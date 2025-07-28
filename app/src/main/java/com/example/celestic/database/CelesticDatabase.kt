@@ -1,13 +1,33 @@
 package com.example.celestic.database
 
-import androidx.room.*
-import com.celestic.database.converters.DetectionStatusConverter
-import com.celestic.database.converters.DetectionTypeConverter
-import com.celestic.model.DetectionItem
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.example.celestic.data.dao.CelesticDao
+import com.example.celestic.database.converters.Converters
+import com.example.celestic.models.DetectionItem
 
-@Database(entities = [DetectionItem::class], version = 1)
-@TypeConverters(DetectionTypeConverter::class, DetectionStatusConverter::class)
+@Database(entities = [DetectionItem::class], version = 1, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class CelesticDatabase : RoomDatabase() {
     abstract fun celesticDao(): CelesticDao
+
+    companion object {
+        @Volatile
+        private var INSTANCE: CelesticDatabase? = null
+
+        fun getDatabase(context: Context): CelesticDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    CelesticDatabase::class.java,
+                    "celestic_database"
+                ).build()
+                INSTANCE = instance
+                instance
+            }
+        }
+    }
 }

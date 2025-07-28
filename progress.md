@@ -38,54 +38,54 @@ This file tracks the progress of the Celestic project.
 - [X] Shape.kt
 
 ### 2. Data Model + Persistence
-- [ ] DetectionItem.kt
-- [ ] DetectionStatus.kt
-- [ ] BoundingBox.kt
-- [ ] ReportEntry.kt
-- [ ] CameraCalibrationData.kt
-- [ ] DetectedFeature.kt
-- [ ] ReportConfig.kt
-- [ ] DetectionDao.kt
-- [ ] DetectionDatabase.kt
-- [ ] DetectionRepository.kt
-- [ ] calibration.json
-- [ ] traceability.json
-- [ ] config_report.json
+- [X] DetectionItem.kt
+- [X] DetectionStatus.kt
+- [X] BoundingBox.kt
+- [X] ReportEntry.kt
+- [X] CameraCalibrationData.kt
+- [X] DetectedFeature.kt
+- [X] ReportConfig.kt
+- [X] DetectionDao.kt
+- [X] DetectionDatabase.kt
+- [X] DetectionRepository.kt
+- [X] calibration.json
+- [X] traceability.json
+- [X] config_report.json
 
 ### 3. Camera + Image Analysis Module
-- [ ] CameraView.kt
-- [ ] CameraUtils.kt
-- [ ] FrameAnalyzer.kt
-- [ ] CalibrationManager.kt
+- [X] CameraView.kt
+- [X] CameraUtils.kt
+- [X] FrameAnalyzer.kt
+- [X] CalibrationManager.kt
 
 ### 4. Integrated Artificial Intelligence
-- [ ] ImageClassifier.kt
+- [X] ImageClassifier.kt
 
 ### 5. Interface and Screens
-- [ ] DashboardScreen.kt
-- [ ] CameraScreen.kt
-- [ ] DetailsScreen.kt
-- [ ] ReportRequestDialog.kt
-- [ ] InspectionPreviewScreen.kt
-- [ ] CalibrationScreen.kt
-- [ ] FeatureCard.kt
-- [ ] StatusIndicator.kt
-- [ ] MeasurementOverlay.kt
-- [ ] NavigationRoutes.kt
-- [ ] NavigationGraph.kt
+- [X] DashboardScreen.kt
+- [X] CameraScreen.kt
+- [X] DetailsScreen.kt
+- [X] ReportRequestDialog.kt
+- [X] InspectionPreviewScreen.kt
+- [X] CalibrationScreen.kt
+- [X] FeatureCard.kt
+- [X] StatusIndicator.kt
+- [X] MeasurementOverlay.kt
+- [X] NavigationRoutes.kt
+- [X] NavigationGraph.kt
 
 ### 6. QR / ArUco / AprilTag Traceability
-- [ ] QRScanner.kt
-- [ ] ArUcoManager.kt
-- [ ] AprilTagManager.kt
+- [X] QRScanner.kt
+- [X] ArUcoManager.kt
+- [X] AprilTagManager.kt
 
 ### 7. Inspection Report (PDF / Word / JSON)
-- [ ] ReportGenerator.kt
+- [X] ReportGenerator.kt
 
 ### 8. Visual Resources
-- [ ] charuco_pattern.png
-- [ ] logo_celestic.png
-- [ ] icon_inspection.png
-- [ ] icon_pdf.png, icon_word.png
-- [ ] status_green.png, status_yellow.png, status_red.png
-- [ ] graph_placeholder.png
+- [X] charuco_pattern.png
+- [X] logo_celestic.png
+- [X] icon_inspection.png
+- [X] icon_pdf.png, icon_word.png
+- [X] status_green.png, status_yellow.png, status_red.png
+- [X] graph_placeholder.png
