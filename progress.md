@@ -57,6 +57,7 @@ This file tracks the progress of the Celestic project.
 - [X] CameraUtils.kt
 - [X] FrameAnalyzer.kt
 - [X] CalibrationManager.kt
+- [X] OpenCVInitializer.kt
 
 ### 4. Integrated Artificial Intelligence
 - [X] ImageClassifier.kt

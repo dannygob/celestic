@@ -14,7 +14,7 @@ class DetectionRepository(private val dao: CelesticDao) {
         dao.insertDetections(detections)
     }
 
-    suspend fun loadDetections(): List<DetectedFeature> {
+    fun loadDetections(): kotlinx.coroutines.flow.Flow<List<DetectedFeature>> {
         return dao.getAllDetections()
     }
 
