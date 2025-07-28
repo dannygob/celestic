@@ -24,19 +24,9 @@ class FrameAnalyzer {
             Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_GRAY2BGR)
             Imgproc.cvtColor(grayMat, grayMat, Imgproc.COLOR_BGR2GRAY)
             Imgproc.GaussianBlur(grayMat, grayMat, Size(5.0, 5.0), 0.0)
-            Imgproc.Canny(grayMat, edges, 100.0, 200.0)
 
-            // Detectar contornos
-            val contourList = ArrayList<MatOfPoint>()
-            val hierarchy = Mat()
-            Imgproc.findContours(
-                edges,
-                contourList,
-                hierarchy,
-                Imgproc.RETR_EXTERNAL,
-                Imgproc.CHAIN_APPROX_SIMPLE
-            )
-            contours.addAll(contourList)
+            val edges = detectEdges(grayMat)
+            val contours = findContours(edges)
 
             // Dibujar resultados en una copia
             val annotatedMat = mat.clone()
@@ -51,5 +41,40 @@ class FrameAnalyzer {
             grayMat.release()
             edges.release()
         }
+    }
+
+    fun detectEdges(image: Mat): Mat {
+        val edges = Mat()
+        Imgproc.Canny(image, edges, 100.0, 200.0)
+        return edges
+    }
+
+    fun applyCalibration(image: Mat, cameraMatrix: Mat, distortionCoeffs: Mat): Mat {
+        val undistortedImage = Mat()
+        Imgproc.undistort(image, undistortedImage, cameraMatrix, distortionCoeffs)
+        return undistortedImage
+    }
+
+    fun extractDimensionsFromContours(contours: List<MatOfPoint>): List<Double> {
+        val dimensions = mutableListOf<Double>()
+        for (contour in contours) {
+            val rect = Imgproc.boundingRect(contour)
+            dimensions.add(rect.width.toDouble())
+            dimensions.add(rect.height.toDouble())
+        }
+        return dimensions
+    }
+
+    private fun findContours(image: Mat): List<MatOfPoint> {
+        val contours = ArrayList<MatOfPoint>()
+        val hierarchy = Mat()
+        Imgproc.findContours(
+            image,
+            contours,
+            hierarchy,
+            Imgproc.RETR_EXTERNAL,
+            Imgproc.CHAIN_APPROX_SIMPLE
+        )
+        return contours
     }
 }

@@ -31,4 +31,16 @@ interface CelesticDao {
 
     @Query("DELETE FROM detected_features")
     suspend fun clearDetections()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCameraCalibrationData(cameraCalibrationData: com.example.celestic.models.calibration.CameraCalibrationData)
+
+    @Query("SELECT * FROM camera_calibration ORDER BY id DESC LIMIT 1")
+    fun getCameraCalibrationData(): Flow<com.example.celestic.models.calibration.CameraCalibrationData?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertReportConfig(reportConfig: com.example.celestic.models.report.ReportConfig)
+
+    @Query("SELECT * FROM report_config ORDER BY id DESC LIMIT 1")
+    fun getReportConfig(): Flow<com.example.celestic.models.report.ReportConfig?>
 }

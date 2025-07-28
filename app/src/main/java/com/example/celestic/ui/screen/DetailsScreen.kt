@@ -10,14 +10,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.celestic.models.DetectionItem
-import com.example.celestic.utils.buscarPorCodigo
-import com.example.celestic.utils.cargarTrazabilidad
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.celestic.models.DetectionItem
+import com.example.celestic.viewmodel.DetailsViewModel
 
 @Composable
 fun DetailsScreen(
     navController: NavController,
     detailType: String,
     detectionItem: DetectionItem? = null,
+    viewModel: DetailsViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val title = when (detailType) {
@@ -27,12 +29,13 @@ fun DetailsScreen(
         else -> "Detalle"
     }
 
-    val trazabilidad = remember(detectionItem) {
+    LaunchedEffect(detectionItem) {
         detectionItem?.linkedQrCode?.let { codigo ->
-            val lista = cargarTrazabilidad(context)
-            buscarPorCodigo(codigo, lista)
+            viewModel.loadTrazabilidad(codigo)
         }
     }
+
+    val trazabilidad by viewModel.trazabilidadItem.collectAsState()
 
     Column(modifier = Modifier
         .fillMaxSize()

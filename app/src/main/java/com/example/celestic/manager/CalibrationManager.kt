@@ -8,22 +8,24 @@ import org.opencv.core.CvType
 import org.opencv.core.Mat
 import java.io.File
 import java.io.FileInputStream
+import javax.inject.Inject
 
-object CalibrationManager {
+class CalibrationManager @Inject constructor(private val context: Context) {
 
     var cameraMatrix: Mat? = null
     var distortionCoeffs: Mat? = null
     var resolution: Pair<Int, Int>? = null
     var calibrationDate: String? = null
 
-    private const val CALIBRATION_FILE = "calibration.json"
-    private const val CONFIG_DIR = "config"
+    private val calibrationFile = File(context.filesDir, "config/calibration.json")
 
-    fun loadCalibration(context: Context): Boolean {
+    init {
+        loadCalibration()
+    }
+
+    private fun loadCalibration(): Boolean {
         return try {
-            val configDir = File(context.filesDir, CONFIG_DIR)
-            val file = File(configDir, CALIBRATION_FILE)
-            val json = JSONObject(FileInputStream(file).bufferedReader().use { it.readText() })
+            val json = JSONObject(FileInputStream(calibrationFile).bufferedReader().use { it.readText() })
 
             // Parse cameraMatrix
             val matrixArray = json.getJSONArray("cameraMatrix")
