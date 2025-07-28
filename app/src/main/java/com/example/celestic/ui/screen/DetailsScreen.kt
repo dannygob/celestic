@@ -9,7 +9,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.room.util.TableInfo
 import com.example.celestic.models.DetectionItem
 import com.example.celestic.utils.buscarPorCodigo
 import com.example.celestic.utils.cargarTrazabilidad
@@ -35,7 +34,7 @@ fun DetailsScreen(
         }
     }
 
-    TableInfo.Column(modifier = Modifier
+    Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)) {
         Text(text = title, style = MaterialTheme.typography.headlineSmall)

@@ -31,13 +31,13 @@ data class ReportConfig(
     @ColumnInfo(name = "generation_date")
     val generationDate: String, // "YYYY-MM-DD HH:mm"
 
-    @ColumnInfo(name = "include_raw_features")
+    @ColumnInfo(name = "include_images")
     val includeImages: Boolean,
 
-    @ColumnInfo(name = "include_raw_features")
+    @ColumnInfo(name = "output_format")
     val outputFormat: String, // "PDF", "Word", "JSON"
 
-    @ColumnInfo(name = "include_raw_features")
+    @ColumnInfo(name = "include_measurements")
     val includeMeasurements: Boolean,
 
 

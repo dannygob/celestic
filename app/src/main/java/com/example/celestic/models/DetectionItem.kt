@@ -1,22 +1,16 @@
 package com.example.celestic.models
 
 import android.os.Parcelable
-import androidx.room.*
-import androidx.room.vo.Entity
-import com.example.celestic.detector.model.DetectionType
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.example.celestic.models.enums.DetectionStatus
+import com.example.celestic.models.enums.DetectionType
 import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = "detection_items")
 @Parcelize
 data class DetectionItem(
-
-    val id: String,
-    val type: String,
-    val description: String,
-    val imageUrl: String
-) : Parcelable
-
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val frameId: String,
     val type: DetectionType,

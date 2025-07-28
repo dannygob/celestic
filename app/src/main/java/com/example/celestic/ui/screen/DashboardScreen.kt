@@ -25,12 +25,23 @@ import com.example.celestic.models.geometry.BoundingBox
 import com.example.celestic.navigation.NavigationRoutes
 import com.example.celestic.util.*
 import com.example.celestic.utils.LocalizedStrings
+import com.example.celestic.utils.exportJsonSummary
+import com.example.celestic.utils.generatePdfFromDetections
+import com.example.celestic.utils.generateWordFromDetections
 import java.util.*
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(navController: NavController) {
+fun DashboardScreen(navController: NavController, viewModel: MainViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+
+    val context = LocalContext.current
+    val strings = LocalizedStrings.current
+    var useCharuco by remember { mutableStateOf(true) }
+
+    // 📁 Formato de reporte
+    val formatos = listOf("PDF", "Word", "JSON")
+    var formatoSeleccionado by remember { mutableStateOf("PDF") }
 
     Scaffold(
         topBar = {
@@ -42,181 +53,144 @@ fun DashboardScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(onClick = { navController.navigate(NavRoutes.CAMERA) }) {
-                Text("Start Inspection")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { navController.navigate(NavRoutes.STATUS) }) {
-                Text("View Status")
-            }
-        }
-    }
+            Text(
+                text = strings.dashboardTitle,
+                style = MaterialTheme.typography.headlineMedium
+            )
 
-    val context = LocalContext.current
-    val strings = LocalizedStrings.current
-    var useCharuco by remember { mutableStateOf(true) }
+            Spacer(Modifier.height(16.dp))
 
-    // 📁 Formato de reporte
-    val formatos = listOf("PDF", "Word", "JSON")
-    var formatoSeleccionado by remember { mutableStateOf("PDF") }
+            // 🔧 Sección Configuración
+            Card(elevation = CardDefaults.cardElevation()) {
+                Column(Modifier.padding(16.dp)) {
+                    Text(
+                        text = strings.calibrationSection,
+                        style = MaterialTheme.typography.titleMedium
+                    )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = strings.dashboardTitle,
-            style = MaterialTheme.typography.headlineMedium
-        )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Button(onClick = {
+                            Toast.makeText(context, strings.toastOpenCalibration, Toast.LENGTH_SHORT)
+                                .show()
+                            navController.navigate(NavigationRoutes.Calibration.route)
+                        }) {
+                            Text(strings.openCalibration)
+                        }
 
-        Spacer(Modifier.height(16.dp))
+                        Spacer(Modifier.width(16.dp))
 
-        // 🔧 Sección Configuración
-        Card(elevation = CardDefaults.cardElevation()) {
-            Column(Modifier.padding(16.dp)) {
-                Text(
-                    text = strings.calibrationSection,
-                    style = MaterialTheme.typography.titleMedium
-                )
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Button(onClick = {
-                        Toast.makeText(context, strings.toastOpenCalibration, Toast.LENGTH_SHORT)
-                            .show()
-                        navController.navigate(NavigationRoutes.Calibration.route)
-                    }) {
-                        Text(strings.openCalibration)
-                    }
-
-                    Spacer(Modifier.width(16.dp))
-
-                    Switch(checked = useCharuco, onCheckedChange = {
-                        useCharuco = it
-                        val marker = if (useCharuco) "Charuco" else "AprilTag"
-                        Toast.makeText(
-                            context,
-                            "Marcador seleccionado: $marker",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    })
-                    Text(if (useCharuco) "Charuco" else "AprilTag")
-                }
-            }
-        }
-
-        Spacer(Modifier.height(20.dp))
-
-        // 🚀 Sección Modalidades de inspección
-        Card(elevation = CardDefaults.cardElevation()) {
-            Column(Modifier.padding(16.dp)) {
-                Text(strings.analysisModes, style = MaterialTheme.typography.titleMedium)
-
-                Row {
-                    Button(onClick = {
-                        Toast.makeText(context, strings.toastModeCarroceria, Toast.LENGTH_SHORT)
-                            .show()
-                    }) {
-                        Text(strings.modeCarroceria)
-                    }
-
-                    Spacer(Modifier.width(8.dp))
-
-                    Button(onClick = {
-                        Toast.makeText(context, strings.toastModePrecision, Toast.LENGTH_SHORT)
-                            .show()
-                    }) {
-                        Text(strings.modePrecision)
-                    }
-
-                    Spacer(Modifier.width(8.dp))
-
-                    Button(onClick = {
-                        Toast.makeText(context, strings.toastModeMetales, Toast.LENGTH_SHORT).show()
-                    }) {
-                        Text(strings.modeMetales)
+                        Switch(checked = useCharuco, onCheckedChange = {
+                            useCharuco = it
+                            val marker = if (useCharuco) "Charuco" else "AprilTag"
+                            Toast.makeText(
+                                context,
+                                "Marcador seleccionado: $marker",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        })
+                        Text(if (useCharuco) "Charuco" else "AprilTag")
                     }
                 }
             }
-        }
 
-        Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(20.dp))
 
-        // 📊 Sección Historial y generación de reportes
-        Card(elevation = CardDefaults.cardElevation()) {
-            Column(Modifier.padding(16.dp)) {
-                Text(strings.reportsSection, style = MaterialTheme.typography.titleMedium)
+            // 🚀 Sección Modalidades de inspección
+            Card(elevation = CardDefaults.cardElevation()) {
+                Column(Modifier.padding(16.dp)) {
+                    Text(strings.analysisModes, style = MaterialTheme.typography.titleMedium)
 
-                Spacer(Modifier.height(8.dp))
+                    Row {
+                        Button(onClick = {
+                            Toast.makeText(context, strings.toastModeCarroceria, Toast.LENGTH_SHORT)
+                                .show()
+                        }) {
+                            Text(strings.modeCarroceria)
+                        }
 
-                Text("Formato de exportación:", style = MaterialTheme.typography.bodyMedium)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    formatos.forEach { formato ->
-                        Button(onClick = { formatoSeleccionado = formato }) {
-                            Text(formato)
+                        Spacer(Modifier.width(8.dp))
+
+                        Button(onClick = {
+                            Toast.makeText(context, strings.toastModePrecision, Toast.LENGTH_SHORT)
+                                .show()
+                        }) {
+                            Text(strings.modePrecision)
+                        }
+
+                        Spacer(Modifier.width(8.dp))
+
+                        Button(onClick = {
+                            Toast.makeText(context, strings.toastModeMetales, Toast.LENGTH_SHORT)
+                                .show()
+                        }) {
+                            Text(strings.modeMetales)
                         }
                     }
                 }
+            }
 
-                Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(20.dp))
 
-                Button(onClick = {
-                    val loteId = "Lote123"
-                    val detecciones = obtenerDeteccionesSimuladas()
+            // 📊 Sección Historial y generación de reportes
+            Card(elevation = CardDefaults.cardElevation()) {
+                Column(Modifier.padding(16.dp)) {
+                    Text(strings.reportsSection, style = MaterialTheme.typography.titleMedium)
 
-                    val archivo = when (formatoSeleccionado) {
-                        "PDF" -> generatePdfFromDetections(context, detecciones, loteId)
-                        "Word" -> generateWordFromDetections(context, detecciones, loteId)
-                        "JSON" -> exportJsonSummary(context, detecciones, loteId)
-                        else -> null
+                    Spacer(Modifier.height(8.dp))
+
+                    Text("Formato de exportación:", style = MaterialTheme.typography.bodyMedium)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        formatos.forEach { formato ->
+                            Button(onClick = { formatoSeleccionado = formato }) {
+                                Text(formato)
+                            }
+                        }
                     }
 
-                    archivo?.let {
-                        Toast.makeText(context, "Reporte generado: ${it.name}", Toast.LENGTH_LONG)
-                            .show()
+                    Spacer(Modifier.height(16.dp))
+
+                    Button(onClick = {
+                        val loteId = "Lote123"
+                        val detecciones = viewModel.detections.value
+
+                        val archivo = when (formatoSeleccionado) {
+                            "PDF" -> generatePdfFromDetections(context, detecciones, loteId)
+                            "Word" -> generateWordFromDetections(context, detecciones, loteId)
+                            "JSON" -> exportJsonSummary(context, detecciones, loteId)
+                            else -> null
+                        }
+
+                        archivo?.let {
+                            Toast.makeText(
+                                context,
+                                "Reporte generado: ${it.name}",
+                                Toast.LENGTH_LONG
+                            )
+                                .show()
+                        }
+                    }) {
+                        Text("Generar reporte ($formatoSeleccionado)")
                     }
-                }) {
-                    Text("Generar reporte ($formatoSeleccionado)")
-                }
 
-                Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(8.dp))
 
-                Button(onClick = {
-                    Toast.makeText(context, strings.toastOpenDetails, Toast.LENGTH_SHORT).show()
-                    navController.navigate(NavigationRoutes.Details.route)
-                }) {
-                    Text(strings.viewHistory)
+                    Button(onClick = {
+                        Toast.makeText(context, strings.toastOpenDetails, Toast.LENGTH_SHORT).show()
+                        navController.navigate(NavigationRoutes.Details.route)
+                    }) {
+                        Text(strings.viewHistory)
+                    }
                 }
             }
+
+            Spacer(Modifier.height(20.dp))
+
+            // 🌐 Multilenguaje
+            Text(
+                text = strings.languageSettingHint,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
-
-        Spacer(Modifier.height(20.dp))
-
-        // 🌐 Multilenguaje
-        Text(
-            text = strings.languageSettingHint,
-            style = MaterialTheme.typography.bodyMedium
-        )
     }
-}
-
-fun obtenerDeteccionesSimuladas(): List<DetectionItem> {
-    return listOf(
-        DetectionItem(
-            id = 1L,
-            frameId = "F001",
-            type = DetectionType.HOLE,
-            boundingBox = BoundingBox(0f, 0f, 100f, 100f),
-            confidence = 0.95f,
-            status = DetectionStatus.DEFECT,
-            measurementMm = 12.5f,
-            timestamp = System.currentTimeMillis(),
-            linkedQrCode = "QR123456",
-            notes = "Curvatura irregular"
-        )
-    )
-
 }

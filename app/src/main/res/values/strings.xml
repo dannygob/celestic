@@ -11,4 +11,20 @@
     <string name="status_passed">Pieza aprobada</string>
     <string name="status_warning">Revisión recomendada</string>
     <string name="status_failed">Fallo crítico</string>
+    <string name="openCalibration">Abrir Calibración</string>
+    <string name="generateReport">Generar Reporte</string>
+    <string name="dashboardTitle">Dashboard de Celestic</string>
+    <string name="calibrationSection">Calibración</string>
+    <string name="toastOpenCalibration">Abriendo calibración...</string>
+    <string name="analysisModes">Modos de Análisis</string>
+    <string name="toastModeCarroceria">Modo carrocería activado</string>
+    <string name="modeCarroceria">Carrocería</string>
+    <string name="toastModePrecision">Modo precisión activado</string>
+    <string name="modePrecision">Precisión</string>
+    <string name="toastModeMetales">Modo metales activado</string>
+    <string name="modeMetales">Metales</string>
+    <string name="reportsSection">Reportes</string>
+    <string name="toastOpenDetails">Abriendo detalles...</string>
+    <string name="viewHistory">Ver Historial</string>
+    <string name="languageSettingHint">La configuración de idioma se puede cambiar en los ajustes del sistema.</string>
 </resources>

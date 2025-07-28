@@ -1,35 +1,28 @@
 package com.example.celestic.data.repository
 
-
-import com.example.celestic.data.dao.DetectionDao
+import com.example.celestic.data.dao.CelesticDao
 import com.example.celestic.models.DetectionItem
 import com.example.celestic.models.calibration.DetectedFeature
 
-class DetectionRepository(private val detectionDao: DetectionDao) {
+class DetectionRepository(private val dao: CelesticDao) {
 
     suspend fun saveDetection(detection: DetectedFeature) {
-        detectionDao.insertDetection(detection)
+        dao.insertDetection(detection)
     }
 
     suspend fun saveDetections(detections: List<DetectedFeature>) {
-        detectionDao.insertDetections(detections)
+        dao.insertDetections(detections)
     }
 
     suspend fun loadDetections(): List<DetectedFeature> {
-        return detectionDao.getAllDetections()
+        return dao.getAllDetections()
     }
 
     suspend fun clearAllDetections() {
-        detectionDao.clearDetections()
+        dao.clearDetections()
     }
 
-    suspend fun insertDetection(item: DetectionItem) = dao.insertDetection(item)
+    suspend fun insertDetection(item: DetectionItem) = dao.insert(item)
 
-    suspend fun deleteDetection(item: DetectionItem) = dao.deleteDetection(item)
-
-    suspend fun clearAll() = dao.clearAll()
-
-
-
-
+    suspend fun deleteDetection(item: DetectionItem) = dao.delete(item)
 }

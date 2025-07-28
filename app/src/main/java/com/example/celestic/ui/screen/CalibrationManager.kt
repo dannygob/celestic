@@ -16,11 +16,13 @@ object CalibrationManager {
     var resolution: Pair<Int, Int>? = null
     var calibrationDate: String? = null
 
-    private const val calibrationPath = "/storage/emulated/0/Celestic/config/calibration.json"
+    private const val CALIBRATION_FILE = "calibration.json"
+    private const val CONFIG_DIR = "config"
 
     fun loadCalibration(context: Context): Boolean {
         return try {
-            val file = File(calibrationPath)
+            val configDir = File(context.filesDir, CONFIG_DIR)
+            val file = File(configDir, CALIBRATION_FILE)
             val json = JSONObject(FileInputStream(file).bufferedReader().use { it.readText() })
 
             // Parse cameraMatrix

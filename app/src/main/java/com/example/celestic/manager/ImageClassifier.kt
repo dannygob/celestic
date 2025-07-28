@@ -30,22 +30,45 @@ class ImageClassifier(context: Context) {
         interpreter = Interpreter(modelBuffer)
     }
 
-    fun runInference(bitmap: Bitmap): FloatArray {
-        val resizedBitmap = bitmap.scale(inputImageSize, inputImageSize)
-        val inputBuffer = convertBitmapToByteBuffer(resizedBitmap)
+    fun runInference(imageProxy: androidx.camera.core.ImageProxy): FloatArray {
+        val inputBuffer = convertImageProxyToByteBuffer(imageProxy)
         val output = Array(1) { FloatArray(numClasses) }
         interpreter.run(inputBuffer, output)
         return output[0]
     }
 
-    private fun convertBitmapToByteBuffer(bitmap: Bitmap): ByteBuffer {
+    private fun convertImageProxyToByteBuffer(image: androidx.camera.core.ImageProxy): ByteBuffer {
         val byteBuffer =
             ByteBuffer.allocateDirect(4 * inputImageSize * inputImageSize * numChannels)
         byteBuffer.order(ByteOrder.nativeOrder())
 
+        val yBuffer = image.planes[0].buffer
+        val uBuffer = image.planes[1].buffer
+        val vBuffer = image.planes[2].buffer
+
+        val ySize = yBuffer.remaining()
+        val uSize = uBuffer.remaining()
+        val vSize = vBuffer.remaining()
+
+        val nv21 = ByteArray(ySize + uSize + vSize)
+
+        yBuffer.get(nv21, 0, ySize)
+        vBuffer.get(nv21, ySize, vSize)
+        uBuffer.get(nv21, ySize + vSize, uSize)
+
+        val yuvImage = org.opencv.core.Mat(image.height + image.height / 2, image.width, org.opencv.core.CvType.CV_8UC1)
+        yuvImage.put(0, 0, nv21)
+        val rgbImage = org.opencv.core.Mat()
+        org.opencv.imgproc.Imgproc.cvtColor(yuvImage, rgbImage, org.opencv.imgproc.Imgproc.COLOR_YUV2RGB_NV21)
+
+        val bitmap = Bitmap.createBitmap(rgbImage.cols(), rgbImage.rows(), Bitmap.Config.ARGB_8888)
+        org.opencv.android.Utils.matToBitmap(rgbImage, bitmap)
+
+        val resizedBitmap = bitmap.scale(inputImageSize, inputImageSize)
+
         for (y in 0 until inputImageSize) {
             for (x in 0 until inputImageSize) {
-                val pixel = bitmap[x, y]
+                val pixel = resizedBitmap.getPixel(x, y)
                 val r = (pixel shr 16 and 0xFF) / 255f
                 val g = (pixel shr 8 and 0xFF) / 255f
                 val b = (pixel and 0xFF) / 255f
