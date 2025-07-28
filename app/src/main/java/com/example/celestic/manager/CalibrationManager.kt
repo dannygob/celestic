@@ -67,4 +67,37 @@ class CalibrationManager @Inject constructor(private val context: Context) {
         val mmPerPixel = 1.0 / focalLength // Sujeto a corrección según distancia focal real
         return pixelLength * mmPerPixel
     }
+
+    fun detectCharucoPattern(image: Mat): Mat {
+        val dictionary = org.opencv.aruco.Aruco.getPredefinedDictionary(org.opencv.aruco.Aruco.DICT_6X6_250)
+        val corners = java.util.ArrayList<Mat>()
+        val ids = Mat()
+        org.opencv.aruco.Aruco.detectMarkers(image, dictionary, corners, ids)
+        val charucoCorners = Mat()
+        val charucoIds = Mat()
+        if (ids.total() > 0) {
+            val board = org.opencv.aruco.CharucoBoard.create(5, 7, 0.04f, 0.02f, dictionary)
+            org.opencv.aruco.Aruco.interpolateCornersCharuco(corners, ids, image, board, charucoCorners, charucoIds)
+        }
+        return charucoCorners
+    }
+
+    fun generateCalibrationMatrix(charucoCorners: List<Mat>, charucoIds: List<Mat>, imageSize: org.opencv.core.Size): Mat {
+        val cameraMatrix = Mat()
+        val distCoeffs = Mat()
+        val rvecs = java.util.ArrayList<Mat>()
+        val tvecs = java.util.ArrayList<Mat>()
+        val board = org.opencv.aruco.CharucoBoard.create(5, 7, 0.04f, 0.02f, org.opencv.aruco.Aruco.getPredefinedDictionary(org.opencv.aruco.Aruco.DICT_6X6_250))
+        org.opencv.aruco.Aruco.calibrateCameraCharuco(charucoCorners, charucoIds, board, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs)
+        return cameraMatrix
+    }
+
+    fun saveCalibrationToJson(cameraMatrix: Mat, distortionCoeffs: Mat, resolution: Pair<Int, Int>) {
+        val json = JSONObject()
+        json.put("cameraMatrix", cameraMatrix.dump())
+        json.put("distortionCoeffs", distortionCoeffs.dump())
+        json.put("resolution", resolution)
+        json.put("calibrationDate", java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(java.util.Date()))
+        calibrationFile.writeText(json.toString())
+    }
 }
