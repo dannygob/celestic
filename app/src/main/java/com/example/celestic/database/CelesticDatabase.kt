@@ -9,7 +9,7 @@ import com.example.celestic.data.dao.CelesticDao
 import com.example.celestic.database.converters.Converters
 import com.example.celestic.models.DetectionItem
 
-@Database(entities = [DetectionItem::class], version = 1, exportSchema = false)
+@Database(entities = [DetectionItem::class, DetectedFeature::class, CameraCalibrationData::class, ReportConfig::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class CelesticDatabase : RoomDatabase() {
     abstract fun celesticDao(): CelesticDao

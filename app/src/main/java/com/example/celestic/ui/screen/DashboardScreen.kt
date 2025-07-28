@@ -22,6 +22,7 @@ import com.example.celestic.detector.model.DetectionType
 import com.example.celestic.models.DetectionItem
 import com.example.celestic.models.enums.DetectionStatus
 import com.example.celestic.models.geometry.BoundingBox
+import com.example.celestic.manager.CalibrationManager
 import com.example.celestic.navigation.NavigationRoutes
 import com.example.celestic.util.*
 import com.example.celestic.utils.LocalizedStrings

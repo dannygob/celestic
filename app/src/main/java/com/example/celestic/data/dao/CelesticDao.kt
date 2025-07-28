@@ -27,7 +27,7 @@ interface CelesticDao {
     suspend fun insertDetections(detections: List<DetectedFeature>)
 
     @Query("SELECT * FROM detected_features ORDER BY timestamp DESC")
-    suspend fun getAllDetections(): List<DetectedFeature>
+    fun getAllDetections(): Flow<List<DetectedFeature>>
 
     @Query("DELETE FROM detected_features")
     suspend fun clearDetections()
