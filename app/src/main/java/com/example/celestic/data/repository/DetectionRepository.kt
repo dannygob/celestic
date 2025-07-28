@@ -25,4 +25,20 @@ class DetectionRepository(private val dao: CelesticDao) {
     suspend fun insertDetection(item: DetectionItem) = dao.insert(item)
 
     suspend fun deleteDetection(item: DetectionItem) = dao.delete(item)
+
+    suspend fun insertCameraCalibrationData(cameraCalibrationData: com.example.celestic.models.calibration.CameraCalibrationData) {
+        dao.insertCameraCalibrationData(cameraCalibrationData)
+    }
+
+    fun getCameraCalibrationData(): kotlinx.coroutines.flow.Flow<com.example.celestic.models.calibration.CameraCalibrationData?> {
+        return dao.getCameraCalibrationData()
+    }
+
+    suspend fun insertReportConfig(reportConfig: com.example.celestic.models.report.ReportConfig) {
+        dao.insertReportConfig(reportConfig)
+    }
+
+    fun getReportConfig(): kotlinx.coroutines.flow.Flow<com.example.celestic.models.report.ReportConfig?> {
+        return dao.getReportConfig()
+    }
 }
