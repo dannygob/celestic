@@ -35,12 +35,9 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(navController: NavController, viewModel: MainViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
-
     val context = LocalContext.current
     val strings = LocalizedStrings.current
     var useCharuco by remember { mutableStateOf(true) }
-
-    // 📁 Formato de reporte
     val formatos = listOf("PDF", "Word", "JSON")
     var formatoSeleccionado by remember { mutableStateOf("PDF") }
 
@@ -177,10 +174,9 @@ fun DashboardScreen(navController: NavController, viewModel: MainViewModel = and
                     Spacer(Modifier.height(8.dp))
 
                     Button(onClick = {
-                        Toast.makeText(context, strings.toastOpenDetails, Toast.LENGTH_SHORT).show()
-                        navController.navigate(NavigationRoutes.Details.route)
+                        navController.navigate("detection_list")
                     }) {
-                        Text(strings.viewHistory)
+                        Text("View Detections")
                     }
                 }
             }

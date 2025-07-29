@@ -8,10 +8,21 @@ import com.example.celestic.models.enums.DetectionStatus
 import com.example.celestic.models.enums.DetectionType
 import kotlinx.parcelize.Parcelize
 
-@Entity(tableName = "detection_items")
+@Entity(
+    tableName = "detection_items",
+    foreignKeys = [
+        androidx.room.ForeignKey(
+            entity = com.example.celestic.models.Inspection::class,
+            parentColumns = ["id"],
+            childColumns = ["inspectionId"],
+            onDelete = androidx.room.ForeignKey.CASCADE
+        )
+    ]
+)
 @Parcelize
 data class DetectionItem(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
+    val inspectionId: Long,
     val frameId: String,
     val type: DetectionType,
     @Embedded val boundingBox: com.example.celestic.models.geometry.BoundingBox,

@@ -13,6 +13,7 @@ import com.example.celestic.ui.screen.DashboardScreen
 import com.example.celestic.ui.screen.DetailsScreen
 import com.example.celestic.ui.screen.InspectionPreviewScreen
 import com.example.celestic.ui.screen.LoginScreen
+import com.example.celestic.ui.screen.DetectionListScreen
 import com.example.celestic.ui.screen.ReportRequestDialog
 import com.example.celestic.ui.screen.SettingsScreen
 
@@ -57,6 +58,9 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable("settings") {
             SettingsScreen(navController)
+        }
+        composable("detection_list") {
+            DetectionListScreen(navController)
         }
     }
 }

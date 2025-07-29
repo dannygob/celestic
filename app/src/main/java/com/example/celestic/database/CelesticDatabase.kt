@@ -9,7 +9,7 @@ import com.example.celestic.data.dao.CelesticDao
 import com.example.celestic.database.converters.Converters
 import com.example.celestic.models.DetectionItem
 
-@Database(entities = [DetectionItem::class, DetectedFeature::class, CameraCalibrationData::class, ReportConfig::class], version = 1, exportSchema = false)
+@Database(entities = [DetectionItem::class, DetectedFeature::class, CameraCalibrationData::class, ReportConfig::class, com.example.celestic.models.Inspection::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class CelesticDatabase : RoomDatabase() {
     abstract fun celesticDao(): CelesticDao
@@ -24,7 +24,7 @@ abstract class CelesticDatabase : RoomDatabase() {
                     context.applicationContext,
                     CelesticDatabase::class.java,
                     "celestic_database"
-                ).build()
+                ).fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 instance
             }
