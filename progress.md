@@ -117,3 +117,9 @@ This file tracks the progress of the Celestic project.
 
 ### 17. Save Inspections
 - [X] Inspection entity
+
+### 18. Unit Tests for Repositories
+- [X] DetectionRepository test
+
+### 19. UI Improvements
+- [X] Shimmer effect

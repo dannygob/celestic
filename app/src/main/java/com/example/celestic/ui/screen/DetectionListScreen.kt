@@ -7,6 +7,8 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.celestic.ui.component.DetectionItemCard
+import com.example.celestic.ui.component.ShimmerDetectionItemCard
+import com.example.celestic.utils.Result
 import com.example.celestic.viewmodel.MainViewModel
 
 @Composable
@@ -14,11 +16,24 @@ fun DetectionListScreen(
     navController: NavController,
     viewModel: MainViewModel = hiltViewModel()
 ) {
-    val detections by viewModel.detections.collectAsState()
+    val detectionsResult by viewModel.detections.collectAsState()
 
     LazyColumn {
-        items(detections) { item ->
-            DetectionItemCard(item = item)
+        when (detectionsResult) {
+            is Result.Loading -> {
+                items(5) {
+                    ShimmerDetectionItemCard()
+                }
+            }
+            is Result.Success -> {
+                val detections = (detectionsResult as Result.Success).data
+                items(detections) { item ->
+                    DetectionItemCard(item = item)
+                }
+            }
+            is Result.Error -> {
+                // TODO: Handle error
+            }
         }
     }
 }

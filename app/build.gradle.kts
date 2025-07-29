@@ -113,6 +113,9 @@ dependencies {
     // Firebase
     implementation("com.google.firebase:firebase-auth-ktx:22.0.0")
 
+    // Shimmer
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
+
     // Debug
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
