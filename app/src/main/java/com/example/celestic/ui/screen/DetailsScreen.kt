@@ -41,13 +41,15 @@ import com.example.celestic.models.DetectionItem
 import com.example.celestic.ui.component.BlueprintView
 import com.example.celestic.ui.component.DrawingCanvas
 import com.example.celestic.viewmodel.DetailsViewModel
+import com.example.celestic.viewmodel.SharedViewModel
 
 @Composable
 fun DetailsScreen(
     navController: NavController,
     detailType: String,
     detectionItem: DetectionItem? = null,
-    viewModel: DetailsViewModel = viewModel()
+    detailsViewModel: DetailsViewModel = viewModel(),
+    sharedViewModel: SharedViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val title = when (detailType) {
@@ -66,8 +68,9 @@ fun DetailsScreen(
         }
     }
 
-    val trazabilidadResult by viewModel.trazabilidadItem.collectAsState()
-    val features by viewModel.features.collectAsState()
+    val trazabilidadResult by detailsViewModel.trazabilidadItem.collectAsState()
+    val features by detailsViewModel.features.collectAsState()
+    val useInches by sharedViewModel.useInches.collectAsState()
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -76,7 +79,7 @@ fun DetailsScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        BlueprintView(features = features)
+        BlueprintView(features = features, useInches = useInches)
 
         Spacer(modifier = Modifier.height(16.dp))
 

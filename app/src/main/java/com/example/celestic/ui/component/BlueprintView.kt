@@ -8,11 +8,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.draw.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.celestic.models.calibration.DetectedFeature
 
 @Composable
-fun BlueprintView(features: List<DetectedFeature>) {
+fun BlueprintView(features: List<DetectedFeature>, useInches: Boolean = false) {
+    val textMeasurer = rememberTextMeasurer()
     Canvas(
         modifier = Modifier
             .fillMaxSize()
@@ -25,6 +29,19 @@ fun BlueprintView(features: List<DetectedFeature>) {
                 radius = 5f,
                 style = Stroke(width = 2f)
             )
+            val dimension = if (useInches) {
+                feature.measurements["diameter"]?.div(25.4f)
+            } else {
+                feature.measurements["diameter"]
+            }
+            dimension?.let {
+                drawText(
+                    textMeasurer = textMeasurer,
+                    text = "%.2f".format(it),
+                    style = TextStyle(color = Color.White),
+                    topLeft = Offset(feature.xCoord + 10, feature.yCoord - 10)
+                )
+            }
         }
     }
 }

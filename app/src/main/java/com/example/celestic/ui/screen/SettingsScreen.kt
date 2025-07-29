@@ -8,18 +8,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.celestic.viewmodel.SharedViewModel
 
 @Composable
-fun SettingsScreen(navController: NavController) {
+fun SettingsScreen(
+    navController: NavController,
+    viewModel: SharedViewModel = hiltViewModel()
+) {
     var isDarkTheme by remember { mutableStateOf(false) }
+    val useInches by viewModel.useInches.collectAsState()
 
     Column(
         modifier = Modifier
@@ -28,12 +31,21 @@ fun SettingsScreen(navController: NavController) {
     ) {
         Text("Settings")
         Spacer(modifier = Modifier.height(16.dp))
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Dark Theme")
             Spacer(modifier = Modifier.weight(1.0f))
             Switch(
                 checked = isDarkTheme,
                 onCheckedChange = { isDarkTheme = it }
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Use Inches")
+            Spacer(modifier = Modifier.weight(1.0f))
+            Switch(
+                checked = useInches,
+                onCheckedChange = { viewModel.setUseInches(it) }
             )
         }
     }
