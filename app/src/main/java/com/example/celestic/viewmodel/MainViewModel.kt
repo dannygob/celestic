@@ -15,10 +15,16 @@ class MainViewModel @Inject constructor(
     private val repository: DetectionRepository
 ) : ViewModel() {
 
-    val detections: StateFlow<List<DetectionItem>> = repository.getAll()
+    val detections: StateFlow<com.example.celestic.utils.Result<List<DetectionItem>>> = repository.getAll()
+        .map<List<DetectionItem>, com.example.celestic.utils.Result<List<DetectionItem>>> {
+            com.example.celestic.utils.Result.Success(it)
+        }
+        .catch {
+            emit(com.example.celestic.utils.Result.Error(it as Exception))
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
+            initialValue = com.example.celestic.utils.Result.Loading
         )
 }
