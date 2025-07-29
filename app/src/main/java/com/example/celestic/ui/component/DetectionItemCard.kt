@@ -10,8 +10,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.celestic.models.DetectionItem
+import com.example.celestic.models.enums.DetectionStatus
+import com.example.celestic.models.enums.DetectionType
+import com.example.celestic.models.geometry.BoundingBox
 
 @Composable
 fun DetectionItemCard(item: DetectionItem) {
@@ -32,4 +36,24 @@ fun DetectionItemCard(item: DetectionItem) {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun DetectionItemCardPreview() {
+    DetectionItemCard(
+        item = DetectionItem(
+            id = 1,
+            inspectionId = 1,
+            frameId = "frame1",
+            type = DetectionType.HOLE,
+            boundingBox = BoundingBox(0f, 0f, 0f, 0f),
+            confidence = 0.9f,
+            status = DetectionStatus.OK,
+            measurementMm = 10f,
+            timestamp = 1234567890,
+            linkedQrCode = "qr1",
+            notes = "notes1"
+        )
+    )
 }

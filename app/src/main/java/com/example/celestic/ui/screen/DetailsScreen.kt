@@ -38,6 +38,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.celestic.R
 import com.example.celestic.models.DetectionItem
+import com.example.celestic.ui.component.BlueprintView
 import com.example.celestic.ui.component.DrawingCanvas
 import com.example.celestic.viewmodel.DetailsViewModel
 
@@ -75,7 +76,13 @@ fun DetailsScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        DrawingCanvas(features = features)
+        BlueprintView(features = features)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        features.forEach { feature ->
+            Text("Feature: ${feature.featureType} at (${feature.xCoord}, ${feature.yCoord})")
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
