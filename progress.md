@@ -90,3 +90,21 @@ This file tracks the progress of the Celestic project.
 - [X] icon_pdf.png, icon_word.png
 - [X] status_green.png, status_yellow.png, status_red.png
 - [X] graph_placeholder.png
+
+### 9. Dependency Injection
+- [X] Hilt implementation
+
+### 10. Error Handling
+- [X] Sealed class for UI states
+
+### 11. Unit Tests
+- [X] ViewModels tests
+
+### 12. UI Improvements
+- [X] Animations
+
+### 13. Authentication
+- [X] Firebase Authentication
+
+### 14. Settings
+- [X] Settings screen

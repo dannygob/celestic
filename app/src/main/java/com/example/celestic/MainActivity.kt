@@ -4,11 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 
-import com.example.celestic.navigation.AppNavigation
+import com.example.celestic.navigation.NavigationGraph
 import com.example.celestic.ui.theme.CelesticTheme
+import dagger.hilt.android.AndroidEntryPoint
 
-
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
