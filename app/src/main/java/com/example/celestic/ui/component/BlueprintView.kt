@@ -1,6 +1,7 @@
 package com.example.celestic.ui.component
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,11 +12,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.celestic.models.calibration.DetectedFeature
 
 @Composable
-fun DrawingCanvas(features: List<DetectedFeature>) {
-    Canvas(modifier = Modifier.fillMaxSize()) {
+fun BlueprintView(features: List<DetectedFeature>) {
+    Canvas(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Blue.copy(alpha = 0.1f))
+    ) {
         features.forEach { feature ->
             drawCircle(
-                color = Color.Red,
+                color = Color.White,
                 center = Offset(feature.xCoord, feature.yCoord),
                 radius = 5f,
                 style = Stroke(width = 2f)
@@ -26,8 +31,8 @@ fun DrawingCanvas(features: List<DetectedFeature>) {
 
 @Preview
 @Composable
-fun DrawingCanvasPreview() {
-    DrawingCanvas(
+fun BlueprintViewPreview() {
+    BlueprintView(
         features = listOf(
             DetectedFeature(
                 id = 1,
