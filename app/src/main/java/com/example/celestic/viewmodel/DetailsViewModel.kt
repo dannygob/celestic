@@ -24,6 +24,9 @@ class DetailsViewModel @Inject constructor(
     private val _trazabilidadItem = MutableStateFlow<Result<TrazabilidadItem?>>(Result.Loading)
     val trazabilidadItem: StateFlow<Result<TrazabilidadItem?>> = _trazabilidadItem
 
+    private val _features = MutableStateFlow<List<com.example.celestic.models.calibration.DetectedFeature>>(emptyList())
+    val features: StateFlow<List<com.example.celestic.models.calibration.DetectedFeature>> = _features
+
     fun loadTrazabilidad(codigo: String) {
         viewModelScope.launch {
             try {
@@ -31,6 +34,14 @@ class DetailsViewModel @Inject constructor(
                 _trazabilidadItem.value = Result.Success(buscarPorCodigo(codigo, lista))
             } catch (e: Exception) {
                 _trazabilidadItem.value = Result.Error(e)
+            }
+        }
+    }
+
+    fun loadFeatures(detectionItemId: Long) {
+        viewModelScope.launch {
+            repository.getFeaturesForDetection(detectionItemId).collect {
+                _features.value = it
             }
         }
     }

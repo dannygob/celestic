@@ -15,6 +15,7 @@ import androidx.navigation.NavController
 import com.example.celestic.models.DetectionItem
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.celestic.models.DetectionItem
+import com.example.celestic.ui.component.DrawingCanvas
 import com.example.celestic.viewmodel.DetailsViewModel
 
 @Composable
@@ -36,14 +37,22 @@ fun DetailsScreen(
         detectionItem?.linkedQrCode?.let { codigo ->
             viewModel.loadTrazabilidad(codigo)
         }
+        detectionItem?.id?.let {
+            viewModel.loadFeatures(it)
+        }
     }
 
     val trazabilidadResult by viewModel.trazabilidadItem.collectAsState()
+    val features by viewModel.features.collectAsState()
 
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)) {
         Text(text = title, style = MaterialTheme.typography.headlineSmall)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        DrawingCanvas(features = features)
 
         Spacer(modifier = Modifier.height(16.dp))
 

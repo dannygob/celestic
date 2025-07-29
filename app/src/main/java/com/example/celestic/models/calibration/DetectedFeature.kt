@@ -15,6 +15,9 @@ data class DetectedFeature(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
 
+    @ColumnInfo(name = "detection_item_id")
+    val detectionItemId: Long,
+
     @ColumnInfo(name = "feature_type")
     val featureType: String, // Ej: "charuco_corner", "aruco_marker", "edge", etc.
 

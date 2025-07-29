@@ -43,4 +43,13 @@ interface CelesticDao {
 
     @Query("SELECT * FROM report_config ORDER BY id DESC LIMIT 1")
     fun getReportConfig(): Flow<com.example.celestic.models.report.ReportConfig?>
+
+    @Query("SELECT * FROM detected_features WHERE detectionItemId = :detectionItemId")
+    fun getFeaturesForDetection(detectionItemId: Long): Flow<List<com.example.celestic.models.calibration.DetectedFeature>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertInspection(inspection: com.example.celestic.models.Inspection): Long
+
+    @Query("SELECT * FROM inspections ORDER BY timestamp DESC")
+    fun getAllInspections(): Flow<List<com.example.celestic.models.Inspection>>
 }

@@ -45,4 +45,17 @@ class DetectionRepository(private val dao: CelesticDao) {
     fun getAll(): kotlinx.coroutines.flow.Flow<List<com.example.celestic.models.DetectionItem>> {
         return dao.getAll()
     }
+
+    fun getFeaturesForDetection(detectionItemId: Long): kotlinx.coroutines.flow.Flow<List<com.example.celestic.models.calibration.DetectedFeature>> {
+        return dao.getFeaturesForDetection(detectionItemId)
+    }
+
+    suspend fun startInspection(): Long {
+        val inspection = com.example.celestic.models.Inspection(timestamp = System.currentTimeMillis())
+        return dao.insertInspection(inspection)
+    }
+
+    fun getAllInspections(): kotlinx.coroutines.flow.Flow<List<com.example.celestic.models.Inspection>> {
+        return dao.getAllInspections()
+    }
 }

@@ -108,3 +108,12 @@ This file tracks the progress of the Celestic project.
 
 ### 14. Settings
 - [X] Settings screen
+
+### 15. 2D Drawing
+- [X] Drawing canvas
+
+### 16. Dynamic Display
+- [X] Detection item card
+
+### 17. Save Inspections
+- [X] Inspection entity
