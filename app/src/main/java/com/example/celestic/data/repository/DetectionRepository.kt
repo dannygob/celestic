@@ -41,4 +41,8 @@ class DetectionRepository(private val dao: CelesticDao) {
     fun getReportConfig(): kotlinx.coroutines.flow.Flow<com.example.celestic.models.report.ReportConfig?> {
         return dao.getReportConfig()
     }
+
+    fun getAll(): kotlinx.coroutines.flow.Flow<List<com.example.celestic.models.DetectionItem>> {
+        return dao.getAll()
+    }
 }

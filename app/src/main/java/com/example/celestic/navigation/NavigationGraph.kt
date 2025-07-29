@@ -12,14 +12,19 @@ import com.example.celestic.ui.screen.CameraScreen
 import com.example.celestic.ui.screen.DashboardScreen
 import com.example.celestic.ui.screen.DetailsScreen
 import com.example.celestic.ui.screen.InspectionPreviewScreen
+import com.example.celestic.ui.screen.LoginScreen
 import com.example.celestic.ui.screen.ReportRequestDialog
+import com.example.celestic.ui.screen.SettingsScreen
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = NavigationRoutes.Dashboard.route
+        startDestination = "login"
     ) {
+        composable("login") {
+            LoginScreen(navController)
+        }
         composable(NavigationRoutes.Dashboard.route) {
             DashboardScreen(navController)
         }
@@ -49,6 +54,9 @@ fun NavigationGraph(navController: NavHostController) {
 
         composable(NavigationRoutes.Preview.route) {
             InspectionPreviewScreen(navController)
+        }
+        composable("settings") {
+            SettingsScreen(navController)
         }
     }
 }

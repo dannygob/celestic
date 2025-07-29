@@ -2,6 +2,9 @@ package com.example.celestic.ui.screen
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -35,7 +38,7 @@ fun DetailsScreen(
         }
     }
 
-    val trazabilidad by viewModel.trazabilidadItem.collectAsState()
+    val trazabilidadResult by viewModel.trazabilidadItem.collectAsState()
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -44,15 +47,29 @@ fun DetailsScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        trazabilidad?.let {
-            Divider()
-            Text("🔍 Trazabilidad:", style = MaterialTheme.typography.titleMedium)
-            Text("• Código: ${it.codigo}")
-            Text("• Pieza: ${it.pieza}")
-            Text("• Operario: ${it.operario}")
-            Text("• Fecha: ${it.fecha}")
-            Text("• Resultado: ${it.resultado}")
-        } ?: Text("❌ No hay información de trazabilidad.")
+        AnimatedVisibility(
+            visible = trazabilidadResult is com.example.celestic.utils.Result.Success,
+            enter = fadeIn(animationSpec = tween(durationMillis = 1000))
+        ) {
+            val trazabilidad = (trazabilidadResult as com.example.celestic.utils.Result.Success).data
+            trazabilidad?.let {
+                Divider()
+                Text("🔍 Trazabilidad:", style = MaterialTheme.typography.titleMedium)
+                Text("• Código: ${it.codigo}")
+                Text("• Pieza: ${it.pieza}")
+                Text("• Operario: ${it.operario}")
+                Text("• Fecha: ${it.fecha}")
+                Text("• Resultado: ${it.resultado}")
+            } ?: Text("❌ No hay información de trazabilidad.")
+        }
+
+        if (trazabilidadResult is com.example.celestic.utils.Result.Loading) {
+            CircularProgressIndicator()
+        }
+
+        if (trazabilidadResult is com.example.celestic.utils.Result.Error) {
+            Text("❌ Error al cargar la información de trazabilidad.")
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
         Button(onClick = {

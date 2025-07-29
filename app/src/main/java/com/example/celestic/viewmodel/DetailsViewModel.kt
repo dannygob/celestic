@@ -3,22 +3,35 @@ package com.example.celestic.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.celestic.data.repository.DetectionRepository
 import com.example.celestic.models.TrazabilidadItem
 import com.example.celestic.utils.buscarPorCodigo
 import com.example.celestic.utils.cargarTrazabilidadDesdeJson
+import dagger.hilt.android.lifecycle.HiltViewModel
+import com.example.celestic.utils.Result
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DetailsViewModel(private val context: Context) : ViewModel() {
+@HiltViewModel
+class DetailsViewModel @Inject constructor(
+    private val repository: DetectionRepository,
+    @ApplicationContext private val context: Context
+) : ViewModel() {
 
-    private val _trazabilidadItem = MutableStateFlow<TrazabilidadItem?>(null)
-    val trazabilidadItem: StateFlow<TrazabilidadItem?> = _trazabilidadItem
+    private val _trazabilidadItem = MutableStateFlow<Result<TrazabilidadItem?>>(Result.Loading)
+    val trazabilidadItem: StateFlow<Result<TrazabilidadItem?>> = _trazabilidadItem
 
     fun loadTrazabilidad(codigo: String) {
         viewModelScope.launch {
-            val lista = cargarTrazabilidadDesdeJson(context)
-            _trazabilidadItem.value = buscarPorCodigo(codigo, lista)
+            try {
+                val lista = cargarTrazabilidadDesdeJson(context)
+                _trazabilidadItem.value = Result.Success(buscarPorCodigo(codigo, lista))
+            } catch (e: Exception) {
+                _trazabilidadItem.value = Result.Error(e)
+            }
         }
     }
 }
