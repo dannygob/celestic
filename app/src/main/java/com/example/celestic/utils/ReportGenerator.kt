@@ -32,9 +32,11 @@ fun generatePdfFromDetections(context: Context, detections: List<DetectionItem>,
 fun generateCsvFromDetections(context: Context, detections: List<DetectionItem>, loteId: String): File {
     val file = File(context.getExternalFilesDir(null), "ReporteCelestic_$loteId.csv")
     val writer = file.bufferedWriter()
-    writer.write("ID,Tipo,Confianza,Status,Medida (mm)\n")
+    writer.write("ID,Tipo,Confianza,Status,Ancho (mm),Alto (mm)\n")
     detections.forEach {
-        writer.write("${it.id},${it.type},${it.confidence},${it.status},${it.measurementMm ?: ""}\n")
+        val width = it.measurementMm
+        val height = it.measurementMm
+        writer.write("${it.id},${it.type},${it.confidence},${it.status},${width ?: ""},${height ?: ""}\n")
     }
     writer.close()
     return file
