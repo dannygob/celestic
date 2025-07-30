@@ -128,3 +128,11 @@ This file tracks the progress of the Celestic project.
 - [X] Hough Circle Transform
 - [X] Contour Approximation
 - [X] Adaptive Thresholding
+- [X] Contour Filtering
+- [X] Watershed Algorithm
+- [X] Template Matching
+- [X] Optical Flow
+
+### 21. Camera Calibration
+- [X] Sub-pixel corner detection
+- [X] Calibration with multiple images

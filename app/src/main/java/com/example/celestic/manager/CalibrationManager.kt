@@ -78,6 +78,14 @@ class CalibrationManager @Inject constructor(private val context: Context) {
         if (ids.total() > 0) {
             val board = org.opencv.aruco.CharucoBoard.create(5, 7, 0.04f, 0.02f, dictionary)
             org.opencv.aruco.Aruco.interpolateCornersCharuco(corners, ids, image, board, charucoCorners, charucoIds)
+            if (charucoCorners.total() > 0) {
+                val gray = Mat()
+                Imgproc.cvtColor(image, gray, Imgproc.COLOR_BGR2GRAY)
+                val term = TermCriteria(TermCriteria.EPS or TermCriteria.MAX_ITER, 30, 0.1)
+                val corners2f = MatOfPoint2f(*charucoCorners.toArray())
+                Imgproc.cornerSubPix(gray, corners2f, Size(5.0, 5.0), Size(-1.0, -1.0), term)
+                charucoCorners.fromArray(*corners2f.toArray())
+            }
         }
         return charucoCorners
     }
@@ -99,5 +107,21 @@ class CalibrationManager @Inject constructor(private val context: Context) {
         json.put("resolution", resolution)
         json.put("calibrationDate", java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(java.util.Date()))
         calibrationFile.writeText(json.toString())
+    }
+
+    fun generateCalibrationMatrixFromImages(images: List<Mat>): Mat {
+        val allCorners = java.util.ArrayList<Mat>()
+        val allIds = java.util.ArrayList<Mat>()
+        val imageSize = images[0].size()
+        for (image in images) {
+            val corners = detectCharucoPattern(image)
+            if (corners.total() > 0) {
+                allCorners.add(corners)
+                val ids = Mat()
+                // TODO: Get ids from detectCharucoPattern
+                allIds.add(ids)
+            }
+        }
+        return generateCalibrationMatrix(allCorners, allIds, imageSize)
     }
 }
