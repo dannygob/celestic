@@ -39,6 +39,8 @@ class FrameAnalyzer {
             val countersinks = detectCountersinks(grayMat, template)
             val opticalFlow = prevGrayMat?.let { detectDeformationsWithOpticalFlow(it, grayMat) }
             prevGrayMat = grayMat.clone()
+            val scale = calibrationManager.getScaleFactor(1.0)
+            val measurements = calculateMeasurements(filteredContours, scale)
 
             // Dibujar resultados en una copia
             val annotatedMat = mat.clone()
@@ -174,5 +176,15 @@ class FrameAnalyzer {
         val err = MatOfFloat()
         Video.calcOpticalFlowPyrLK(prevFrame, nextFrame, prevPts, nextPts, status, err)
         return nextPts
+    }
+
+    fun calculateMeasurements(contours: List<MatOfPoint>, scale: Double): List<Double> {
+        val measurements = mutableListOf<Double>()
+        for (contour in contours) {
+            val rect = Imgproc.boundingRect(contour)
+            measurements.add(rect.width * scale)
+            measurements.add(rect.height * scale)
+        }
+        return measurements
     }
 }

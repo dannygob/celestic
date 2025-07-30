@@ -153,3 +153,7 @@ This file tracks the progress of the Celestic project.
 
 ### 23. Report Generation
 - [X] CSV support
+
+## Post-production
+- Create a base application to add modules.
+- Develop modules for other domains like automotive, aeronautics, etc.
