@@ -133,6 +133,7 @@ graph_placeholder.png
 ## Post-production
 - Create a base application to add modules.
 - Develop modules for other domains like automotive, aeronautics, etc.
+- ML Kit will be used for the base module for multiplatform.
 🔹 Celestic – Proyecto Android de Inspección Visual Inteligente
 
 🧠 Propósito General Celestic es una aplicación Android nativa en Kotlin + Jetpack Compose, diseñada para automatizar la inspección visual de componentes industriales, usando visión computacional y aprendizaje automático. Su evolución contempla:
@@ -270,3 +271,4 @@ graph_placeholder.png
 ## Post-producción
 - Crear una aplicación base para añadir módulos.
 - Desarrollar módulos para otros dominios como automoción, aeronáutica, etc.
+- Se utilizará ML Kit para el módulo base para multiplataforma.
