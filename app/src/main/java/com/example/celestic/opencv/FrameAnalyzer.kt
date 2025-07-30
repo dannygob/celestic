@@ -14,6 +14,8 @@ class FrameAnalyzer {
         val annotatedMat: Mat,
     )
 
+    private var prevGrayMat: Mat? = null
+
     fun analyze(mat: Mat): AnalysisResult {
         val grayMat = Mat()
         val thresholdedImage = Mat()
@@ -28,14 +30,19 @@ class FrameAnalyzer {
             Imgproc.GaussianBlur(grayMat, grayMat, Size(5.0, 5.0), 0.0)
 
             val thresholdedImage = applyAdaptiveThresholding(grayMat)
-            val edges = detectEdges(thresholdedImage)
-            val contours = findContours(edges)
-            val deformations = detectDeformations(contours)
+            val markers = applyWatershed(thresholdedImage)
+            val contours = findContours(markers)
+            val filteredContours = filterContours(contours, 100.0)
+            val deformations = detectDeformations(filteredContours)
             val holes = detectHoles(grayMat)
+            val template = Utils.loadResource(context, R.drawable.countersink_template)
+            val countersinks = detectCountersinks(grayMat, template)
+            val opticalFlow = prevGrayMat?.let { detectDeformationsWithOpticalFlow(it, grayMat) }
+            prevGrayMat = grayMat.clone()
 
             // Dibujar resultados en una copia
             val annotatedMat = mat.clone()
-            Imgproc.drawContours(annotatedMat, contours, -1, Scalar(0.0, 255.0, 0.0), 2)
+            Imgproc.drawContours(annotatedMat, filteredContours, -1, Scalar(0.0, 255.0, 0.0), 2)
             Imgproc.drawContours(annotatedMat, deformations, -1, Scalar(255.0, 0.0, 0.0), 2)
             for (i in 0 until holes.cols()) {
                 val circle = holes.get(0, i)
@@ -43,6 +50,7 @@ class FrameAnalyzer {
                 val radius = circle[2].toInt()
                 Imgproc.circle(annotatedMat, center, radius, Scalar(0.0, 0.0, 255.0), 2)
             }
+            // TODO: Draw countersinks
 
             return AnalysisResult(contours, annotatedMat)
 
@@ -132,5 +140,39 @@ class FrameAnalyzer {
             2.0
         )
         return thresholdedImage
+    }
+
+    fun filterContours(contours: List<MatOfPoint>, minArea: Double): List<MatOfPoint> {
+        val filteredContours = mutableListOf<MatOfPoint>()
+        for (contour in contours) {
+            val area = Imgproc.contourArea(contour)
+            if (area > minArea) {
+                filteredContours.add(contour)
+            }
+        }
+        return filteredContours
+    }
+
+    fun applyWatershed(image: Mat): Mat {
+        val markers = Mat()
+        Imgproc.connectedComponents(image, markers)
+        Imgproc.watershed(image, markers)
+        return markers
+    }
+
+    fun detectCountersinks(image: Mat, template: Mat): Mat {
+        val result = Mat()
+        Imgproc.matchTemplate(image, template, result, Imgproc.TM_CCOEFF_NORMED)
+        return result
+    }
+
+    fun detectDeformationsWithOpticalFlow(prevFrame: Mat, nextFrame: Mat): MatOfPoint2f {
+        val prevPts = MatOfPoint2f()
+        Imgproc.goodFeaturesToTrack(prevFrame, prevPts, 100, 0.3, 7.0)
+        val nextPts = MatOfPoint2f()
+        val status = MatOfByte()
+        val err = MatOfFloat()
+        Video.calcOpticalFlowPyrLK(prevFrame, nextFrame, prevPts, nextPts, status, err)
+        return nextPts
     }
 }
