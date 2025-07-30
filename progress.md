@@ -123,3 +123,8 @@ This file tracks the progress of the Celestic project.
 
 ### 19. UI Improvements
 - [X] Shimmer effect
+
+### 20. Image Processing
+- [X] Hough Circle Transform
+- [X] Contour Approximation
+- [X] Adaptive Thresholding
