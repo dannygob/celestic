@@ -147,3 +147,9 @@ This file tracks the progress of the Celestic project.
 ### 21. Camera Calibration
 - [X] Sub-pixel corner detection
 - [X] Calibration with multiple images
+
+### 22. Unit Tests for Business Logic
+- [X] FrameAnalyzer test
+
+### 23. Report Generation
+- [X] CSV support

@@ -27,6 +27,7 @@ import com.example.celestic.navigation.NavigationRoutes
 import com.example.celestic.util.*
 import com.example.celestic.utils.LocalizedStrings
 import com.example.celestic.utils.exportJsonSummary
+import com.example.celestic.utils.generateCsvFromDetections
 import com.example.celestic.utils.generatePdfFromDetections
 import com.example.celestic.utils.generateWordFromDetections
 import java.util.*
@@ -38,7 +39,7 @@ fun DashboardScreen(navController: NavController, viewModel: MainViewModel = and
     val context = LocalContext.current
     val strings = LocalizedStrings.current
     var useCharuco by remember { mutableStateOf(true) }
-    val formatos = listOf("PDF", "Word", "JSON")
+    val formatos = listOf("PDF", "Word", "JSON", "CSV")
     var formatoSeleccionado by remember { mutableStateOf("PDF") }
 
     Scaffold(
@@ -156,6 +157,7 @@ fun DashboardScreen(navController: NavController, viewModel: MainViewModel = and
                             "PDF" -> generatePdfFromDetections(context, detecciones, loteId)
                             "Word" -> generateWordFromDetections(context, detecciones, loteId)
                             "JSON" -> exportJsonSummary(context, detecciones, loteId)
+                            "CSV" -> generateCsvFromDetections(context, detecciones, loteId)
                             else -> null
                         }
 
