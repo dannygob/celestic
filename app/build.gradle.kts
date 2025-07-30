@@ -3,8 +3,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-parcelize")
-    id("com.google.dagger.hilt.android")
-    id("kotlin-kapt")
 }
 
 android {
@@ -97,24 +95,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
-    testImplementation("app.cash.turbine:turbine:0.12.1")
-
-    // Hilt
-    implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-android-compiler:2.48")
-
-    // iText
-    implementation("com.itextpdf:itext7-core:7.1.15")
-
-    // Apache POI
-    implementation("org.apache.poi:poi-ooxml:5.2.2")
-
-    // Firebase
-    implementation("com.google.firebase:firebase-auth-ktx:22.0.0")
-
-    // Shimmer
-    implementation("com.facebook.shimmer:shimmer:0.5.0")
 
     // Debug
     debugImplementation(libs.androidx.ui.tooling)
