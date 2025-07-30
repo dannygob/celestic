@@ -29,6 +29,17 @@ fun generatePdfFromDetections(context: Context, detections: List<DetectionItem>,
     return file
 }
 
+fun generateCsvFromDetections(context: Context, detections: List<DetectionItem>, loteId: String): File {
+    val file = File(context.getExternalFilesDir(null), "ReporteCelestic_$loteId.csv")
+    val writer = file.bufferedWriter()
+    writer.write("ID,Tipo,Confianza,Status,Medida (mm)\n")
+    detections.forEach {
+        writer.write("${it.id},${it.type},${it.confidence},${it.status},${it.measurementMm ?: ""}\n")
+    }
+    writer.close()
+    return file
+}
+
 fun generateWordFromDetections(context: Context, detections: List<DetectionItem>, loteId: String): File {
     val file = File(context.getExternalFilesDir(null), "ReporteCelestic_$loteId.docx")
     val document = XWPFDocument()
