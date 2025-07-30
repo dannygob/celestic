@@ -1,10 +1,11 @@
 package com.example.celestic.manager
 
+
 import org.opencv.aruco.Aruco
-import org.opencv.aruco.Dictionary
 import org.opencv.core.Mat
 import org.opencv.core.MatOfInt
-import java.util.ArrayList
+import org.opencv.objdetect.Dictionary
+import java.util.Dictionary
 
 class ArUcoManager {
 

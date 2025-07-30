@@ -12,4 +12,3 @@ sealed class NavigationRoutes(val route: String) {
     object ReportDialog : NavigationRoutes("report_dialog")
     object Preview : NavigationRoutes("inspection_preview")
 }
-}

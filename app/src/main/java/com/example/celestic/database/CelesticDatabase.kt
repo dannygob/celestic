@@ -8,6 +8,9 @@ import androidx.room.TypeConverters
 import com.example.celestic.data.dao.CelesticDao
 import com.example.celestic.database.converters.Converters
 import com.example.celestic.models.DetectionItem
+import com.example.celestic.models.calibration.CameraCalibrationData
+import com.example.celestic.models.calibration.DetectedFeature
+import com.example.celestic.models.report.ReportConfig
 
 @Database(entities = [DetectionItem::class, DetectedFeature::class, CameraCalibrationData::class, ReportConfig::class, com.example.celestic.models.Inspection::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
@@ -24,7 +27,7 @@ abstract class CelesticDatabase : RoomDatabase() {
                     context.applicationContext,
                     CelesticDatabase::class.java,
                     "celestic_database"
-                ).fallbackToDestructiveMigration().build()
+                ).fallbackToDestructiveMigration(false).build()
                 INSTANCE = instance
                 instance
             }

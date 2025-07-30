@@ -1,13 +1,6 @@
 package com.example.celestic.ui.screen
 
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -22,12 +15,14 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.celestic.manager.ImageClassifier
 import com.example.celestic.utils.OpenCVInitializer
 import com.example.celestic.viewmodel.MainViewModel
 import org.opencv.android.Utils
@@ -36,7 +31,6 @@ import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-
 
 
 @Composable

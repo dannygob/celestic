@@ -3,6 +3,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-parcelize")
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
+
 }
 
 android {
@@ -19,6 +22,14 @@ android {
 
         vectorDrawables {
             useSupportLibrary = true
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            force("org.jetbrains:annotations:23.0.0") // Force the newer version
+            // Or if you explicitly wanted the older one (less common for this scenario)
+            // force("com.intellij:annotations:12.0")
         }
     }
 
@@ -70,6 +81,11 @@ dependencies {
 
     implementation(libs.androidx.activity.compose)
 
+    implementation(libs.material)
+
+    implementation(libs.androidx.room.runtime)
+
+
     // OpenCV
     implementation(libs.opencv)
 
@@ -89,6 +105,11 @@ dependencies {
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.databinding.adapters)
 
+    // Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    kapt(libs.hilt.compiler)
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -99,4 +120,11 @@ dependencies {
     // Debug
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.androidx.benchmark.macro)
+
+
+
+
+
 }

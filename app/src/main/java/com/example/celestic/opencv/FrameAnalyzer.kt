@@ -1,16 +1,17 @@
-package com.example.celestic.ui.screen
+package com.example.celestic.opencv
 
+import android.R
 import android.util.Log
+import androidx.compose.ui.geometry.Size
 import org.opencv.core.Mat
 import org.opencv.core.MatOfPoint
 import org.opencv.core.Scalar
-import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 
 class FrameAnalyzer {
 
     data class AnalysisResult(
-        val contours: List<MatOfPoint>,
+        val contours: List<T>,
         val annotatedMat: Mat,
     )
 
@@ -20,9 +21,9 @@ class FrameAnalyzer {
         val grayMat = Mat()
         val thresholdedImage = Mat()
         val edges = Mat()
-        val contours = mutableListOf<MatOfPoint>()
-        val deformations = mutableListOf<MatOfPoint>()
-        val holes = Mat()
+        mutableListOf<MatOfPoint>()
+        mutableListOf<MatOfPoint>()
+        Mat()
 
         try {
             // Preprocesamiento
@@ -36,11 +37,11 @@ class FrameAnalyzer {
             val deformations = detectDeformations(filteredContours)
             val holes = detectHoles(grayMat)
             val template = Utils.loadResource(context, R.drawable.countersink_template)
-            val countersinks = detectCountersinks(grayMat, template)
-            val opticalFlow = prevGrayMat?.let { detectDeformationsWithOpticalFlow(it, grayMat) }
+            detectCountersinks(grayMat, template)
+            prevGrayMat?.let { detectDeformationsWithOpticalFlow(it, grayMat) }
             prevGrayMat = grayMat.clone()
             val scale = calibrationManager.getScaleFactor(1.0)
-            val measurements = calculateMeasurements(filteredContours, scale)
+            calculateMeasurements(filteredContours, scale)
 
             // Dibujar resultados en una copia
             val annotatedMat = mat.clone()

@@ -1,4 +1,4 @@
-package com.example.celestic.ui.screen
+package com.example.celestic.manager
 
 
 import android.content.Context
@@ -6,8 +6,11 @@ import android.util.Log
 import org.json.JSONObject
 import org.opencv.core.CvType
 import org.opencv.core.Mat
+import org.opencv.core.Size
 import java.io.File
 import java.io.FileInputStream
+import java.text.SimpleDateFormat
+import java.util.Date
 import javax.inject.Inject
 
 class CalibrationManager @Inject constructor(private val context: Context) {
@@ -70,7 +73,7 @@ class CalibrationManager @Inject constructor(private val context: Context) {
 
     fun detectCharucoPattern(image: Mat): Mat {
         val dictionary = org.opencv.aruco.Aruco.getPredefinedDictionary(org.opencv.aruco.Aruco.DICT_6X6_250)
-        val corners = java.util.ArrayList<Mat>()
+        val corners = ArrayList<Mat>()
         val ids = Mat()
         org.opencv.aruco.Aruco.detectMarkers(image, dictionary, corners, ids)
         val charucoCorners = Mat()
@@ -90,11 +93,15 @@ class CalibrationManager @Inject constructor(private val context: Context) {
         return charucoCorners
     }
 
-    fun generateCalibrationMatrix(charucoCorners: List<Mat>, charucoIds: List<Mat>, imageSize: org.opencv.core.Size): Mat {
+    fun generateCalibrationMatrix(
+        charucoCorners: List<Mat>,
+        charucoIds: List<Mat>,
+        imageSize: Size,
+    ): Mat {
         val cameraMatrix = Mat()
         val distCoeffs = Mat()
-        val rvecs = java.util.ArrayList<Mat>()
-        val tvecs = java.util.ArrayList<Mat>()
+        val rvecs = ArrayList<Mat>()
+        val tvecs = ArrayList<Mat>()
         val board = org.opencv.aruco.CharucoBoard.create(5, 7, 0.04f, 0.02f, org.opencv.aruco.Aruco.getPredefinedDictionary(org.opencv.aruco.Aruco.DICT_6X6_250))
         org.opencv.aruco.Aruco.calibrateCameraCharuco(charucoCorners, charucoIds, board, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs)
         return cameraMatrix
@@ -105,13 +112,13 @@ class CalibrationManager @Inject constructor(private val context: Context) {
         json.put("cameraMatrix", cameraMatrix.dump())
         json.put("distortionCoeffs", distortionCoeffs.dump())
         json.put("resolution", resolution)
-        json.put("calibrationDate", java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(java.util.Date()))
+        json.put("calibrationDate", SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()))
         calibrationFile.writeText(json.toString())
     }
 
     fun generateCalibrationMatrixFromImages(images: List<Mat>): Mat {
-        val allCorners = java.util.ArrayList<Mat>()
-        val allIds = java.util.ArrayList<Mat>()
+        val allCorners = ArrayList<Mat>()
+        val allIds = ArrayList<Mat>()
         val imageSize = images[0].size()
         for (image in images) {
             val corners = detectCharucoPattern(image)

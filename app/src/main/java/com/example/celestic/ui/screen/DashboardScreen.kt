@@ -1,14 +1,6 @@
 package com.example.celestic.ui.screen
 
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.celestic.navigation.NavRoutes
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -18,11 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.celestic.detector.model.DetectionType
-import com.example.celestic.models.DetectionItem
-import com.example.celestic.models.enums.DetectionStatus
-import com.example.celestic.models.geometry.BoundingBox
-import com.example.celestic.manager.CalibrationManager
 import com.example.celestic.navigation.NavigationRoutes
 import com.example.celestic.util.*
 import com.example.celestic.utils.LocalizedStrings
@@ -30,6 +17,7 @@ import com.example.celestic.utils.exportJsonSummary
 import com.example.celestic.utils.generateCsvFromDetections
 import com.example.celestic.utils.generatePdfFromDetections
 import com.example.celestic.utils.generateWordFromDetections
+import com.example.celestic.viewmodel.MainViewModel
 import java.util.*
 
 

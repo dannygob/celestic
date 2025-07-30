@@ -1,7 +1,8 @@
-package com.example.celestic.ui.screen
+package com.example.celestic.manager
 
 import android.content.Context
-import android.graphics.Bitmap
+import androidx.camera.core.ImageProxy
+import androidx.core.graphics.createBitmap
 import androidx.core.graphics.get
 import androidx.core.graphics.scale
 import org.tensorflow.lite.Interpreter
@@ -30,14 +31,14 @@ class ImageClassifier(context: Context) {
         interpreter = Interpreter(modelBuffer)
     }
 
-    fun runInference(imageProxy: androidx.camera.core.ImageProxy): FloatArray {
+    fun runInference(imageProxy: ImageProxy): FloatArray {
         val inputBuffer = convertImageProxyToByteBuffer(imageProxy)
         val output = Array(1) { FloatArray(numClasses) }
         interpreter.run(inputBuffer, output)
         return output[0]
     }
 
-    private fun convertImageProxyToByteBuffer(image: androidx.camera.core.ImageProxy): ByteBuffer {
+    private fun convertImageProxyToByteBuffer(image: ImageProxy): ByteBuffer {
         val byteBuffer =
             ByteBuffer.allocateDirect(4 * inputImageSize * inputImageSize * numChannels)
         byteBuffer.order(ByteOrder.nativeOrder())
@@ -61,14 +62,14 @@ class ImageClassifier(context: Context) {
         val rgbImage = org.opencv.core.Mat()
         org.opencv.imgproc.Imgproc.cvtColor(yuvImage, rgbImage, org.opencv.imgproc.Imgproc.COLOR_YUV2RGB_NV21)
 
-        val bitmap = Bitmap.createBitmap(rgbImage.cols(), rgbImage.rows(), Bitmap.Config.ARGB_8888)
+        val bitmap = createBitmap(rgbImage.cols(), rgbImage.rows())
         org.opencv.android.Utils.matToBitmap(rgbImage, bitmap)
 
         val resizedBitmap = bitmap.scale(inputImageSize, inputImageSize)
 
         for (y in 0 until inputImageSize) {
             for (x in 0 until inputImageSize) {
-                val pixel = resizedBitmap.getPixel(x, y)
+                val pixel = resizedBitmap[x, y]
                 val r = (pixel shr 16 and 0xFF) / 255f
                 val g = (pixel shr 8 and 0xFF) / 255f
                 val b = (pixel and 0xFF) / 255f

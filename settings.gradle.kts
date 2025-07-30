@@ -16,8 +16,13 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url = uri("https://opencv.github.io/opencv-android/maven/")
+        }
+
     }
 }
 
 rootProject.name = "celestic"
 include(":app")
+include(":opencv")

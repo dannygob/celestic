@@ -1,6 +1,5 @@
 package com.example.celestic.opencv
 
-import com.example.celestic.ui.screen.FrameAnalyzer
 import io.mockk.mockk
 import org.junit.Before
 import org.junit.Test

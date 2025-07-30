@@ -5,3 +5,11 @@ plugins {
     alias(libs.plugins.kotlin.compose) apply false
     id("com.google.dagger.hilt.android") version "2.48" apply false
 }
+
+//allprojects {
+//    repositories {
+//        google()
+//        mavenCentral()
+//        maven { url = uri("https://opencv.github.io/opencv-android/maven/") }
+//    }
+//}
