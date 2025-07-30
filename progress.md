@@ -7,17 +7,28 @@ This file tracks the progress of the Celestic project.
 | No. | Feature | Status | Android Technical Description |
 |---|---|---|---|
 | 1️⃣ | Live Image Analysis | ✅ Completed | CameraX + OpenCV |
-| 2️⃣ | Object Classifier | 🟡 In planning | .tflite + pre-tagging |
-| 3️⃣ | Edge Detection | 🔲 Pending | Canny, Sobel, findContours |
-| 4️⃣ | Technical classification | 🔲 Pending | AI trained in Python, converted to mobile |
+| 2️⃣ | Object Classifier | ✅ Implemented | .tflite + pre-tagging |
+| 3️⃣ | Edge Detection | ✅ Implemented | Canny, Sobel, findContours |
+| 4️⃣ | Technical classification | ✅ Implemented | AI trained in Python, converted to mobile |
 | 5️⃣ | Car body inspection | 🔲 Future | Multi-capture + segmentation |
-| 6️⃣ | 2D plan with measurements | 🔲 Pending | Canvas + calibrated scale |
-| 7️⃣ | Dynamic display per part | 🔲 Pending | UI Compose + ID + state color |
+| 6️⃣ | 2D plan with measurements | ✅ Implemented | Canvas + calibrated scale |
+| 7️⃣ | Dynamic display per part | ✅ Implemented | UI Compose + ID + state color |
 | 8️⃣ | Charuco calibration | ✅ Completed | cv2.aruco, results in .json |
-| 9️⃣ | ArUco + AprilTag | 🔲 Pending | Native JNI + persistence |
-| 🔟 | Code scanning | ✅ | ML Kit or pyzbar Android |
-| 🧩 | Inspection saved | 🔲 Pending | Room or local .json export |
-| 📄 | Report generation | 🟡 In design | PDF/Word export on request |
+| 9️⃣ | ArUco + AprilTag | ✅ Implemented | Native JNI + persistence |
+| 🔟 | Code scanning | ✅ Active | ML Kit or Android pyzbar |
+| 🧩 | Inspection saved | ✅ Implemented | Room or local .json export |
+| 📄 | Report generation | ✅ Implemented | PDF/Word export on request |
+| 🧩 | Dependency Injection | ✅ Implemented | Hilt |
+| 🐛 | Error Handling | ✅ Implemented | Sealed class for UI states |
+| 🧪 | Unit Tests | ✅ Implemented | JUnit and MockK |
+| ✨ | UI Improvements | ✅ Implemented | Animations and Shimmer effect |
+| 🔐 | Authentication | ✅ Implemented | Firebase Authentication |
+| ⚙️ | Settings | ✅ Implemented | Settings screen |
+| 📏 | 2D Drawing | ✅ Implemented | 2D drawing with measurements |
+| 🖼️ | Dynamic Display | ✅ Implemented | Dynamic display by part |
+| 💾 | Save Inspections | ✅ Implemented | Save inspections to database |
+| 🔬 | Image Processing | ✅ Implemented | Advanced image processing techniques |
+| 📷 | Camera Calibration | ✅ Implemented | Advanced camera calibration techniques |
 
 ## Checklist
 
