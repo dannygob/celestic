@@ -1,13 +1,14 @@
-package com.example.celestic.ui.screen
+package com.example.celestic.opencv
 
+import android.content.Context
 import android.util.Log
-import org.opencv.core.Mat
-import org.opencv.core.MatOfPoint
-import org.opencv.core.Scalar
-import org.opencv.core.Size
+import com.example.celestic.R
+import org.opencv.android.Utils
+import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
+import org.opencv.video.Video
 
-class FrameAnalyzer {
+class FrameAnalyzer(private val context: Context, private val calibrationManager: com.example.celestic.manager.CalibrationManager) {
 
     data class AnalysisResult(
         val contours: List<MatOfPoint>,

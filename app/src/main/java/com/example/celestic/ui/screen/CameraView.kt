@@ -28,6 +28,10 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.celestic.manager.CalibrationManager
+import com.example.celestic.opencv.FrameAnalyzer
+import com.example.celestic.utils.getCameraProvider
+import com.example.celestic.utils.hasCameraPermission
 import com.example.celestic.utils.OpenCVInitializer
 import com.example.celestic.viewmodel.MainViewModel
 import org.opencv.android.Utils
@@ -46,6 +50,8 @@ fun CameraView(
 ) {
     val context = LocalContext.current
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
+    val frameAnalyzer = remember { FrameAnalyzer(context, CalibrationManager(context)) }
+    val qrScanner = remember { com.example.celestic.manager.QRScanner() }
     var permissionGranted by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -83,7 +89,7 @@ fun CameraView(
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
                 }.also { previewView ->
-                    startCamera(ctx, previewView, cameraExecutor, viewModel)
+                    startCamera(ctx, previewView, cameraExecutor, viewModel, frameAnalyzer)
                 }
             },
             modifier = Modifier.fillMaxSize()
@@ -96,6 +102,7 @@ private fun startCamera(
     previewView: PreviewView,
     cameraExecutor: ExecutorService,
     viewModel: MainViewModel,
+    frameAnalyzer: FrameAnalyzer
 ) {
     val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
     cameraProviderFuture.addListener({
@@ -112,13 +119,16 @@ private fun startCamera(
                 setAnalyzer(cameraExecutor) { imageProxy ->
                     try {
                         val bitmap = imageProxyToBitmap(imageProxy)
-                        val classifier = ImageClassifier(context)
-                        val predictions = classifier.runInference(bitmap)
-                        val tipo = classifier.mapPredictionToFeatureType(predictions)
-                        Log.d("Clasificación", "Resultado: $tipo")
-                        viewModel.setTipoClasificacion(tipo) // Puedes mostrarlo en UI si lo integras
+                        val qrCode = qrScanner.detectQRCode(bitmap)
+                        if (qrCode != null) {
+                            Log.d("QRScanner", "QR Code detected: $qrCode")
+                        }
+                        val mat = Mat()
+                        Utils.bitmapToMat(bitmap, mat)
+                        val result = frameAnalyzer.analyze(mat)
+                        // TODO: Do something with the result
                     } catch (e: Exception) {
-                        Log.e("Clasificador", "Error en inferencia", e)
+                        Log.e("CameraView", "Error analyzing frame", e)
                     } finally {
                         imageProxy.close()
                     }
@@ -139,26 +149,4 @@ private fun startCamera(
             Log.e("CameraView", "Error al iniciar cámara", e)
         }
     }, ContextCompat.getMainExecutor(context))
-}
-
-private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
-    val plane = image.planes[0]
-    val buffer = plane.buffer
-    val bytes = ByteArray(buffer.remaining())
-    buffer.get(bytes)
-
-    val yuvMat = Mat(image.height + image.height / 2, image.width, CvType.CV_8UC1)
-    yuvMat.put(0, 0, bytes)
-
-    val rgbMat = Mat()
-    Imgproc.cvtColor(yuvMat, rgbMat, Imgproc.COLOR_YUV2RGB_NV21)
-
-    val bmp = Bitmap.createBitmap(rgbMat.cols(), rgbMat.rows(), Bitmap.Config.ARGB_8888)
-    Utils.matToBitmap(rgbMat, bmp)
-
-    yuvMat.release()
-    rgbMat.release()
-
-    return bmp
-
 }

@@ -8,7 +8,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.celestic.navigation.NavRoutes
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
