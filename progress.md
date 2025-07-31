@@ -154,6 +154,9 @@ This file tracks the progress of the Celestic project.
 ### 23. Report Generation
 - [X] CSV support
 
+### 24. Fix redeclared classes
+- [X] Fixed redeclared classes
+
 ## Post-production
 - Create a base application to add modules.
 - Develop modules for other domains like automotive, aeronautics, etc.
