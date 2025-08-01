@@ -3,19 +3,28 @@ package com.example.celestic.opencv
 import android.R
 import android.util.Log
 import androidx.compose.ui.geometry.Size
+import com.example.celestic.manager.ArUcoManager
+import org.opencv.aruco.Aruco
 import org.opencv.core.Mat
 import org.opencv.core.MatOfPoint
 import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
+import org.opencv.core.Point
+import org.opencv.core.MatOfPoint2f
+import org.opencv.video.Video
+import org.opencv.core.MatOfByte
+import org.opencv.core.MatOfFloat
 
 class FrameAnalyzer {
 
     data class AnalysisResult(
-        val contours: List<T>,
+        val contours: List<MatOfPoint>,
         val annotatedMat: Mat,
+        val markers: List<ArUcoManager.Marker>
     )
 
     private var prevGrayMat: Mat? = null
+    private val arucoManager = ArUcoManager()
 
     fun analyze(mat: Mat): AnalysisResult {
         val grayMat = Mat()
@@ -31,17 +40,21 @@ class FrameAnalyzer {
             Imgproc.GaussianBlur(grayMat, grayMat, Size(5.0, 5.0), 0.0)
 
             val thresholdedImage = applyAdaptiveThresholding(grayMat)
-            val markers = applyWatershed(thresholdedImage)
-            val contours = findContours(markers)
+            val watershedMarkers = applyWatershed(thresholdedImage)
+            val contours = findContours(watershedMarkers)
             val filteredContours = filterContours(contours, 100.0)
             val deformations = detectDeformations(filteredContours)
             val holes = detectHoles(grayMat)
-            val template = Utils.loadResource(context, R.drawable.countersink_template)
-            detectCountersinks(grayMat, template)
+            // val template = Utils.loadResource(context, R.drawable.countersink_template)
+            // detectCountersinks(grayMat, template)
             prevGrayMat?.let { detectDeformationsWithOpticalFlow(it, grayMat) }
             prevGrayMat = grayMat.clone()
-            val scale = calibrationManager.getScaleFactor(1.0)
-            calculateMeasurements(filteredContours, scale)
+            // val scale = calibrationManager.getScaleFactor(1.0)
+            // calculateMeasurements(filteredContours, scale)
+
+            // Detección de marcadores ArUco
+            val markers = arucoManager.detectMarkers(mat)
+
 
             // Dibujar resultados en una copia
             val annotatedMat = mat.clone()
@@ -54,12 +67,16 @@ class FrameAnalyzer {
                 Imgproc.circle(annotatedMat, center, radius, Scalar(0.0, 0.0, 255.0), 2)
             }
             // TODO: Draw countersinks
+            if (markers.isNotEmpty()){
+                Aruco.drawDetectedMarkers(annotatedMat, markers.map { it.corners }, Mat())
+            }
 
-            return AnalysisResult(contours, annotatedMat)
+
+            return AnalysisResult(contours, annotatedMat, markers)
 
         } catch (e: Exception) {
             Log.e("FrameAnalyzer", "Error al analizar frame", e)
-            return AnalysisResult(emptyList(), mat)
+            return AnalysisResult(emptyList(), mat, emptyList())
         } finally {
             grayMat.release()
             thresholdedImage.release()
