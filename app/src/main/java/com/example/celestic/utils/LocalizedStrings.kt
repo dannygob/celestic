@@ -17,7 +17,7 @@ data class LocalizedStrings(
     val toastOpenCalibration: String = "Navegando a calibración...",
     val toastOpenDetails: String = "Abriendo historial...",
     val toastOpenReportDialog: String = "Solicitando generación de reporte...",
-    val toastModeCarroceria: String = "Modo Carrocería seleccionado",
+    val toastModeCarroceria: String = "Mod Carrocería seleccionado",
     val toastModePrecision: String = "Modo Precisión seleccionado",
     val toastModeMetales: String = "Modo Metal seleccionado",
 )

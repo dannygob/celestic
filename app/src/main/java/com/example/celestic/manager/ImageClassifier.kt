@@ -1,7 +1,7 @@
 package com.example.celestic.manager
 
 import android.content.Context
-import androidx.camera.core.ImageProxy
+import android.graphics.Bitmap
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.get
 import androidx.core.graphics.scale
@@ -31,14 +31,14 @@ class ImageClassifier(context: Context) {
         interpreter = Interpreter(modelBuffer)
     }
 
-    fun runInference(imageProxy: ImageProxy): FloatArray {
+    fun runInference(imageProxy: Bitmap): FloatArray {
         val inputBuffer = convertImageProxyToByteBuffer(imageProxy)
         val output = Array(1) { FloatArray(numClasses) }
         interpreter.run(inputBuffer, output)
         return output[0]
     }
 
-    private fun convertImageProxyToByteBuffer(image: ImageProxy): ByteBuffer {
+    private fun convertImageProxyToByteBuffer(image: Bitmap): ByteBuffer {
         val byteBuffer =
             ByteBuffer.allocateDirect(4 * inputImageSize * inputImageSize * numChannels)
         byteBuffer.order(ByteOrder.nativeOrder())
