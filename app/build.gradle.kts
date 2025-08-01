@@ -110,6 +110,9 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     kapt(libs.hilt.compiler)
 
+    // AprilTag
+    implementation("com.github.TaylorsZ:ApriltagLib:3.4.3")
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -19,7 +19,7 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://opencv.github.io/opencv-android/maven/")
         }
-
+        maven("https://jitpack.io")
     }
 }
 

@@ -4,6 +4,9 @@ import android.R
 import android.util.Log
 import androidx.compose.ui.geometry.Size
 import com.example.celestic.manager.ArUcoManager
+import com.example.celestic.manager.AprilTagManager
+import com.example.celestic.viewmodel.SharedViewModel
+import com.example.celestic.viewmodel.MarkerType
 import org.opencv.aruco.Aruco
 import org.opencv.core.Mat
 import org.opencv.core.MatOfPoint
@@ -14,17 +17,31 @@ import org.opencv.core.MatOfPoint2f
 import org.opencv.video.Video
 import org.opencv.core.MatOfByte
 import org.opencv.core.MatOfFloat
+import org.opencv.core.CvType
 
-class FrameAnalyzer {
+class FrameAnalyzer(private val sharedViewModel: SharedViewModel) {
+
+    data class Marker(val id: Int, val corners: Mat)
 
     data class AnalysisResult(
         val contours: List<MatOfPoint>,
         val annotatedMat: Mat,
-        val markers: List<ArUcoManager.Marker>
+        val markers: List<Marker>
     )
 
     private var prevGrayMat: Mat? = null
     private val arucoManager = ArUcoManager()
+    private val aprilTagManager = AprilTagManager()
+
+    init {
+        aprilTagManager.init()
+    }
+
+    private fun cornersToMat(corners: DoubleArray): Mat {
+        val mat = Mat(4, 1, CvType.CV_32FC2)
+        mat.put(0, 0, *corners)
+        return mat
+    }
 
     fun analyze(mat: Mat): AnalysisResult {
         val grayMat = Mat()
@@ -52,8 +69,11 @@ class FrameAnalyzer {
             // val scale = calibrationManager.getScaleFactor(1.0)
             // calculateMeasurements(filteredContours, scale)
 
-            // Detección de marcadores ArUco
-            val markers = arucoManager.detectMarkers(mat)
+            // Detección de marcadores
+            val markers = when (sharedViewModel.markerType.value) {
+                MarkerType.ARUCO -> arucoManager.detectMarkers(mat).map { Marker(it.id, it.corners) }
+                MarkerType.APRILTAG -> aprilTagManager.detectMarkers(mat).map { Marker(it.id, cornersToMat(it.corners)) }
+            }
 
 
             // Dibujar resultados en una copia
