@@ -1,274 +1,203 @@
-🔹 Celestic – Intelligent Visual Inspection Android Project
+🧠 General Purpose
+Celestic is a native Android application in Kotlin + Jetpack Compose, designed to automate the visual inspection of industrial components using computer vision and artificial intelligence (AI) techniques. Its modular and scalable design allows it to be adapted to different industrial sectors. Currently focused on metal parts, its evolution to more complex environments is planned.
 
-🧠 General Purpose Celestic is a native Android application in Kotlin + Jetpack Compose, designed to automate the visual inspection of industrial components using computer vision and machine learning. Its evolution includes:
+🔧 Current and Future Features
+🔍 Visual detection and classification of physical objects with enriched queries to internal databases and external sources.
+📐 Technical identification of characteristics in metal parts: 2D dimensions, holes, countersinks, alodine halos, etc.
+🚦 Intelligent filtering of invalid objects based on their type, presence/absence, and inspection context.
+📏 Blueprint-style technical drawing generated with detections, measurements, and statuses.
+🧾 Report generation (PDF/Word/JSON) including processed blueprint images.
+📷 Precise camera calibration using Charuco patterns.
+🧿 Visual tracking using ArUco markers (default), with the future option to use AprilTag as a configurable alternative.
+🧾 Inspection traceability via QR code or barcode scanning, linking each inspection 1:1 to a batch or production order.
+🧭 (Future - Placeholder) 3D extrapolation using supervised rotation and multiple captures (future planning).
+🚗 (Future) Scaling up to large bodies or structures, applying segmentation and imperfection detection (bumps, dents).
+🛠️ Full offline mode guaranteed for inspections in environments without connectivity, running .tflite models directly on the device.
 
-🔍 Visual detection and classification of physical objects, with enriched queries via internal databases and external sources.
-📐 Identification of technical characteristics in metal parts: 2D dimensions, holes, countersinks, alodine halos, etc.
-🚦 Intelligent filtering of invalid objects based on their type and context.
-🚗 Future scaling to complex bodies and structures to detect imperfections (bumps, dents, etc.).
-🧭 3D extrapolation of views using supervised rotation of the part.
-📐 Precise camera calibration using Charuco patterns.
-🧿 Tracking using ArUco markers and optional AprilTag.
-🧾 QR and barcode scanning to link inspections to batches or manufacturing orders.
-📄 Report generation upon request (PDF or Word) with inspection results, measurements, and alerts for failed or critical parts.
-🛠️ Core Technologies
-
+🧩 Base Technologies
 📱 Android (Kotlin) + Jetpack Compose
-🧠 AI: TensorFlow Lite / PyTorch Mobile
+🧠 Mobile AI: TensorFlow Lite / PyTorch Mobile
 🎥 Image: OpenCV + CameraX
-🐍 Python (custom model training)
-🧩 MVVM Architecture + Data Layer (Room, Flow)
-🧩 System Components
+🐍 Python (for custom model training)
+💾 Persistence: Room, Flow
 
-CameraView.kt → Live capture + real-time preprocessing
-FrameAnalyzer.kt → Analysis of each frame with AI, edges, detection, measurements
-DetectionItem.kt → @Parcelize model with results for each part
-DetailsScreen.kt → Interactive view per part with measurements + status 🟢🟡🔴
-CalibrationManager.kt → Charuco handling and .json persistence
-QRScanner.kt → Code scanner with ML Kit
-ReportGenerator.kt → 🆕 New module to generate PDF/Word reports from data in Room
-ReportRequestDialog.kt → UI to allow the user to choose whether or not to generate the final report
-StatusScreen.kt → System overview with metrics and logs
-AppNavigation.kt + MainActivity.kt → Central navigation and screen loading
-📊 Phased Goals (Technical Summary) | No. | Feature | Status | Android Technical Description | | 1️⃣ | Live Image Analysis | ✅ Completed | CameraX + OpenCV | | 2️⃣ | Object Classifier | ✅ Implemented | .tflite + pre-tagging | | 3️⃣ | Edge Detection | ✅ Implemented | Canny, Sobel, findContours | | 4️⃣ | Technical classification | ✅ Implemented | AI trained in Python, converted to mobile | | 5️⃣ | Car body inspection | 🔲 Future | Multi-capture + segmentation | | 6️⃣ | 2D plan with measurements | ✅ Implemented | Canvas + calibrated scale | | 7️⃣ | Dynamic display per part | ✅ Implemented | UI Compose + ID + state color | | 8️⃣ | Charuco calibration | ✅ Completed | cv2.aruco, results in .json | | 9️⃣ | ArUco + AprilTag | ✅ Implemented | Native JNI + persistence | | 🔟 | Code scanning | ✅ Active | ML Kit or Android pyzbar | | 🧩 | Inspection saved | ✅ Implemented | Room or local .json export | | 📄 | Report generation | ✅ Implemented | PDF/Word export on request | | 🧩 | Dependency Injection | ✅ Implemented | Hilt | | 🐛 | Error Handling | ✅ Implemented | Sealed class for UI states | | 🧪 | Unit Tests | ✅ Implemented | JUnit and MockK | | ✨ | UI Improvements | ✅ Implemented | Animations and Shimmer effect | | 🔐 | Authentication | ✅ Implemented | Firebase Authentication | | ⚙️ | Settings | ✅ Implemented | Settings screen | | 📏 | 2D Drawing | ✅ Implemented | 2D drawing with measurements | | 🖼️ | Dynamic Display | ✅ Implemented | Dynamic display by part | | 💾 | Save Inspections | ✅ Implemented | Save inspections to database | | 🔬 | Image Processing | ✅ Implemented | Advanced image processing techniques | | 📷 | Camera Calibration | ✅ Implemented | Advanced camera calibration techniques | ✅ Celestic Construction Checklist – By Technical Stages
+🧩 Architecture: MVVM + data layer
+🔐 Authentication: Firebase Auth (basic access control)
+🧩 Main System Components
+Component Description
+CameraView.kt Video capture + real-time preprocessing
+FrameAnalyzer.kt Analysis of each frame: edges, AI, measurements
+DetectionItem.kt Per-piece data model, with serializable results
+DetailsScreen.kt Per-piece interactive view with state and measurements
+CalibrationManager.kt Calibration using Charuco, persistence in JSON
+QRScanner.kt QR/barcode scanning for 1:1 traceability
+ReportGenerator.kt Blueprint-style PDF/Word report generator
+ReportRequestDialog.kt UI to generate reports based on user preference
+StatusScreen.kt General dashboard with metrics, logs, and system status
+AppNavigation.kt + MainActivity.kt Main navigation and screens
 
-🧱 1. Basic Project Structure 📦 Files and folders:
+📊 Technical Summary by Functionality
+Number Function Status Technology
+1️⃣ Live Image Analysis ✅ CameraX + OpenCV
+2️⃣ Physical Object Classifier ✅ TensorFlow Lite (.tflite)
+3️⃣ Edge Detection ✅ Canny, Sobel, Contours
+4️⃣ Technical Part Classification ✅ AI trained in Python
+5️⃣ Body Inspection 🔲 Future Multi-capture + Segmentation
+6️⃣ 2D drawing generation ✅ Calibrated canvas
+7️⃣ Stateful part view ✅ Compose UI + traffic light colors
+8️⃣ Charuco calibration ✅ OpenCV ArUco, JSON export
+9️⃣ ArUco + AprilTag (alternative) ✅ Configurable JNI + option in settings
+🔟 Code scanning ✅ ML Kit / Pyzbar
+🧩 Inspection persistence ✅ Room DB + JSON export
+📄 Technical-visual reports ✅ PDF / Word + blueprint image
+🔐 Access control ✅ Firebase Authentication
+📶 Offline mode ✅ 100% local operation
+🧪 Unit tests ✅ JUnit + MockK
+✨ UI animations ✅ Compose + Shimmer
+🧱 Future Modularization 🔲 Designed as a Plug-in System
 
-MainActivity.kt
-AppNavigation.kt
-ui/ folder
-model/ folder
-data/ folder
-theme/ folder
-utils/ folder 🎨 XML Resources:
-colors.xml
-strings.xml
-dimens.xml
-themes.xml 🎨 Theme and styles:
-CelesticTheme.kt
-Typography.kt
-Shape.kt (optional for borders)
-🧩 2. Data Model + Persistence 📄 Models:
+🧱 Construction Checklist (Updated)
+1. Project Structure
+MainActivity.kt, AppNavigation.kt
+Folders ui/, data/, model/, theme/, utils/
+XML Resources (colors.xml, strings.xml, etc.)
 
-DetectionItem.kt
-DetectionStatus.kt (enum 🟢🟡🔴)
-BoundingBox.kt
-ReportEntry.kt
-CameraCalibrationData.kt
-DetectedFeature.kt
-ReportConfig.kt 🗃️ Room Database:
-DetectionDao.kt
-DetectionDatabase.kt
-DetectionRepository.kt 📁 External Files:
-calibration.json
-traceability.json (for QR code reading)
-config_report.json (user settings)
-🎥 3. Camera + Image Analysis Module 📷 Capture:
+2. Data Model + Persistence
+Entities: DetectionItem, ReportEntry, BoundingBox, CameraCalibrationData
+1:1 Relationship between DetectionItem and BatchQR
+Room Database (DetectionDao, DetectionRepository)
+External Files: calibration.json, traceability.json
 
-CameraView.kt
-CameraUtils.kt 🔍 Processing:
-FrameAnalyzer.kt
-Function: detectEdges()
-Function: detectMarkers()
-Function: classifyImageAI()
-Function: applyCalibration()
-Function: extractDimensionsFromContours() 📐 Calibration:
-CalibrationManager.kt
-detectCharucoPattern()
-generateCalibrationMatrix()
-saveCalibrationToJson()
-loadCalibrationFromJson()
-🧠 4. Integrated Artificial Intelligence 🧠 Android AI:
+3. Image Analysis
+Capture: CameraView.kt, CameraUtils.kt
+Processing: detectEdges(), detectMarkers(), classifyImageAI(), extractDimensionsFromContours()
+Calibration: generateCalibrationMatrix(), loadCalibrationFromJson()
 
-.tflite or .pt model saved in assets/
-ImageClassifier.kt
-Function: runInference(bitmap)
-Function: mapPredictionToFeatureType() 🐍 Python AI:
-Training script train_model.py
-Labeled dataset data/train_images/
-Android-compatible export
-📊 5. Interface and Screens 🖼️ Compose Screens:
+4. Artificial Intelligence
+Android: .tflite / .pt in assets/, ImageClassifier.kt
+Python: train_model.py, data/train_images/, export for Android
 
-DashboardScreen.kt
-CameraScreen.kt
-DetailsScreen.kt
-ReportRequestDialog.kt
-InspectionPreviewScreen.kt (optional preview)
-CalibrationScreen.kt (for manual configuration) 📦 Composable Components:
-FeatureCard.kt
-StatusIndicator.kt
-MeasurementOverlay.kt 📍 Navigation:
-NavigationRoutes.kt
-NavigationGraph.kt
-🧾 6. QR / ArUco / AprilTag Traceability 🧾 Scanning:
+5. User Interface
+Screens: DashboardScreen.kt, CameraScreen.kt, DetailsScreen.kt, ReportRequestDialog.kt
+Composables: FeatureCard.kt, StatusIndicator.kt, MeasurementOverlay.kt
+Navigation: NavigationGraph.kt
 
-QRScanner.kt
-Function: startQrScan()
-Function: decodeBarcode()
-Linking to DetectionItem 🔲 Markers:
-ArUcoManager.kt
-AprilTagManager.kt (via JNI or integrated library) 🗃️ Linked Data:
-Traceability.json database
-Visual connection in DetailsScreen.kt
-📄 7. Inspection Report (PDF / Word / JSON) 📄 Generation:
+6. Scanning + Markers
+QRScanner.kt, decodeBarcode()
+ArUcoManager.kt (active by default), AprilTagManager.kt (optional via JNI)
+Configurable via settings
 
-ReportGenerator.kt
-generatePdfFromDetections()
-generateWordFromDetections()
-exportJsonSummary()
-filterDetectionsByStatus() 🖼️ UI:
-Button in DashboardScreen.kt or DetailsScreen.kt
-Selector: PDF, Word or JSON 📁 Export:
-Folder /storage/emulated/0/Celestic/Reports/
-Suggested name: ReporteCelestic_Lote123.pdf
-🎨 8. Visual Resources 📷 Image / Icons in drawable/:
+7. Technical Report
+• ReportGenerator.kt: generatePdfFromDetections(), generateWordFromDetections()
+• Blueprint images with measurements, features, and statuses
+• Export to: /storage/emulated/0/Celestic/Reports/ReporteCelestic_Lote123.pdf
+8. Visual Resources
+• drawable/: icons, logo, Charuco pattern, markers, blueprint
+• theme/: CelesticTheme.kt, Typography.kt, Shape.kt
+________________________________________
+🔜 Future Planning
+Feature Status Observations
+3D Extrapolation 🔲 Placeholder Techniques to be defined (multi-view, depth map, SLAM, etc.)
+Body Inspection 🔲 Planning Segmentation, multi-image assembly
+Modularization by sector 🔲 Planning Plugin-type structure by domain
+Internal Audit and Traceability 🔲 Not started Add log events, changes, users
+Advanced user management ❌ Not yet planned Differentiated roles: supervisor, technician, etc.
 
-charuco_pattern.png
-logo_celestic.png
-icon_inspection.png
-icon_pdf.png, icon_word.png
-status_green.png, status_yellow.png, status_red.png
-graph_placeholder.png
 
-## Post-production
-- Create a base application to add modules.
-- Develop modules for other domains like automotive, aeronautics, etc.
-- ML Kit will be used for the base module for multiplatform.
-🔹 Celestic – Proyecto Android de Inspección Visual Inteligente
-
-🧠 Propósito General Celestic es una aplicación Android nativa en Kotlin + Jetpack Compose, diseñada para automatizar la inspección visual de componentes industriales, usando visión computacional y aprendizaje automático. Su evolución contempla:
-
-🔍 Detección y clasificación visual de objetos físicos, con consultas enriquecidas vía bases internas y fuentes externas.
-📐 Identificación de características técnicas en piezas metálicas: dimensiones 2D, agujeros, avellanados, halos de alodine, etc.
-🚦 Filtrado inteligente de objetos no válidos según su tipo y contexto.
-🚗 Escalamiento futuro hacia carrocerías y estructuras complejas para detectar imperfecciones ( golpes, abolladuras, etc.).
-🧭 Extrapolación 3D de vistas mediante rotación supervisada de la pieza.
-📐 Calibración precisa de la cámara usando patrones Charuco.
-🧿 Seguimiento mediante marcadores ArUco y opcionalmente AprilTag.
-🧾 Escaneo de códigos QR y barras para vincular inspecciones con lotes u órdenes de fabricación.
-📄 Generación de reporte bajo solicitud (PDF o Word) con resultados de inspección, medidas y alertas por piezas falladas o críticas.
-🛠️ Tecnologías Base
-
-📱 Android (Kotlin) + Jetpack Compose
-🧠 IA: TensorFlow Lite / PyTorch Mobile
-🎥 Imagen: OpenCV + CameraX
-🐍 Python (entrenamiento de modelos personalizados)
-🧩 Arquitectura MVVM + Data Layer (Room, Flow)
-🧩 Componentes del Sistema
-
-CameraView.kt → Captura en vivo + preprocesamiento en tiempo real
-FrameAnalyzer.kt → Análisis de cada frame con IA, bordes, detección, mediciones
-DetectionItem.kt → Modelo @Parcelize con resultados de cada pieza
-DetailsScreen.kt → Vista interactiva por pieza con medidas + estado 🟢🟡🔴
-CalibrationManager.kt → Manejo de Charuco y persistencia .json
-QRScanner.kt → Scanner de códigos con ML Kit
-ReportGenerator.kt → 🆕 Nuevo módulo para generar reportes PDF/Word desde los datos en Room
-ReportRequestDialog.kt → UI para permitir al usuario elegir generar o no el reporte final
-StatusScreen.kt → Vista general del sistema con métricas + logs
-AppNavigation.kt + MainActivity.kt → Navegación central y carga de pantallas
-📊 Objetivos por Etapas (Resumen técnico) | Nº | Función | Estado | Descripción técnica Android | | 1️⃣ | Análisis de imagen en vivo | ✅ | CameraX + OpenCV | | 2️⃣ | Clasificador de objetos | ✅ Implementado | .tflite + preetiquetado | | 3️⃣ | Detección de bordes | ✅ Implementado | Canny, Sobel, findContours | | 4️⃣ | Clasificación técnica | ✅ Implementado | IA entrenada en Python, convertida a móvil | | 5️⃣ | Inspección de carrocerías | 🔲 Futuro | Captura múltiple + segmentación | | 6️⃣ | Plano 2D con medidas | ✅ Implementado | Canvas + escala calibrada | | 7️⃣ | Pantalla dinámica por pieza | ✅ Implementado | UI Compose + ID + color de estado | | 8️⃣ | Calibración Charuco | ✅ | cv2.aruco, resultados en .json | | 9️⃣ | ArUco + AprilTag | ✅ Implementado | JNI nativo + persistencia | | 🔟 | Escaneo de códigos | ✅ | ML Kit o pyzbar Android | | 🧩 | Guardado de inspección | ✅ Implementado | Room o export .json local | | 📄 | Generación de reporte | ✅ Implementado | Exportador PDF/Word por solicitud | | 🧩 | Inyección de Dependencias | ✅ Implementado | Hilt | | 🐛 | Manejo de Errores | ✅ Implementado | Sealed class para estados de UI | | 🧪 | Pruebas Unitarias | ✅ Implementado | JUnit y MockK | | ✨ | Mejoras de UI | ✅ Implementado | Animaciones y efecto Shimmer | | 🔐 | Autenticación | ✅ Implementado | Firebase Authentication | | ⚙️ | Ajustes | ✅ Implementado | Pantalla de ajustes | | 📏 | Dibujo 2D | ✅ Implementado | Dibujo 2D con medidas | | 🖼️ | Pantalla Dinámica | ✅ Implementado | Pantalla dinámica por pieza | | 💾 | Guardar Inspecciones | ✅ Implementado | Guardar inspecciones en la base de datos | | 🔬 | Procesamiento de Imagen | ✅ Implementado | Técnicas avanzadas de procesamiento de imagen | | 📷 | Calibración de Cámara | ✅ Implementado | Técnicas avanzadas de calibración de cámara |
-
-✅ Checklist Constructivo de Celestic – Por Etapas Técnicas
-
-🧱 1. Estructura Base del Proyecto 📦 Archivos y carpetas:
-
-MainActivity.kt
-AppNavigation.kt
-Carpeta ui/
-Carpeta model/
-Carpeta data/
-Carpeta theme/
-Carpeta utils/ 🎨 Recursos XML:
-colors.xml
-strings.xml
-dimens.xml
-themes.xml 🎨 Tema y estilos:
-CelesticTheme.kt
-Typography.kt
-Shape.kt (opcional para bordes)
-🧩 2. Modelo de Datos + Persistencia 📄 Modelos:
-
-DetectionItem.kt
-DetectionStatus.kt (enum 🟢🟡🔴)
-BoundingBox.kt
-ReportEntry.kt
-CameraCalibrationData.kt
-DetectedFeature.kt
-ReportConfig.kt 🗃️ Room Database:
-DetectionDao.kt
-DetectionDatabase.kt
-DetectionRepository.kt 📁 Archivos externos:
-calibration.json
-trazabilidad.json (por lectura QR)
-config_report.json (configuraciones por usuario)
-🎥 3. Módulo Cámara + Análisis de Imagen 📷 Captura:
-
-CameraView.kt
-CameraUtils.kt 🔍 Procesamiento:
-FrameAnalyzer.kt
-Función: detectEdges()
-Función: detectMarkers()
-Función: classifyImageAI()
-Función: applyCalibration()
-Función: extractDimensionsFromContours() 📐 Calibración:
-CalibrationManager.kt
-detectCharucoPattern()
-generateCalibrationMatrix()
-saveCalibrationToJson()
-loadCalibrationFromJson()
-🧠 4. Inteligencia Artificial integrada 🧠 IA Android:
-
-Modelo .tflite o .pt guardado en assets/
-ImageClassifier.kt
-Función: runInference(bitmap)
-Función: mapPredictionToFeatureType() 🐍 IA Python:
-Script de entrenamiento train_model.py
-Dataset etiquetado data/train_images/
-Exportación compatible con Android
-📊 5. Interfaz y Pantallas 🖼️ Pantallas Compose:
-
-DashboardScreen.kt
-CameraScreen.kt
-DetailsScreen.kt
-ReportRequestDialog.kt
-InspectionPreviewScreen.kt (opcional visualización previa)
-CalibrationScreen.kt (para configuración manual) 📦 Componentes Composables:
-FeatureCard.kt
-StatusIndicator.kt
-MeasurementOverlay.kt 📍 Navegación:
-NavigationRoutes.kt
-NavigationGraph.kt
-🧾 6. Trazabilidad QR / ArUco / AprilTag 🧾 Escaneo:
-
-QRScanner.kt
-Función: startQrScan()
-Función: decodeBarcode()
-Vinculación con DetectionItem 🔲 Marcadores:
-ArUcoManager.kt
-AprilTagManager.kt (via JNI o librería integrada) 🗃️ Datos enlazados:
-Base de datos trazabilidad.json
-Conexión visual en DetailsScreen.kt
-📄 7. Reporte de inspección (PDF / Word / JSON) 📄 Generación:
-
-ReportGenerator.kt
-generatePdfFromDetections()
-generateWordFromDetections()
-exportJsonSummary()
-filterDetectionsByStatus() 🖼️ UI:
-Botón en DashboardScreen.kt o DetailsScreen.kt
-Selector: PDF, Word o JSON 📁 Exportación:
-Carpeta /storage/emulated/0/Celestic/Reports/
-Nombre sugerido: ReporteCelestic_Lote123.pdf
-🎨 8. Recursos Visuales 📷 Imagen / Iconos en drawable/:
-
-charuco_pattern.png
-logo_celestic.png
-icon_inspection.png
-icon_pdf.png, icon_word.png
-status_green.png, status_yellow.png, status_red.png
-graph_placeholder.png
-
-## Post-producción
-- Crear una aplicación base para añadir módulos.
-- Desarrollar módulos para otros dominios como automoción, aeronáutica, etc.
-- Se utilizará ML Kit para el módulo base para multiplataforma.
+🧠 Propósito General 
+Celestic es una aplicación Android nativa en Kotlin + Jetpack Compose, diseñada para automatizar la inspección visual de componentes industriales mediante técnicas de visión computacional e inteligencia artificial (IA). Su diseño modular y escalable permite su adaptación a distintos sectores industriales. Actualmente enfocada en piezas metálicas, se plantea su evolución hacia entornos más complejos.
+🔧 Funcionalidades Actuales y Futuras
+•	🔍 Detección y clasificación visual de objetos físicos con consulta enriquecida a bases internas y fuentes externas.
+•	📐 Identificación técnica de características en piezas metálicas: dimensiones 2D, agujeros, avellanados, halos de alodine, etc.
+•	🚦 Filtrado inteligente de objetos no válidos según su tipo, presencia/ausencia y contexto de inspección.
+•	📏 Plano técnico estilo blueprint generado con detecciones, mediciones y estados.
+•	🧾 Generación de reportes (PDF/Word/JSON) incluyendo imagen procesada tipo blueprint.
+•	📷 Calibración precisa de la cámara usando patrones Charuco.
+•	🧿 Seguimiento visual mediante marcadores ArUco (por defecto), con opción futura de usar AprilTag como alternativa configurable.
+•	🧾 Trazabilidad de inspecciones vía escaneo de QR o códigos de barras, vinculando 1:1 cada inspección con un lote u orden de producción.
+•	🧭 (Futuro - Placeholder) Extrapolación 3D mediante rotación supervisada y múltiples capturas (planificación futura).
+•	🚗 (Futuro) Escalado hacia carrocerías o estructuras grandes, aplicando segmentación y detección de imperfecciones (golpes, abolladuras).
+•	🛠️ Modo offline completo garantizado para inspecciones en entornos sin conectividad, ejecutando modelos .tflite directamente en el dispositivo.
+________________________________________
+🧩 Tecnologías Base
+•	📱 Android (Kotlin) + Jetpack Compose
+•	🧠 IA móvil: TensorFlow Lite / PyTorch Mobile
+•	🎥 Imagen: OpenCV + CameraX
+•	🐍 Python (para entrenamiento de modelos personalizados)
+•	💾 Persistencia: Room, Flow
+•	🧩 Arquitectura: MVVM + capa de datos
+•	🔐 Autenticación: Firebase Auth (control básico de acceso)
+________________________________________
+🧩 Componentes Principales del Sistema
+Componente	Descripción
+CameraView.kt	Captura de video + preprocesamiento en tiempo real
+FrameAnalyzer.kt	Análisis de cada frame: bordes, IA, mediciones
+DetectionItem.kt	Modelo de datos por pieza, con resultados serializables
+DetailsScreen.kt	Vista interactiva por pieza con estado 🟢🟡🔴 y medidas
+CalibrationManager.kt	Calibración usando Charuco, persistencia en JSON
+QRScanner.kt	Escaneo QR/barcode para trazabilidad 1:1
+ReportGenerator.kt	Generador de reporte PDF/Word estilo blueprint
+ReportRequestDialog.kt	UI para generar reporte según preferencia del usuario
+StatusScreen.kt	Panel general con métricas, logs y estado del sistema
+AppNavigation.kt + MainActivity.kt	Navegación principal y pantallas
+________________________________________
+📊 Resumen Técnico por Funcionalidad
+Nº	Función	Estado	Tecnología
+1️⃣	Análisis de imagen en vivo	✅	CameraX + OpenCV
+2️⃣	Clasificador de objetos físicos	✅	TensorFlow Lite (.tflite)
+3️⃣	Detección de bordes	✅	Canny, Sobel, Contornos
+4️⃣	Clasificación técnica de piezas	✅	IA entrenada en Python
+5️⃣	Inspección de carrocerías	🔲 Futuro	Multi-captura + segmentación
+6️⃣	Generación de plano 2D	✅	Canvas calibrado
+7️⃣	Vista por pieza con estado	✅	Compose UI + colores semafóricos
+8️⃣	Calibración Charuco	✅	OpenCV ArUco, export JSON
+9️⃣	ArUco + AprilTag (alternativos)	✅ Configurable	JNI + opción en ajustes
+🔟	Escaneo de códigos	✅	ML Kit / Pyzbar
+🧩	Persistencia de inspecciones	✅	Room DB + exportación JSON
+📄	Reportes técnico-visuales	✅	PDF / Word + imagen blueprint
+🔐	Control de acceso	✅	Firebase Authentication
+📶	Modo Offline	✅	Operación 100% local
+🧪	Tests Unitarios	✅	JUnit + MockK
+✨	Animaciones UI	✅	Compose + shimmer
+🧱	Modularización futura	🔲	Pensado como sistema plug-in
+________________________________________
+🧱 Checklist Constructivo 
+1. Estructura del Proyecto
+•	MainActivity.kt, AppNavigation.kt
+•	Carpetas ui/, data/, model/, theme/, utils/
+•	Recursos XML (colors.xml, strings.xml, etc.)
+2. Modelo de Datos + Persistencia
+•	Entidades: DetectionItem, ReportEntry, BoundingBox, CameraCalibrationData
+•	Relación 1:1 entre DetectionItem y LoteQR
+•	Base de datos Room (DetectionDao, DetectionRepository)
+•	Archivos externos: calibration.json, trazabilidad.json
+3. Análisis de Imagen
+•	Captura: CameraView.kt, CameraUtils.kt
+•	Procesamiento: detectEdges(), detectMarkers(), classifyImageAI(), extractDimensionsFromContours()
+•	Calibración: generateCalibrationMatrix(), loadCalibrationFromJson()
+4. Inteligencia Artificial
+•	Android: .tflite / .pt en assets/, ImageClassifier.kt
+•	Python: train_model.py, data/train_images/, exportación para Android
+5. Interfaz de Usuario
+•	Pantallas: DashboardScreen.kt, CameraScreen.kt, DetailsScreen.kt, ReportRequestDialog.kt
+•	Composables: FeatureCard.kt, StatusIndicator.kt, MeasurementOverlay.kt
+•	Navegación: NavigationGraph.kt
+6. Escaneo + Marcadores
+•	QRScanner.kt, decodeBarcode()
+•	ArUcoManager.kt (activo por defecto), AprilTagManager.kt (opcional vía JNI)
+•	Configurable desde ajustes
+7. Reporte Técnico
+•	ReportGenerator.kt: generatePdfFromDetections(), generateWordFromDetections()
+•	Imágenes blueprint con medidas, características, estados
+•	Exportación a: /storage/emulated/0/Celestic/Reports/ReporteCelestic_Lote123.pdf
+8. Recursos Visuales
+•	drawable/: iconos, logo, patrón Charuco, marcadores, blueprint
+•	theme/: CelesticTheme.kt, Typography.kt, Shape.kt
+________________________________________
+🔜 Planificación Futura
+Feature	Estado	Observaciones
+Extrapolación 3D	🔲 Placeholder	Técnicas por definir (multi-view, depth map, SLAM, etc.)
+Inspección de carrocerías	🔲 Planeado	Segmentación, ensamblaje multiimagen
+Modularización por sector	🔲 Planeado	Estructura tipo plugin por dominio
+Auditoría y trazabilidad interna	🔲 No iniciado	Agregar bitácora de eventos, cambios, usuarios
+Gestión avanzada de usuarios	❌ No planeado aún	Roles diferenciados: supervisor, técnico, etc.
