@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.celestic.viewmodel.SharedViewModel
+import com.example.celestic.viewmodel.MarkerType
 
 @Composable
 fun SettingsScreen(
@@ -23,6 +24,7 @@ fun SettingsScreen(
 ) {
     var isDarkTheme by remember { mutableStateOf(false) }
     val useInches by viewModel.useInches.collectAsState()
+    val markerType by viewModel.markerType.collectAsState()
 
     Column(
         modifier = Modifier
@@ -46,6 +48,17 @@ fun SettingsScreen(
             Switch(
                 checked = useInches,
                 onCheckedChange = { viewModel.setUseInches(it) }
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Use AprilTag")
+            Spacer(modifier = Modifier.weight(1.0f))
+            Switch(
+                checked = markerType == MarkerType.APRILTAG,
+                onCheckedChange = {
+                    viewModel.setMarkerType(if (it) MarkerType.APRILTAG else MarkerType.ARUCO)
+                }
             )
         }
     }
