@@ -1,37 +1,41 @@
 package com.example.celestic.ui.screen
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.celestic.navigation.NavRoutes
+import com.example.celestic.ui.theme.CelesticTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(navController: NavController) {
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Celestic Dashboard") })
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Button(onClick = { navController.navigate(NavRoutes.CAMERA) }) {
-                Text("Start Inspection")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { navController.navigate(NavRoutes.STATUS) }) {
-                Text("View Status")
-            }
-        }
+fun DashboardScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = "Estado del Sistema",
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        Text(text = "Frames procesados: 2040")
+        Text(text = "Alodines detectados: 7")
+        Text(text = "Avellanados detectados: 4")
+        Text(text = "Uso de CPU: 38%")
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewDashboardScreen() {
+    CelesticTheme {
+        DashboardScreen()
     }
 }
