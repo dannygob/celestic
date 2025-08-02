@@ -19,6 +19,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        ndkVersion = "26.1.10909125" // Specify NDK version for CMake integration
 
         vectorDrawables {
             useSupportLibrary = true
@@ -30,6 +31,7 @@ android {
             force("org.jetbrains:annotations:23.0.0") // Force the newer version
             // Or if you explicitly wanted the older one (less common for this scenario)
             // force("com.intellij:annotations:12.0")
+            exclude(group = "com.intellij", module = "annotations")
         }
     }
 
@@ -38,16 +40,16 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.7.8" // versión definida en tu TOML
+        kotlinCompilerExtensionVersion = "1.5.12" // Updated for Kotlin 2.0+ compatibility
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 
     packaging {
@@ -63,6 +65,21 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = "../../opencv/CMakeLists.txt" // Path to OpenCV's CMakeLists.txt
+            version = "3.22.1" // Match the CMake version used in build_opencv_android.bat
+            defaultConfig {
+                abiFilters += "arm64-v8a" // Specify the ABI to build for
+            }
+            arguments += "-DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules" // Path to opencv_contrib modules
+            arguments += "-DBUILD_SHARED_LIBS=ON" // Build shared libraries
+            arguments += "-DBUILD_ANDROID_PROJECTS=OFF" // Prevent building OpenCV's own Android projects
+            arguments += "-DANDROID_PLATFORM=android-24" // Match the Android platform from the batch script
+            arguments += "-DCMAKE_BUILD_TYPE=Release" // Build type
         }
     }
 }
@@ -86,8 +103,8 @@ dependencies {
     implementation(libs.androidx.room.runtime)
 
 
-    // OpenCV
-    implementation(libs.opencv)
+    // OpenCV (Commented out as it will be built directly via CMake)
+    // implementation(libs.opencv)
 
     // CameraX
 
@@ -110,8 +127,8 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     kapt(libs.hilt.compiler)
 
-    // AprilTag
-    implementation("com.github.TaylorsZ:ApriltagLib:3.4.3")
+    // AprilTag (Commented out due to resolution issues and elective use)
+    // implementation(libs.apriltaglib)
 
     // Testing
     testImplementation(libs.junit)
