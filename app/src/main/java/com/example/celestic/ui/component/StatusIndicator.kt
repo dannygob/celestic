@@ -12,11 +12,12 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun StatusIndicator(isActive: Boolean) {
+    val indicatorSizeDp = 12.dp
     val color = if (isActive) Color(0xFF4CAF50) else Color(0xFFF44336)
 
     Box(
         modifier = Modifier
-            .size(12.dp)
+            .size(indicatorSizeDp)
             .clip(CircleShape)
             .background(color)
     )

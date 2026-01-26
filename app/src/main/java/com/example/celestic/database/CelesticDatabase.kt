@@ -27,7 +27,7 @@ abstract class CelesticDatabase : RoomDatabase() {
                     context.applicationContext,
                     CelesticDatabase::class.java,
                     "celestic_database"
-                ).fallbackToDestructiveMigration(false).build()
+                ).fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 instance
             }

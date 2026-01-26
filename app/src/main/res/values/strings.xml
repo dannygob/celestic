@@ -1,30 +1,99 @@
 <resources>
-    <string name="app_name">Celestic Detector</string>
-    <string name="back">Atrás</string>
-    <string name="details_title_hole">Detalle de Agujero</string>
-    <string name="details_title_alodine">Detalle de Alodine</string>
-    <string name="details_title_countersink">Detalle de Avellanado</string>
-    <string name="welcome_message">Bienvenido al detector celestial</string>
-    <string name="scan_button">Escanear componente</string>
-    <string name="report_issue">Reportar problema</string>
-    <string name="loading">Cargando...</string>
-    <string name="status_passed">Pieza aprobada</string>
-    <string name="status_warning">Revisión recomendada</string>
-    <string name="status_failed">Fallo crítico</string>
-    <string name="openCalibration">Abrir Calibración</string>
-    <string name="generateReport">Generar Reporte</string>
-    <string name="dashboardTitle">Dashboard de Celestic</string>
-    <string name="calibrationSection">Calibración</string>
-    <string name="toastOpenCalibration">Abriendo calibración...</string>
-    <string name="analysisModes">Modos de Análisis</string>
-    <string name="toastModeCarroceria">Modo carrocería activado</string>
-    <string name="modeCarroceria">Carrocería</string>
-    <string name="toastModePrecision">Modo precisión activado</string>
-    <string name="modePrecision">Precisión</string>
-    <string name="toastModeMetales">Modo metales activado</string>
-    <string name="modeMetales">Metales</string>
-    <string name="reportsSection">Reportes</string>
-    <string name="toastOpenDetails">Abriendo detalles...</string>
-    <string name="viewHistory">Ver Historial</string>
-    <string name="languageSettingHint">La configuración de idioma se puede cambiar en los ajustes del sistema.</string>
+
+
+    <!-- App Info -->
+    <string name="appName">Celestic</string>
+
+    <!-- Common Actions -->
+    <string name="Back">Back</string> <!-- replaces: back -->
+    <string name="OK">OK</string> <!-- replaces: ok -->
+    <string name="Login">Login</string> <!-- replaces: login -->
+    <string name="Retry">Retry</string> <!-- replaces: retry -->
+    <string name="Capture">Capture</string> <!-- replaces: capture -->
+
+    <!-- Auth -->
+    <string name="Email">Email</string> <!-- replaces: email -->
+    <string name="Password">Password</string> <!-- replaces: password -->
+
+
+    <!-- Permissions -->
+    <string name="camera_permission_denied">Camera permission not granted.</string> <!-- replaces: camera_permission_denied -->
+
+
+    <!-- Technical Errors -->
+    <string name="errorOpenCvInit">Failed to initialize OpenCV</string> <!-- replaces: errorOpenCvInit -->
+    <string name="errorInference">Inference error</string> <!-- replaces: errorInference -->
+    <string name="errorCameraInit">Camera initialization error</string> <!-- replaces: errorCameraInit -->
+    <string name="errorInspection">Inspection error</string> <!-- replaces: errorInspection -->
+
+    <!-- Details Screens -->
+    <string name="detailsHole">Hole Details</string> <!-- replaces: detailsHole -->
+    <string name="detailsAlodine">Alodine Details</string> <!-- replaces: detailsAlodine -->
+    <string name="detailsCountersink">Countersink Details</string> <!-- replaces: detailsCountersink -->
+
+    <!-- Welcome / General -->
+    <string name="welcomeMessage">Welcome to Celestic Detector</string> <!-- replaces: welcomeMessage -->
+    <string name="loading">Loading...</string> <!-- replaces: Loading -->
+    <string name="languageSettingHint">Language is changed in system settings.</string> <!-- replaces: languageSettingHint -->
+
+
+    <!-- Inspection Flow -->
+    <string name="inspectionStart">Start inspection</string> <!-- replaces: inspectionStart -->
+    <string name="inspectionProcessing">Processing inspection...</string> <!-- replaces: inspectionProcessing -->
+    <string name="Analyzing">Analyzing...</string> <!-- replaces: analyzing -->
+    <string name="inspectionApproved">Inspection approved</string> <!-- replaces: inspectionApproved -->
+    <string name="inspectionRedirecting">Redirecting to details...</string> <!-- replaces: inspectionRedirecting -->
+
+    <!-- Component Scan -->
+    <string name="scanComponent">Scan component</string> <!-- replaces: scanComponent -->
+
+    <!-- Issue Reporting -->
+    <string name="reportIssue">Report issue</string> <!-- replaces: reportIssue -->
+
+    <!-- Status Labels -->
+    <string name="statusPassed">Part approved</string> <!-- replaces: statusPassed -->
+    <string name="statusWarning">Review recommended</string> <!-- replaces: statusWarning -->
+    <string name="statusFailed">Critical failure</string> <!-- replaces: status_failed -->
+
+    <!-- Calibration -->
+    <string name="calibrationOpen">Open Calibration</string> <!-- replaces:  calibrationOpen -->
+    <string name="calibrationSection">Calibration</string> <!-- replaces: calibrationSection -->
+    <string name="calibrationOpening">Opening calibration...</string> <!-- replaces: calibrationOpening -->
+
+    <!-- Reports -->
+    <string name="reportGenerate">Generate Report</string> <!-- replaces: reportGenerate -->
+    <string name="reportGenerateConfirm">Do you want to generate the inspection report?</string> <!-- replaces: reportGenerateConfirm -->
+    <string name="reportRequesting">Requesting report...</string> <!-- replaces: reportRequesting -->
+    <string name="reportSection">Reports</string> <!-- replaces: reportSection -->
+
+
+    <!-- Dashboard -->
+    <string name="dashboardTitle">Celestic Dashboard</string> <!-- replaces: dashboardTitle -->
+    <string name="dashboardOpenDetails">Opening details...</string> <!-- replaces: dashboardOpenDetails -->
+    <string name="viewHistory">View History</string> <!-- replaces: viewHistory -->
+
+
+    <!-- Analysis Modes -->
+    <string name="analysisModes">Analysis Modes</string> <!-- replaces: analysisModes -->
+
+    <string name="modeBodywork">Bodywork</string> <!-- replaces: modeBodywork -->
+    <string name="modeBodyworkActivated">Bodywork mode activated</string> <!-- replaces: modeBodyworkActivated -->
+
+    <string name="modePrecision">Precision</string> <!-- replaces: modePrecision -->
+    <string name="modePrecisionActivated">Precision mode activated</string> <!-- replaces: modePrecisionActivated -->
+
+    <string name="modeMetals">Metals</string> <!-- replaces: modeMetals -->
+    <string name="modeMetalsActivated">Metals mode activated</string>
+    <string name="celesticMode">Celestic</string> <!-- replaces: celesticMode -->
+    <string name="CalibrationOpen">Calibration Open</string>
+    <string name="opencv_init_error">opencvInitError</string>
+    <string name="capture">Capture</string>
+    <string name="analyzing">Analyzing</string>
+    <string name="retry">Retry</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="ok">OK</string>
+    <string name="back">Back</string>
+
 </resources>

@@ -22,19 +22,22 @@ fun FeatureCard(
     description: String,
     onClick: () -> Unit,
 ) {
+    val cardPaddingDp = 8.dp
+    val contentPaddingDp = 16.dp
+    val spacerHeightDp = 8.dp
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(cardPaddingDp)
             .clickable { onClick() },
         elevation = CardDefaults.cardElevation()
     ) {
         Column(
-            Modifier.padding(16.dp),
+            Modifier.padding(contentPaddingDp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(text = title, style = MaterialTheme.typography.titleMedium)
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(spacerHeightDp))
             Text(text = description, textAlign = TextAlign.Center)
         }
     }

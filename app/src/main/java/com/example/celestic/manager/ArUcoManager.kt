@@ -1,25 +1,29 @@
 package com.example.celestic.manager
 
-
-import org.opencv.aruco.Aruco
 import org.opencv.core.Mat
 import org.opencv.core.MatOfInt
-import org.opencv.objdetect.Dictionary
+import org.opencv.objdetect.ArucoDetector
+import org.opencv.objdetect.DetectorParameters
+import org.opencv.objdetect.Objdetect
 
 class ArUcoManager {
 
     data class Marker(val id: Int, val corners: Mat)
 
     fun detectMarkers(image: Mat): List<Marker> {
-        val dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_6X6_250)
+        val dictionary = Objdetect.getPredefinedDictionary(Objdetect.DICT_6X6_250)
+        val parameters = DetectorParameters()
+        val detector = ArucoDetector(dictionary, parameters)
+        
         val corners = ArrayList<Mat>()
         val ids = MatOfInt()
-        Aruco.detectMarkers(image, dictionary, corners, ids)
+        val rejected = ArrayList<Mat>()
+
+        detector.detectMarkers(image, corners, ids, rejected)
 
         val markers = mutableListOf<Marker>()
         if (ids.total() > 0) {
-            val idsArray = IntArray(ids.total().toInt())
-            ids.get(0, 0, idsArray)
+            val idsArray = ids.toArray()
             for (i in idsArray.indices) {
                 markers.add(Marker(idsArray[i], corners[i]))
             }

@@ -19,8 +19,8 @@ fun DetectionItemPreview() {
         timestamp = System.currentTimeMillis(),
         linkedQrCode = "QR-L123",
         notes = "Preview de prueba",
-        id = TODO(),
-        inspectionId = TODO()
+        id = 1,
+        inspectionId = 1
     )
 
     Text(text = "⚙️ Preview: ${item.type} - ${item.measurementMm}mm - ${item.status}")

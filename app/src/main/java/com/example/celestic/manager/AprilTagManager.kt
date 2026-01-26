@@ -1,38 +1,33 @@
 package com.example.celestic.manager
 
-import com.taylor.demo.apriltag.ApriltagNative
 import org.opencv.core.Mat
+import org.opencv.core.MatOfInt
+import org.opencv.objdetect.ArucoDetector
+import org.opencv.objdetect.DetectorParameters
+import org.opencv.objdetect.Objdetect
 
 class AprilTagManager {
 
-    data class Marker(
-        val id: Int,
-        val hamming: Int,
-        val decisionMargin: Float,
-        val center: DoubleArray,
-        val corners: DoubleArray
-    )
-
-    fun init() {
-        ApriltagNative.apriltagInit("tag36h11", 1, 1.0f, 0.0f, 4, 1, 0.25)
-    }
+    data class Marker(val id: Int, val corners: Mat)
 
     fun detectMarkers(image: Mat): List<Marker> {
-        val yuvData = ByteArray(image.total().toInt() * image.channels())
-        image.get(0, 0, yuvData)
-        val detections = ApriltagNative.apriltagDetectYuv(yuvData, "rear_camera", 0, 1, image.width(), image.height())
+        // En OpenCV 4.x, AprilTag se detecta de forma más estable usando ArucoDetector
+        // con el diccionario específico de AprilTag.
+        val dictionary = Objdetect.getPredefinedDictionary(Objdetect.DICT_APRILTAG_36h11)
+        val parameters = DetectorParameters()
+        val detector = ArucoDetector(dictionary, parameters)
+
+        val corners = ArrayList<Mat>()
+        val ids = MatOfInt()
+        val rejected = ArrayList<Mat>()
+
+        detector.detectMarkers(image, corners, ids, rejected)
+
         val markers = mutableListOf<Marker>()
-        if (detections != null) {
-            for (detection in detections) {
-                markers.add(
-                    Marker(
-                        detection.id,
-                        detection.hamming,
-                        detection.decisionMargin,
-                        detection.center,
-                        detection.corners
-                    )
-                )
+        if (ids.total() > 0) {
+            val idsArray = ids.toArray()
+            for (i in idsArray.indices) {
+                markers.add(Marker(idsArray[i], corners[i]))
             }
         }
         return markers

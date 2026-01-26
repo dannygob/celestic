@@ -5,22 +5,34 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
-
 import com.example.celestic.navigation.NavigationGraph
 import com.example.celestic.ui.theme.CelesticTheme
+import com.example.celestic.utils.OpenCVInitializer
+import com.example.celestic.viewmodel.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        OpenCVInitializer.initOpenCV(this)
+
 
         setContent {
-            CelesticTheme {
+            val sharedViewModel: SharedViewModel = hiltViewModel()
+            val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
+
+            CelesticTheme(useDarkTheme = isDarkMode) {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     val navController = rememberNavController()
-                    NavigationGraph(navController = navController)
+                    NavigationGraph(
+                        navController = navController,
+                        sharedViewModel = sharedViewModel
+                    )
                 }
             }
         }

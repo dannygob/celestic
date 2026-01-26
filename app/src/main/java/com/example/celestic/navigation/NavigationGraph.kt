@@ -11,23 +11,28 @@ import com.example.celestic.ui.screen.CalibrationScreen
 import com.example.celestic.ui.screen.CameraScreen
 import com.example.celestic.ui.screen.DashboardScreen
 import com.example.celestic.ui.screen.DetailsScreen
+import com.example.celestic.ui.screen.DetectionListScreen
 import com.example.celestic.ui.screen.InspectionPreviewScreen
 import com.example.celestic.ui.screen.LoginScreen
-import com.example.celestic.ui.screen.DetectionListScreen
 import com.example.celestic.ui.screen.ReportRequestDialog
+import com.example.celestic.ui.screen.ReportsScreen
 import com.example.celestic.ui.screen.SettingsScreen
+import com.example.celestic.viewmodel.SharedViewModel
 
 @Composable
-fun NavigationGraph(navController: NavHostController) {
+fun NavigationGraph(
+    navController: NavHostController,
+    sharedViewModel: SharedViewModel
+) {
     NavHost(
         navController = navController,
         startDestination = "login"
     ) {
         composable("login") {
-            LoginScreen(navController)
+            LoginScreen(navController, sharedViewModel)
         }
         composable(NavigationRoutes.Dashboard.route) {
-            DashboardScreen(navController)
+            DashboardScreen(navController, sharedViewModel = sharedViewModel)
         }
 
         composable(NavigationRoutes.Camera.route) {
@@ -39,11 +44,11 @@ fun NavigationGraph(navController: NavHostController) {
             arguments = listOf(navArgument("detailType") { type = NavType.StringType })
         ) { backStackEntry ->
             val detailType = backStackEntry.arguments?.getString("detailType") ?: "hole"
-            DetailsScreen(navController, detailType)
+            DetailsScreen(navController, detailType, sharedViewModel = sharedViewModel)
         }
 
         composable(NavigationRoutes.Calibration.route) {
-            CalibrationScreen(navController)
+            CalibrationScreen(navController, sharedViewModel = sharedViewModel)
         }
 
         composable(NavigationRoutes.ReportDialog.route) {
@@ -54,13 +59,16 @@ fun NavigationGraph(navController: NavHostController) {
         }
 
         composable(NavigationRoutes.Preview.route) {
-            InspectionPreviewScreen(navController)
+            InspectionPreviewScreen(navController, sharedViewModel = sharedViewModel)
         }
         composable("settings") {
-            SettingsScreen(navController)
+            SettingsScreen(navController, sharedViewModel = sharedViewModel)
         }
         composable("detection_list") {
-            DetectionListScreen(navController)
+            DetectionListScreen(navController, sharedViewModel = sharedViewModel)
+        }
+        composable(NavigationRoutes.Reports.route) {
+            ReportsScreen(navController, sharedViewModel = sharedViewModel)
         }
     }
 }

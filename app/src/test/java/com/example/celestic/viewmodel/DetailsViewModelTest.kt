@@ -57,9 +57,9 @@ class DetailsViewModelTest {
     }
 
     @Test
-    fun `loadTrazabilidad should emit Error when data loading fails`() = runTest {
+    fun `loadTrazabilidad should emit Error when data Loading fails`() = runTest {
         val codigo = "123"
-        val exception = Exception("Error loading data")
+        val exception = Exception("Error Loading data")
 
         coEvery { cargarTrazabilidadDesdeJson(context) } throws exception
 

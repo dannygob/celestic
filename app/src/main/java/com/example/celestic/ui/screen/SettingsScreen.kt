@@ -1,65 +1,270 @@
 package com.example.celestic.ui.screen
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.DeveloperBoard
+import androidx.compose.material.icons.filled.DisplaySettings
+import androidx.compose.material.icons.filled.Straighten
+import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.celestic.viewmodel.SharedViewModel
+import androidx.navigation.compose.rememberNavController
+import com.example.celestic.ui.theme.CelesticTheme
 import com.example.celestic.viewmodel.MarkerType
+import com.example.celestic.viewmodel.SharedViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     navController: NavController,
-    viewModel: SharedViewModel = hiltViewModel()
+    sharedViewModel: SharedViewModel = hiltViewModel()
 ) {
-    var isDarkTheme by remember { mutableStateOf(false) }
-    val useInches by viewModel.useInches.collectAsState()
-    val markerType by viewModel.markerType.collectAsState()
+    val useInches by sharedViewModel.useInches.collectAsState()
+    val markerType by sharedViewModel.markerType.collectAsState()
+    val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text("Settings")
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Dark Theme")
-            Spacer(modifier = Modifier.weight(1.0f))
-            Switch(
-                checked = isDarkTheme,
-                onCheckedChange = { isDarkTheme = it }
+    val background = if (isDarkMode) Color(0xFF0A0E14) else Color(0xFFF2F2F2)
+    val topBarBg = if (isDarkMode) Color.Black else Color.White
+    val textColor = if (isDarkMode) Color.White else Color.Black
+    val sectionColor = if (isDarkMode) Color(0xFF415A77) else Color(0xFF3366CC)
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        "CONFIGURACIÓN",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 2.sp,
+                        color = textColor
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Regresar",
+                            tint = textColor
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = topBarBg,
+                    titleContentColor = textColor
+                )
             )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Use Inches")
-            Spacer(modifier = Modifier.weight(1.0f))
-            Switch(
+        },
+        containerColor = background
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                "UNIDADES Y PREFERENCIAS",
+                color = sectionColor,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            SettingsItem(
+                title = "Sistema Imperial (Pulgadas)",
+                subtitle = "Alternar entre milímetros y pulgadas",
+                icon = Icons.Default.Straighten,
                 checked = useInches,
-                onCheckedChange = { viewModel.setUseInches(it) }
+                isDarkMode = isDarkMode,
+                onCheckedChange = { sharedViewModel.setUseInches(it) }
             )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Use AprilTag")
-            Spacer(modifier = Modifier.weight(1.0f))
-            Switch(
+
+            SettingsItem(
+                title = "Detección AprilTag",
+                subtitle = "Usar AprilTag en lugar de ArUco",
+                icon = Icons.Default.Tag,
                 checked = markerType == MarkerType.APRILTAG,
+                isDarkMode = isDarkMode,
                 onCheckedChange = {
-                    viewModel.setMarkerType(if (it) MarkerType.APRILTAG else MarkerType.ARUCO)
+                    sharedViewModel.setMarkerType(if (it) MarkerType.APRILTAG else MarkerType.ARUCO)
                 }
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                "APARIENCIA",
+                color = sectionColor,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            SettingsItem(
+                title = "Modo Oscuro",
+                subtitle = "Forzar interfaz de alto contraste",
+                icon = Icons.Default.DisplaySettings,
+                checked = isDarkMode,
+                isDarkMode = isDarkMode,
+                onCheckedChange = { sharedViewModel.setDarkMode(it) }
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                "HARDWARE Y ÓPTICA",
+                color = sectionColor,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isDarkMode) Color.White.copy(
+                        alpha = 0.05f
+                    ) else Color.Black.copy(alpha = 0.05f)
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.DeveloperBoard,
+                            contentDescription = null,
+                            tint = sectionColor,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                sharedViewModel.deviceModel.uppercase(),
+                                color = textColor,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 14.sp
+                            )
+                            Text(
+                                sharedViewModel.hardwareInfo,
+                                color = Color.Gray,
+                                fontSize = 11.sp,
+                                letterSpacing = 1.sp
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        "Las especificaciones ópticas se ajustan automáticamente según el perfil del hardware detectado para optimizar la precisión de los mm.",
+                        color = Color.Gray.copy(alpha = 0.8f),
+                        fontSize = 11.sp,
+                        lineHeight = 14.sp
+                    )
+                }
+            }
         }
+    }
+}
+
+@Composable
+fun SettingsItem(
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    checked: Boolean,
+    isDarkMode: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    val cardBg =
+        if (isDarkMode) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
+    val textColor = if (isDarkMode) Color.White else Color.Black
+    val iconBoxBg = if (isDarkMode) Color(0xFF1B263B) else Color(0xFFD1D9E6)
+    val accentColor = if (isDarkMode) Color(0xFF415A77) else Color(0xFF3366CC)
+
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = cardBg),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(iconBoxBg, RoundedCornerShape(8.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(icon, contentDescription = null, tint = accentColor)
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title, color = textColor, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(subtitle, color = Color.Gray, fontSize = 12.sp)
+            }
+            
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedTrackColor = accentColor,
+                    uncheckedThumbColor = Color.Gray,
+                    uncheckedTrackColor = Color.DarkGray
+                )
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, locale = "en")
+@Composable
+fun SettingsScreen() {
+    CelesticTheme {
+        SettingsScreen(rememberNavController())
     }
 }

@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.celestic.data.repository.DetectionRepository
 import com.example.celestic.models.TrazabilidadItem
+import com.example.celestic.utils.Result
 import com.example.celestic.utils.buscarPorCodigo
 import com.example.celestic.utils.cargarTrazabilidadDesdeJson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.example.celestic.utils.Result
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -46,3 +46,4 @@ class DetailsViewModel @Inject constructor(
         }
     }
 }
+

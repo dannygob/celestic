@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.celestic.data.repository.DetectionRepository
 import com.example.celestic.models.DetectionItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -16,6 +18,13 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repository: DetectionRepository
 ) : ViewModel() {
+
+    private val _classificationResult = MutableStateFlow<String?>(null)
+    val classificationResult: StateFlow<String?> = _classificationResult.asStateFlow()
+
+    fun setTipoClasificacion(tipo: String) {
+        _classificationResult.value = tipo
+    }
 
     val detections: StateFlow<com.example.celestic.utils.Result<List<DetectionItem>>> = repository.getAll()
         .map<List<DetectionItem>, com.example.celestic.utils.Result<List<DetectionItem>>> {

@@ -11,4 +11,5 @@ sealed class NavigationRoutes(val route: String) {
     object Calibration : NavigationRoutes("calibration")
     object ReportDialog : NavigationRoutes("report_dialog")
     object Preview : NavigationRoutes("inspection_preview")
+    object Reports : NavigationRoutes("reports")
 }

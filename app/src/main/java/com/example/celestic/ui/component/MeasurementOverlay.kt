@@ -14,10 +14,12 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun MeasurementOverlay(value: String, unit: String = "mm") {
+    val paddingDp = 8.dp
+    val textPaddingDp = 4.dp
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp),
+            .padding(paddingDp),
         contentAlignment = Alignment.TopStart
     ) {
         Text(
@@ -26,7 +28,7 @@ fun MeasurementOverlay(value: String, unit: String = "mm") {
             color = Color.White,
             modifier = Modifier
                 .background(Color.Black.copy(alpha = 0.6f))
-                .padding(4.dp)
+                .padding(textPaddingDp)
         )
     }
 }

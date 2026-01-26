@@ -5,6 +5,7 @@ import com.example.celestic.models.enums.DetectionStatus
 import com.example.celestic.models.enums.DetectionType
 import com.example.celestic.models.geometry.BoundingBox
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class Converters {
     private val gson = Gson()
@@ -19,8 +20,10 @@ class Converters {
     fun fromMap(value: Map<String, Float>): String = gson.toJson(value)
 
     @TypeConverter
-    fun toMap(value: String): Map<String, Float> =
-        gson.fromJson(value, Map::class.java) as Map<String, Float>
+    fun toMap(value: String): Map<String, Float> {
+        val type = object : TypeToken<Map<String, Float>>() {}.type
+        return gson.fromJson(value, type)
+    }
 
     @TypeConverter
     fun fromDetectionStatus(status: DetectionStatus): String = status.name
