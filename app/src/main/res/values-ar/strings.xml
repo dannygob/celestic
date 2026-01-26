@@ -1,0 +1,79 @@
+<resources>
+    <!-- App Info -->
+    <string name="appName">Celestic</string>
+
+    <!-- Common Actions -->
+    <string name="back">رجوع</string>
+    <string name="ok">موافق</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="capture">التقاط</string>
+
+    <!-- Auth -->
+    <string name="email">البريد الإلكتروني</string>
+    <string name="password">كلمة المرور</string>
+
+    <!-- Permissions -->
+    <string name="camera_permission_denied">لم يتم منح إذن الكاميرا.</string>
+
+    <!-- Technical Errors -->
+    <string name="errorOpenCvInit">فشل تهيئة OpenCV</string>
+    <string name="errorInference">خطأ في الاستدلال</string>
+    <string name="errorCameraInit">خطأ في تهيئة الكاميرا</string>
+    <string name="errorInspection">خطأ في الفحص</string>
+
+    <!-- Details Screens -->
+    <string name="detailsHole">تفاصيل الثقب</string>
+    <string name="detailsAlodine">تفاصيل الألودين</string>
+    <string name="detailsCountersink">تفاصيل الخزق</string>
+
+    <!-- Welcome / General -->
+    <string name="welcomeMessage">مرحبًا بك في كاشف Celestic</string>
+    <string name="loading">جاري التحميل...</string>
+    <string name="languageSettingHint">يتم تغيير اللغة في إعدادات النظام.</string>
+
+    <!-- Inspection Flow -->
+    <string name="inspectionStart">بدء الفحص</string>
+    <string name="inspectionProcessing">جاري معالجة الفحص...</string>
+    <string name="analyzing">جاري التحليل...</string>
+    <string name="inspectionApproved">تمت الموافقة على الفحص</string>
+    <string name="inspectionRedirecting">جاري التوجيه إلى التفاصيل...</string>
+
+    <!-- Component Scan -->
+    <string name="scanComponent">مسح المكون</string>
+
+    <!-- Issue Reporting -->
+    <string name="reportIssue">الإبلاغ عن مشكلة</string>
+
+    <!-- Status Labels -->
+    <string name="statusPassed">تمت الموافقة على القطعة</string>
+    <string name="statusWarning">يوصى بالمراجعة</string>
+    <string name="statusFailed">فشل ذريع</string>
+
+    <!-- Calibration -->
+    <string name="calibrationOpen">فتح المعايرة</string>
+    <string name="calibrationSection">المعايرة</string>
+    <string name="calibrationOpening">جاري فتح المعايرة...</string>
+
+    <!-- Reports -->
+    <string name="reportGenerate">إنشاء تقرير</string>
+    <string name="reportGenerateConfirm">هل تريد إنشاء تقرير الفحص؟</string>
+    <string name="reportRequesting">جاري طلب التقرير...</string>
+    <string name="reportSection">التقارير</string>
+
+    <!-- Dashboard -->
+    <string name="dashboardTitle">لوحة Celestic</string>
+    <string name="dashboardOpenDetails">جاري فتح التفاصيل...</string>
+    <string name="viewHistory">عرض السجل</string>
+
+    <!-- Analysis Modes -->
+    <string name="analysisModes">أوضاع التحليل</string>
+    <string name="modeBodywork">هيكل السيارة</string>
+    <string name="modeBodyworkActivated">تم تفعيل وضع هيكل السيارة</string>
+    <string name="modePrecision">الدقة</string>
+    <string name="modePrecisionActivated">تم تفعيل وضع الدقة</string>
+    <string name="modeMetals">المعادن</string>
+    <string name="modeMetalsActivated">تم تفعيل وضع المعادن</string>
+    <string name="celesticMode">Celestic</string>
+    <string name="opencv_init_error">خطأ في تهيئة opencv</string>
+</resources>

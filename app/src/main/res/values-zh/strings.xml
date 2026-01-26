@@ -1,0 +1,79 @@
+<resources>
+    <!-- App Info -->
+    <string name="appName">Celestic</string>
+
+    <!-- Common Actions -->
+    <string name="back">返回</string>
+    <string name="ok">确定</string>
+    <string name="login">登录</string>
+    <string name="retry">重试</string>
+    <string name="capture">拍摄</string>
+
+    <!-- Auth -->
+    <string name="email">电子邮件</string>
+    <string name="password">密码</string>
+
+    <!-- Permissions -->
+    <string name="camera_permission_denied">未授予相机权限。</string>
+
+    <!-- Technical Errors -->
+    <string name="errorOpenCvInit">OpenCV 初始化失败</string>
+    <string name="errorInference">推理错误</string>
+    <string name="errorCameraInit">相机初始化错误</string>
+    <string name="errorInspection">检查错误</string>
+
+    <!-- Details Screens -->
+    <string name="detailsHole">孔详情</string>
+    <string name="detailsAlodine">阿洛丁详情</string>
+    <string name="detailsCountersink">埋头孔详情</string>
+
+    <!-- Welcome / General -->
+    <string name="welcomeMessage">欢迎使用 Celestic 检测器</string>
+    <string name="loading">加载中...</string>
+    <string name="languageSettingHint">语言在系统设置中更改。</string>
+
+    <!-- Inspection Flow -->
+    <string name="inspectionStart">开始检查</string>
+    <string name="inspectionProcessing">正在处理检查...</string>
+    <string name="analyzing">正在分析...</string>
+    <string name="inspectionApproved">检查已通过</string>
+    <string name="inspectionRedirecting">正在跳转至详情...</string>
+
+    <!-- Component Scan -->
+    <string name="scanComponent">扫描组件</string>
+
+    <!-- Issue Reporting -->
+    <string name="reportIssue">报告问题</string>
+
+    <!-- Status Labels -->
+    <string name="statusPassed">零件已批准</string>
+    <string name="statusWarning">建议复检</string>
+    <string name="statusFailed">严重故障</string>
+
+    <!-- Calibration -->
+    <string name="calibrationOpen">打开校准</string>
+    <string name="calibrationSection">校准</string>
+    <string name="calibrationOpening">正在打开校准...</string>
+
+    <!-- Reports -->
+    <string name="reportGenerate">生成报告</string>
+    <string name="reportGenerateConfirm">您要生成检查报告吗？</string>
+    <string name="reportRequesting">正在请求报告...</string>
+    <string name="reportSection">报告</string>
+
+    <!-- Dashboard -->
+    <string name="dashboardTitle">Celestic 仪表板</string>
+    <string name="dashboardOpenDetails">正在打开详情...</string>
+    <string name="viewHistory">查看历史记录</string>
+
+    <!-- Analysis Modes -->
+    <string name="analysisModes">分析模式</string>
+    <string name="modeBodywork">支腿/车身</string>
+    <string name="modeBodyworkActivated">支腿模式已激活</string>
+    <string name="modePrecision">精密</string>
+    <string name="modePrecisionActivated">精密模式已激活</string>
+    <string name="modeMetals">金属</string>
+    <string name="modeMetalsActivated">金属模式已激活</string>
+    <string name="celesticMode">Celestic</string>
+    <string name="opencv_init_error">OpenCV 初始化错误</string>
+</resources>

@@ -1,0 +1,79 @@
+<resources>
+    <!-- App Info -->
+    <string name="appName">Celestic</string>
+
+    <!-- Common Actions -->
+    <string name="back">Indietro</string>
+    <string name="ok">OK</string>
+    <string name="login">Accedi</string>
+    <string name="retry">Riprova</string>
+    <string name="capture">Cattura</string>
+
+    <!-- Auth -->
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+
+    <!-- Permissions -->
+    <string name="camera_permission_denied">Permesso fotocamera non concesso.</string>
+
+    <!-- Technical Errors -->
+    <string name="errorOpenCvInit">Inizializzazione OpenCV fallita</string>
+    <string name="errorInference">Errore di inferenza</string>
+    <string name="errorCameraInit">Errore inizializzazione fotocamera</string>
+    <string name="errorInspection">Errore ispezione</string>
+
+    <!-- Details Screens -->
+    <string name="detailsHole">Dettagli Foro</string>
+    <string name="detailsAlodine">Dettagli Alodine</string>
+    <string name="detailsCountersink">Dettagli Svasatura</string>
+
+    <!-- Welcome / General -->
+    <string name="welcomeMessage">Benvenuti in Celestic Detector</string>
+    <string name="loading">Caricamento...</string>
+    <string name="languageSettingHint">La lingua viene cambiata nelle impostazioni di sistema.</string>
+
+    <!-- Inspection Flow -->
+    <string name="inspectionStart">Avvia ispezione</string>
+    <string name="inspectionProcessing">Elaborazione ispezione...</string>
+    <string name="analyzing">Analisi in corso...</string>
+    <string name="inspectionApproved">Ispezione approvata</string>
+    <string name="inspectionRedirecting">Reindirizzamento ai dettagli...</string>
+
+    <!-- Component Scan -->
+    <string name="scanComponent">Scansiona componente</string>
+
+    <!-- Issue Reporting -->
+    <string name="reportIssue">Segnala problema</string>
+
+    <!-- Status Labels -->
+    <string name="statusPassed">Parte approvata</string>
+    <string name="statusWarning">Revisione consigliata</string>
+    <string name="statusFailed">Guasto critico</string>
+
+    <!-- Calibration -->
+    <string name="calibrationOpen">Apri Calibrazione</string>
+    <string name="calibrationSection">Calibrazione</string>
+    <string name="calibrationOpening">Apertura calibrazione...</string>
+
+    <!-- Reports -->
+    <string name="reportGenerate">Genera Report</string>
+    <string name="reportGenerateConfirm">Desideri generare il report di ispezione?</string>
+    <string name="reportRequesting">Richiesta report...</string>
+    <string name="reportSection">Report</string>
+
+    <!-- Dashboard -->
+    <string name="dashboardTitle">Dashboard Celestic</string>
+    <string name="dashboardOpenDetails">Apertura dettagli...</string>
+    <string name="viewHistory">Vedi Cronologia</string>
+
+    <!-- Analysis Modes -->
+    <string name="analysisModes">Modalità di Analisi</string>
+    <string name="modeBodywork">Carrozzeria</string>
+    <string name="modeBodyworkActivated">Modalità carrozzeria attivata</string>
+    <string name="modePrecision">Precisione</string>
+    <string name="modePrecisionActivated">Modalità precisione attivata</string>
+    <string name="modeMetals">Metalli</string>
+    <string name="modeMetalsActivated">Modalità metalli attivata</string>
+    <string name="celesticMode">Celestic</string>
+    <string name="opencv_init_error">Errore inizializzazione opencv</string>
+</resources>
