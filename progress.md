@@ -6,153 +6,153 @@ This file tracks the progress of the Celestic project.
 
 | No. | Feature | Status | Android Technical Description |
 |---|---|---|---|
-| 1️⃣ | Live Image Analysis | ✅ Completed | CameraX + OpenCV |
-| 2️⃣ | Object Classifier | ✅ Implemented | .tflite + pre-tagging |
-| 3️⃣ | Edge Detection | ✅ Implemented | Canny, Sobel, findContours |
-| 4️⃣ | Technical classification | ✅ Implemented | AI trained in Python, converted to mobile |
+| 1️⃣ | Live Image Analysis |  | CameraX + OpenCV |
+| 2️⃣ | Object Classifier |  | .tflite + pre-tagging |
+| 3️⃣ | Edge Detection |  | Canny, Sobel, findContours |
+| 4️⃣ | Technical classification |  | AI trained in Python, converted to mobile |
 | 5️⃣ | Car body inspection | 🔲 Future | Multi-capture + segmentation |
-| 6️⃣ | 2D plan with measurements | ✅ Implemented | Canvas + calibrated scale |
-| 7️⃣ | Dynamic display per part | ✅ Implemented | UI Compose + ID + state color |
-| 8️⃣ | Charuco calibration | ✅ Completed | cv2.aruco, results in .json |
-| 9️⃣ | ArUco + AprilTag | ✅ Implemented | Native JNI + persistence |
-| 🔟 | Code scanning | ✅ Active | ML Kit or Android pyzbar |
-| 🧩 | Inspection saved | ✅ Implemented | Room or local .json export |
-| 📄 | Report generation | ✅ Implemented | PDF/Word export on request |
-| 🧩 | Dependency Injection | ✅ Implemented | Hilt |
-| 🐛 | Error Handling | ✅ Implemented | Sealed class for UI states |
-| 🧪 | Unit Tests | ✅ Implemented | JUnit and MockK |
-| ✨ | UI Improvements | ✅ Implemented | Animations and Shimmer effect |
-| 🔐 | Authentication | ✅ Implemented | Firebase Authentication |
-| ⚙️ | Settings | ✅ Implemented | Settings screen |
-| 📏 | 2D Drawing | ✅ Implemented | 2D drawing with measurements |
-| 🖼️ | Dynamic Display | ✅ Implemented | Dynamic display by part |
-| 💾 | Save Inspections | ✅ Implemented | Save inspections to database |
-| 🔬 | Image Processing | ✅ Implemented | Advanced image processing techniques |
-| 📷 | Camera Calibration | ✅ Implemented | Advanced camera calibration techniques |
+| 6️⃣ | 2D plan with measurements | | Canvas + calibrated scale |
+| 7️⃣ | Dynamic display per part | | UI Compose + ID + state color |
+| 8️⃣ | Charuco calibration |  | cv2.aruco, results in .json |
+| 9️⃣ | ArUco + AprilTag | | Native JNI + persistence |
+| 🔟 | Code scanning || ML Kit or Android pyzbar |
+| 🧩 | Inspection saved | | Room or local .json export |
+| 📄 | Report generation | | PDF/Word export on request |
+| 🧩 | Dependency Injection |  | Hilt |
+| 🐛 | Error Handling || Sealed class for UI states |
+| 🧪 | Unit Tests | | JUnit and MockK |
+| ✨ | UI Improvements | | Animations and Shimmer effect |
+| 🔐 | Authentication || Firebase Authentication |
+| ⚙️ | Settings |  | Settings screen |
+| 📏 | 2D Drawing |  | 2D drawing with measurements |
+| 🖼️ | Dynamic Display | | Dynamic display by part |
+| 💾 | Save Inspections | | Save inspections to database |
+| 🔬 | Image Processing |  | Advanced image processing techniques |
+| 📷 | Camera Calibration |  | Advanced camera calibration techniques |
 
 ## Checklist
 
 ### 1. Basic Project Structure
-- [X] MainActivity.kt
-- [X] AppNavigation.kt
-- [X] ui/ folder
-- [X] model/ folder
-- [X] data/ folder
-- [X] theme/ folder
-- [X] utils/ folder
-- [X] colors.xml
-- [X] strings.xml
-- [X] dimens.xml
-- [X] themes.xml
-- [X] CelesticTheme.kt
-- [X] Typography.kt
-- [X] Shape.kt
+- [ ] MainActivity.kt
+- [ ] AppNavigation.kt
+- [ ] ui/ folder
+- [ ] model/ folder
+- [ ] data/ folder
+- [ ] theme/ folder
+- [ ] utils/ folder
+- [ ] colors.xml
+- [ ] strings.xml
+- [ ] dimens.xml
+- [ ] themes.xml
+- [ ] CelesticTheme.kt
+- [ ] Typography.kt
+- [ ] Shape.kt
 
 ### 2. Data Model + Persistence
-- [X] DetectionItem.kt
-- [X] DetectionStatus.kt
-- [X] BoundingBox.kt
-- [X] ReportEntry.kt
-- [X] CameraCalibrationData.kt
-- [X] DetectedFeature.kt
-- [X] ReportConfig.kt
-- [X] DetectionDao.kt
-- [X] DetectionDatabase.kt
-- [X] DetectionRepository.kt
-- [X] calibration.json
-- [X] traceability.json
-- [X] config_report.json
+- [ ] DetectionItem.kt
+- [ ] DetectionStatus.kt
+- [ ] BoundingBox.kt
+- [ ] ReportEntry.kt
+- [ ] CameraCalibrationData.kt
+- [ ] DetectedFeature.kt
+- [ ] ReportConfig.kt
+- [ ] DetectionDao.kt
+- [ ] DetectionDatabase.kt
+- [ ] DetectionRepository.kt
+- [ ] calibration.json
+- [ ] traceability.json
+- [ ] config_report.json
 
 ### 3. Camera + Image Analysis Module
-- [X] CameraView.kt
-- [X] CameraUtils.kt
-- [X] FrameAnalyzer.kt
-- [X] CalibrationManager.kt
-- [X] OpenCVInitializer.kt
+- [ ] CameraView.kt
+- [ ] CameraUtils.kt
+- [ ] FrameAnalyzer.kt
+- [ ] CalibrationManager.kt
+- [ ] OpenCVInitializer.kt
 
 ### 4. Integrated Artificial Intelligence
-- [X] ImageClassifier.kt
+- [ ] ImageClassifier.kt
 
 ### 5. Interface and Screens
-- [X] DashboardScreen.kt
-- [X] CameraScreen.kt
-- [X] DetailsScreen.kt
-- [X] ReportRequestDialog.kt
-- [X] InspectionPreviewScreen.kt
-- [X] CalibrationScreen.kt
-- [X] FeatureCard.kt
-- [X] StatusIndicator.kt
-- [X] MeasurementOverlay.kt
-- [X] NavigationRoutes.kt
-- [X] NavigationGraph.kt
+- [ ] DashboardScreen.kt
+- [ ] CameraScreen.kt
+- [ ] DetailsScreen.kt
+- [ ] ReportRequestDialog.kt
+- [ ] InspectionPreviewScreen.kt
+- [ ] CalibrationScreen.kt
+- [ ] FeatureCard.kt
+- [ ] StatusIndicator.kt
+- [ ] MeasurementOverlay.kt
+- [ ] NavigationRoutes.kt
+- [ ] NavigationGraph.kt
 
 ### 6. QR / ArUco / AprilTag Traceability
-- [X] QRScanner.kt
-- [X] ArUcoManager.kt
-- [X] AprilTagManager.kt
-
+- [ ] QRScanner.kt
+- [ ] ArUcoManager.kt
+- [ ] AprilTagManager.kt
+ 
 ### 7. Inspection Report (PDF / Word / JSON)
-- [X] ReportGenerator.kt
+- [ ] ReportGenerator.kt
 
 ### 8. Visual Resources
-- [X] charuco_pattern.png
-- [X] logo_celestic.png
-- [X] icon_inspection.png
-- [X] icon_pdf.png, icon_word.png
-- [X] status_green.png, status_yellow.png, status_red.png
-- [X] graph_placeholder.png
+- [ ] charuco_pattern.png
+- [ ] logo_celestic.png
+- [ ] icon_inspection.png
+- [ ] icon_pdf.png, icon_word.png
+- [ ] status_green.png, status_yellow.png, status_red.png
+- [ ] graph_placeholder.png
 
 ### 9. Dependency Injection
-- [X] Hilt implementation
+- [ ] Hilt implementation
 
 ### 10. Error Handling
-- [X] Sealed class for UI states
+- [ ] Sealed class for UI states
 
 ### 11. Unit Tests
-- [X] ViewModels tests
+- [ ] ViewModels tests
 
 ### 12. UI Improvements
-- [X] Animations
+- [ ] Animations
 
 ### 13. Authentication
-- [X] Firebase Authentication
+- [ ] Firebase Authentication
 
 ### 14. Settings
-- [X] Settings screen
+- [ ] Settings screen
 
 ### 15. 2D Drawing
-- [X] Drawing canvas
+- [ ] Drawing canvas
 
 ### 16. Dynamic Display
-- [X] Detection item card
+- [ ] Detection item card
 
 ### 17. Save Inspections
-- [X] Inspection entity
+- [ ] Inspection entity
 
 ### 18. Unit Tests for Repositories
-- [X] DetectionRepository test
+- [ ] DetectionRepository test
 
 ### 19. UI Improvements
-- [X] Shimmer effect
+- [ ] Shimmer effect
 
 ### 20. Image Processing
-- [X] Hough Circle Transform
-- [X] Contour Approximation
-- [X] Adaptive Thresholding
-- [X] Contour Filtering
-- [X] Watershed Algorithm
-- [X] Template Matching
-- [X] Optical Flow
+- [ ] Hough Circle Transform
+- [ ] Contour Approximation
+- [ ] Adaptive Thresholding
+- [ ] Contour Filtering
+- [ ] Watershed Algorithm
+- [ ] Template Matching
+- [ ] Optical Flow
 
 ### 21. Camera Calibration
-- [X] Sub-pixel corner detection
-- [X] Calibration with multiple images
+- [ ] Sub-pixel corner detection
+- [ ] Calibration with multiple images
 
 ### 22. Unit Tests for Business Logic
-- [X] FrameAnalyzer test
+- [ ] FrameAnalyzer test
 
 ### 23. Report Generation
-- [X] CSV support
+- [ ] CSV support
 
 ## Post-production
 - Create a base application to add modules.
