@@ -104,12 +104,26 @@
     <string name="resetSystem">RESET SYSTEM</string>
     <string name="returnToDashboard">Return to Dashboard</string>
     <string name="statusLabel">STATUS: %1$s</string>
+    <string name="batch_label">Batch: %1$s</string>
     <string name="start">START</string>
     <string name="stop">STOP</string>
     <string name="cal_abbr">CAL</string>
     <string name="hist_abbr">HIST</string>
     <string name="rep_abbr">REP</string>
     <string name="blueprint_desc">Blueprint Image</string>
+
+    <!-- Details Screen -->
+    <string name="visualAnalysis">VISUAL ANALYSIS</string>
+    <string name="detectionsHeadline">DETECTIONS</string>
+    <string name="traceabilityHeadline">TRACEABILITY</string>
+    <string name="detailedAnalysis">Detailed Analysis</string>
+    <string name="partCode">Part Code</string>
+    <string name="modelType">Model/Type</string>
+    <string name="operator">Operator</string>
+    <string name="inspectionDate">Inspection Date</string>
+    <string name="finalStatus">Final Status</string>
+    <string name="noTraceability">No traceability information available.</string>
+    <string name="reportIssueSent">Issue report sent</string>
 
     <!-- Settings -->
     <string name="settingsTitle">SETTINGS</string>
@@ -146,5 +160,11 @@
     <string name="rmsError">RMS ERROR</string>
     <string name="calibrate">CALIBRATE</string>
     <string name="calibrationInstructions">Move the pattern to different angles.</string>
+
+    <!-- Status Screen -->
+    <string name="systemStatus">SYSTEM STATUS</string>
+    <string name="hardwareInfo">HARDWARE INFO</string>
+    <string name="softwareInfo">SOFTWARE INFO</string>
+    <string name="configuration">CONFIGURATION</string>
 
 </resources>

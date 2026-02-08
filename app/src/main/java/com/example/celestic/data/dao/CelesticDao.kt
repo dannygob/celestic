@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CelesticDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(item: DetectionItem)
+    suspend fun insert(item: DetectionItem): Long
 
     @Query("SELECT * FROM detection_items ORDER BY timestamp DESC")
     fun getAll(): Flow<List<DetectionItem>>

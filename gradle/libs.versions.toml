@@ -21,6 +21,7 @@ gson = "2.11.0"
 itext7 = "8.0.5"
 foundation = "1.10.1"
 foundationLayout = "1.10.1"
+foundationLayoutVersion = "1.10.2"
 
 
 [libraries]
@@ -68,6 +69,7 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 itext7-core = { group = "com.itextpdf", name = "itext7-core", version.ref = "itext7" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
+androidx-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayoutVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -68,7 +68,7 @@ fun DetailsScreen(
     val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
 
     // Si no hay viewModel (Preview), usamos estados fijos
-    val trazabilidadResult = detailsViewModel?.trazabilidadItem?.collectAsState()?.value
+    val traceabilityResult = detailsViewModel?.traceabilityItem?.collectAsState()?.value
         ?: com.example.celestic.utils.Result.Loading
     val features = detailsViewModel?.features?.collectAsState()?.value ?: emptyList()
     val useInches = sharedViewModel.useInches.collectAsState().value
@@ -80,16 +80,18 @@ fun DetailsScreen(
     val cardBg =
         if (isDarkMode) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
 
+    val reportSentMsg = stringResource(R.string.reportIssueSent)
+
     val title = when (detailType) {
         "hole" -> stringResource(R.string.detailsHole)
         "alodine" -> stringResource(R.string.detailsAlodine)
         "countersink" -> stringResource(R.string.detailsCountersink)
-        else -> "Análisis Detallado"
+        else -> stringResource(R.string.detailedAnalysis)
     }
 
     LaunchedEffect(detectionItem) {
-        detectionItem?.linkedQrCode?.let { codigo ->
-            detailsViewModel?.loadTrazabilidad(codigo)
+        detectionItem?.linkedQrCode?.let { code ->
+            detailsViewModel?.loadTraceability(code)
         }
         detectionItem?.id?.let {
             detailsViewModel?.loadFeatures(it)
@@ -109,7 +111,11 @@ fun DetailsScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = textColor)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            stringResource(R.string.back),
+                            tint = textColor
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -130,7 +136,7 @@ fun DetailsScreen(
             // Sección de Visualización Técnica
             item {
                 Text(
-                    "VISUALIZACIÓN TÉCNICA",
+                    stringResource(R.string.visualAnalysis),
                     color = sectionColor,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
@@ -152,7 +158,7 @@ fun DetailsScreen(
             // Sección de Características Detectadas
             item {
                 Text(
-                    "DETECCIONES",
+                    stringResource(R.string.detectionsHeadline),
                     color = sectionColor,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
@@ -194,7 +200,7 @@ fun DetailsScreen(
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "TRAZABILIDAD",
+                    stringResource(R.string.traceabilityHeadline),
                     color = sectionColor,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
@@ -203,7 +209,7 @@ fun DetailsScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 AnimatedContent(
-                    targetState = trazabilidadResult,
+                    targetState = traceabilityResult,
                     label = "traceability"
                 ) { result ->
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -221,32 +227,32 @@ fun DetailsScreen(
                                     ) {
                                         Column(modifier = Modifier.padding(16.dp)) {
                                             TraceabilityRow(
-                                                "Código Pieza",
-                                                data.codigo,
+                                                stringResource(R.string.partCode),
+                                                data.code,
                                                 textColor,
                                                 Color.Gray
                                             )
                                             TraceabilityRow(
-                                                "Modelo/Tipo",
-                                                data.pieza,
+                                                stringResource(R.string.modelType),
+                                                data.partName,
                                                 textColor,
                                                 Color.Gray
                                             )
                                             TraceabilityRow(
-                                                "Operario",
-                                                data.operario,
+                                                stringResource(R.string.operator),
+                                                data.operatorName,
                                                 textColor,
                                                 Color.Gray
                                             )
                                             TraceabilityRow(
-                                                "Fecha Inspección",
-                                                data.fecha,
+                                                stringResource(R.string.inspectionDate),
+                                                data.inspectionDate,
                                                 textColor,
                                                 Color.Gray
                                             )
                                             TraceabilityRow(
-                                                "Estado Final",
-                                                data.resultado,
+                                                stringResource(R.string.finalStatus),
+                                                data.finalStatus,
                                                 textColor,
                                                 Color.Gray,
                                                 isStatus = true
@@ -262,7 +268,7 @@ fun DetailsScreen(
 
                             else -> {
                                 Text(
-                                    "Sin información de trazabilidad disponible.",
+                                    stringResource(R.string.noTraceability),
                                     color = Color.Gray,
                                     fontSize = 14.sp
                                 )
@@ -277,8 +283,7 @@ fun DetailsScreen(
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
                     onClick = {
-                        Toast.makeText(context, "Reporte de incidencia enviado", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(context, reportSentMsg, Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),

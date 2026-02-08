@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.androidx.foundation.layout)
     ksp(libs.hilt.compiler)
 
     // --- BASE DE DATOS (ROOM) ---

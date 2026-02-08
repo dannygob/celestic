@@ -41,7 +41,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,7 +53,9 @@ import com.example.celestic.R
 import com.example.celestic.ui.component.CameraPreview
 import com.example.celestic.ui.component.triggerCameraCapture
 import com.example.celestic.ui.theme.CelesticTheme
+import com.example.celestic.viewmodel.CalibrationState
 import com.example.celestic.viewmodel.CalibrationViewModel
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,16 +64,13 @@ fun CalibrationScreen(
     sharedViewModel: com.example.celestic.viewmodel.SharedViewModel = hiltViewModel(),
     calibrationViewModel: CalibrationViewModel = hiltViewModel()
 ) {
-    LocalContext.current
     val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
     val uiState by calibrationViewModel.uiState.collectAsState()
+    val locale = Locale.getDefault()
 
     val background = if (isDarkMode) Color(0xFF0A0E14) else Color(0xFFF2F2F2)
-    val topBarBg = if (isDarkMode) Color.Black else Color.White
     val textColor = if (isDarkMode) Color.White else Color.Black
-    val accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
-    val cardBg =
-        if (isDarkMode) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
+    val topBarBg = if (isDarkMode) Color.Black else Color.White
 
     BoxWithConstraints(
         modifier = Modifier
@@ -83,343 +81,355 @@ fun CalibrationScreen(
 
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = {
-                        Column {
-                            Text(
-                                stringResource(R.string.calibrationTitle),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 2.sp,
-                                color = textColor
-                            )
-                            uiState.calibrationDate?.let {
-                                Text(
-                                    stringResource(R.string.lastCalibration, it),
-                                    fontSize = 10.sp,
-                                    color = Color.Gray
-                                )
-                            }
-                        }
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = stringResource(R.string.returnDesc),
-                                tint = textColor
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { calibrationViewModel.reset() }) {
-                            Icon(
-                                Icons.Default.Refresh,
-                                contentDescription = stringResource(R.string.reset),
-                                tint = textColor
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = topBarBg,
-                        titleContentColor = textColor
-                    )
+                CalibrationTopBar(
+                    uiState = uiState,
+                    textColor = textColor,
+                    topBarBg = topBarBg,
+                    onBack = { navController.popBackStack() },
+                    onReset = { calibrationViewModel.reset() }
                 )
             },
             containerColor = background
         ) { paddingValues ->
             if (isLandscape) {
-                // DISEÑO LANDSCAPE (Cámara izquierda, Controles derecha)
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // Área de Cámara (60% de ancho)
-                    Box(
-                        modifier = Modifier
-                            .weight(1.5f)
-                            .fillMaxHeight()
-                            .clip(RoundedCornerShape(24.dp))
-                            .background(Color.Black)
-                    ) {
-                        CameraPreview(onFrameCaptured = { bitmap ->
-                            calibrationViewModel.captureFrame(bitmap)
-                        })
-
-                        // Overlay de estado de captura (Mini)
-                        uiState.lastCaptureSuccess?.let { success ->
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.TopCenter)
-                                    .padding(top = 8.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(
-                                        if (success) Color.Green.copy(alpha = 0.8f) else Color.Red.copy(
-                                            alpha = 0.8f
-                                        )
-                                    )
-                                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                            ) {
-                                Text(
-                                    if (success) stringResource(R.string.patternDetected) else stringResource(
-                                        R.string.patternNotVisible
-                                    ),
-                                    color = Color.White,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-                    }
-
-                    // Panel de Control (40% de ancho)
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        // Estadísticas rápidamente legibles
-                        Card(
-                            colors = CardDefaults.cardColors(containerColor = cardBg),
-                            shape = RoundedCornerShape(16.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column {
-                                    Text(
-                                        stringResource(R.string.captures),
-                                        color = Color.Gray,
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Text(
-                                        "${uiState.capturedFrames} / 15",
-                                        color = accentColor,
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.Black
-                                    )
-                                }
-                                uiState.rmsError?.let { rms ->
-                                    Column(horizontalAlignment = Alignment.End) {
-                                        Text(
-                                            stringResource(R.string.rmsError),
-                                            color = Color.Gray,
-                                            fontSize = 10.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        Text(
-                                            "%.3f".format(rms),
-                                            color = if (rms < 0.5) Color.Green else Color.Red,
-                                            fontSize = 20.sp,
-                                            fontWeight = FontWeight.Black
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        Button(
-                            onClick = { triggerCameraCapture() },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = accentColor)
-                        ) {
-                            Icon(Icons.Default.Camera, contentDescription = null)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(R.string.Capture), fontWeight = FontWeight.Bold)
-                        }
-
-                        Button(
-                            onClick = { calibrationViewModel.runCalibration() },
-                            enabled = uiState.capturedFrames >= 5 && !uiState.isCalibrating,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF1B263B),
-                                disabledContainerColor = Color.Gray.copy(alpha = 0.3f)
-                            )
-                        ) {
-                            if (uiState.isCalibrating) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    color = Color.White,
-                                    strokeWidth = 2.dp
-                                )
-                            } else {
-                                Icon(Icons.Default.Science, contentDescription = null)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    stringResource(R.string.calibrate),
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-
-                        Text(
-                            stringResource(R.string.calibrationInstructions),
-                            color = Color.Gray,
-                            fontSize = 11.sp,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                }
+                LandscapeCalibrationContent(
+                    paddingValues = paddingValues,
+                    uiState = uiState,
+                    viewModel = calibrationViewModel,
+                    locale = locale,
+                    isDarkMode = isDarkMode
+                )
             } else {
-                // DISEÑO PORTRAIT (El original con mejoras de padding)
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Panel de Control Superior
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                stringResource(R.string.captures),
-                                color = Color.Gray,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                "${uiState.capturedFrames} / 15",
-                                color = accentColor,
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Black
-                            )
-                        }
+                PortraitCalibrationContent(
+                    paddingValues = paddingValues,
+                    uiState = uiState,
+                    viewModel = calibrationViewModel,
+                    locale = locale,
+                    isDarkMode = isDarkMode
+                )
+            }
+        }
+    }
+}
 
-                        uiState.rmsError?.let { rms ->
-                            Column(horizontalAlignment = Alignment.End) {
-                                Text(
-                                    stringResource(R.string.rmsError),
-                                    color = Color.Gray,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    "%.4f".format(rms),
-                                    color = if (rms < 0.5) Color.Green else Color.Red,
-                                    fontSize = 24.sp,
-                                    fontWeight = FontWeight.Black
-                                )
-                            }
-                        }
-                    }
-
-                    // Área de Cámara
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .clip(RoundedCornerShape(24.dp))
-                            .background(Color.Black)
-                    ) {
-                        CameraPreview(onFrameCaptured = { bitmap ->
-                            calibrationViewModel.captureFrame(bitmap)
-                        })
-
-                        uiState.lastCaptureSuccess?.let { success ->
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.TopCenter)
-                                    .padding(top = 16.dp)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(
-                                        if (success) Color.Green.copy(alpha = 0.8f) else Color.Red.copy(
-                                            alpha = 0.8f
-                                        )
-                                    )
-                                    .padding(horizontal = 12.dp, vertical = 6.dp)
-                            ) {
-                                Text(
-                                    if (success) stringResource(R.string.patternDetected) else stringResource(
-                                        R.string.patternNotVisible
-                                    ),
-                                    color = Color.White,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-                    }
-
-                    // Acciones Inferiores
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(24.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Button(
-                            onClick = { triggerCameraCapture() },
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(56.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = accentColor)
-                        ) {
-                            Icon(Icons.Default.Camera, contentDescription = null)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(R.string.Capture), fontWeight = FontWeight.Bold)
-                        }
-
-                        Button(
-                            onClick = { calibrationViewModel.runCalibration() },
-                            enabled = uiState.capturedFrames >= 5 && !uiState.isCalibrating,
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(56.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF1B263B),
-                                disabledContainerColor = Color.Gray.copy(alpha = 0.3f)
-                            )
-                        ) {
-                            if (uiState.isCalibrating) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    color = Color.White,
-                                    strokeWidth = 2.dp
-                                )
-                            } else {
-                                Icon(Icons.Default.Science, contentDescription = null)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    stringResource(R.string.calibrate),
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-                    }
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CalibrationTopBar(
+    uiState: CalibrationState,
+    textColor: Color,
+    topBarBg: Color,
+    onBack: () -> Unit,
+    onReset: () -> Unit
+) {
+    TopAppBar(
+        title = {
+            Column {
+                Text(
+                    stringResource(R.string.calibrationTitle),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 2.sp,
+                    color = textColor
+                )
+                uiState.calibrationDate?.let { date ->
                     Text(
-                        stringResource(R.string.calibrationInstructions),
-                        color = Color.Gray,
-                        fontSize = 11.sp,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        stringResource(R.string.lastCalibration, date),
+                        fontSize = 10.sp,
+                        color = Color.Gray
                     )
                 }
+            }
+        },
+        navigationIcon = {
+            IconButton(onClick = onBack) {
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.returnDesc),
+                    tint = textColor
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = onReset) {
+                Icon(
+                    Icons.Default.Refresh,
+                    contentDescription = stringResource(R.string.reset),
+                    tint = textColor
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = topBarBg,
+            titleContentColor = textColor
+        )
+    )
+}
+
+@Composable
+private fun LandscapeCalibrationContent(
+    paddingValues: androidx.compose.foundation.layout.PaddingValues,
+    uiState: CalibrationState,
+    viewModel: CalibrationViewModel,
+    locale: Locale,
+    isDarkMode: Boolean
+) {
+    val accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
+    val cardBg =
+        if (isDarkMode) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
+
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .weight(1.5f)
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(24.dp))
+                .background(Color.Black)
+        ) {
+            CameraPreview(onFrameCaptured = { viewModel.captureFrame(it) })
+            CaptureStatusOverlay(uiState.lastCaptureSuccess, Alignment.TopCenter)
+        }
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            CalibrationStatsCard(uiState, accentColor, cardBg, locale)
+
+            CalibrationActions(
+                uiState = uiState,
+                accentColor = accentColor,
+                onCapture = { triggerCameraCapture() },
+                onCalibrate = { viewModel.runCalibration() }
+            )
+
+            Text(
+                stringResource(R.string.calibrationInstructions),
+                color = Color.Gray,
+                fontSize = 11.sp,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
+private fun PortraitCalibrationContent(
+    paddingValues: androidx.compose.foundation.layout.PaddingValues,
+    uiState: CalibrationState,
+    viewModel: CalibrationViewModel,
+    locale: Locale,
+    isDarkMode: Boolean
+) {
+    val accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
+    val cardBg =
+        if (isDarkMode) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CalibrationStatsCard(
+            uiState = uiState,
+            accentColor = accentColor,
+            cardBg = cardBg,
+            locale = locale,
+            modifier = Modifier.padding(16.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .background(Color.Black)
+        ) {
+            CameraPreview(onFrameCaptured = { viewModel.captureFrame(it) })
+            CaptureStatusOverlay(uiState.lastCaptureSuccess, Alignment.TopCenter)
+        }
+
+        CalibrationActions(
+            uiState = uiState,
+            accentColor = accentColor,
+            onCapture = { triggerCameraCapture() },
+            onCalibrate = { viewModel.runCalibration() },
+            modifier = Modifier.padding(24.dp),
+            isLandscape = false
+        )
+
+        Text(
+            stringResource(R.string.calibrationInstructions),
+            color = Color.Gray,
+            fontSize = 11.sp,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+    }
+}
+
+@Composable
+private fun CalibrationStatsCard(
+    uiState: CalibrationState,
+    accentColor: Color,
+    cardBg: Color,
+    locale: Locale,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = cardBg),
+        shape = RoundedCornerShape(16.dp),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    stringResource(R.string.captures),
+                    color = Color.Gray,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    "${uiState.capturedFrames} / 15",
+                    color = accentColor,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Black
+                )
+            }
+            uiState.rmsError?.let { rms ->
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        stringResource(R.string.rmsError),
+                        color = Color.Gray,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        String.format(locale, "%.4f", rms),
+                        color = if (rms < 0.5) Color.Green else Color.Red,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Black
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CalibrationActions(
+    uiState: CalibrationState,
+    accentColor: Color,
+    onCapture: () -> Unit,
+    onCalibrate: () -> Unit,
+    modifier: Modifier = Modifier,
+    isLandscape: Boolean = true
+) {
+    if (isLandscape) {
+        Column(modifier = modifier) {
+            CalibrationButtons(
+                uiState,
+                accentColor,
+                onCapture,
+                onCalibrate,
+                Modifier.fillMaxWidth()
+            )
+        }
+    } else {
+        Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            CalibrationButtons(uiState, accentColor, onCapture, onCalibrate, Modifier.weight(1f))
+        }
+    }
+}
+
+@Composable
+private fun CalibrationButtons(
+    uiState: CalibrationState,
+    accentColor: Color,
+    onCapture: () -> Unit,
+    onCalibrate: () -> Unit,
+    buttonModifier: Modifier
+) {
+    Button(
+        onClick = onCapture,
+        modifier = buttonModifier.height(56.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = accentColor)
+    ) {
+        Icon(Icons.Default.Camera, contentDescription = null)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(stringResource(R.string.Capture), fontWeight = FontWeight.Bold)
+    }
+
+    // El Spacer depende de si es Columna o Fila, pero podemos usar un Box o manejarlo fuera.
+    // Para simplificar, lo manejamos en el contenedor (CalibrationActions).
+
+    Button(
+        onClick = onCalibrate,
+        enabled = uiState.capturedFrames >= 5 && !uiState.isCalibrating,
+        modifier = buttonModifier.height(56.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF1B263B),
+            disabledContainerColor = Color.Gray.copy(alpha = 0.3f)
+        )
+    ) {
+        if (uiState.isCalibrating) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                color = Color.White,
+                strokeWidth = 2.dp
+            )
+        } else {
+            Icon(Icons.Default.Science, contentDescription = null)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                stringResource(R.string.calibrate),
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+@Composable
+private fun CaptureStatusOverlay(success: Boolean?, alignment: Alignment) {
+    success?.let { isSuccess ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = alignment
+        ) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        if (isSuccess) Color.Green.copy(alpha = 0.8f)
+                        else Color.Red.copy(alpha = 0.8f)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 6.dp)
+            ) {
+                Text(
+                    if (isSuccess) stringResource(R.string.patternDetected)
+                    else stringResource(R.string.patternNotVisible),
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

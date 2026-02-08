@@ -22,23 +22,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.celestic.R
 import com.example.celestic.models.DetectionItem
 import com.example.celestic.models.enums.DetectionStatus
+import java.util.Locale
 
 @Composable
 fun DetectionItemCard(
     item: DetectionItem,
     onClick: () -> Unit = {}
 ) {
-    16.dp
-    48.dp
-    4.dp
-    32.dp
-    12.dp
-    12.dp
+    val locale = Locale.getDefault()
     val statusColor = when (item.status) {
         DetectionStatus.OK -> Color(0xFF2E7D32)
         DetectionStatus.WARNING -> Color(0xFFF9A825)
@@ -89,7 +87,7 @@ fun DetectionItemCard(
                     fontSize = 15.sp
                 )
                 Text(
-                    text = "Lote: ${item.linkedQrCode ?: "N/A"}",
+                    text = stringResource(R.string.batch_label, item.linkedQrCode ?: "N/A"),
                     color = Color.Gray,
                     fontSize = 12.sp
                 )
@@ -98,7 +96,7 @@ fun DetectionItemCard(
             Column(horizontalAlignment = Alignment.End) {
                 item.measurementMm?.let {
                     Text(
-                        text = "${String.format("%.2f", it)} mm",
+                        text = "${String.format(locale, "%.2f", it)} mm",
                         color = Color.White,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp

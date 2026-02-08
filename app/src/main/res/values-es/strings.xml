@@ -102,12 +102,26 @@
     <string name="resetSystem">REINICIAR SISTEMA</string>
     <string name="returnToDashboard">Volver al Panel</string>
     <string name="statusLabel">ESTADO: %1$s</string>
+    <string name="batch_label">Lote: %1$s</string>
     <string name="start">INICIAR</string>
     <string name="stop">PARAR</string>
     <string name="cal_abbr">CAL</string>
     <string name="hist_abbr">HIST</string>
     <string name="rep_abbr">INF</string>
     <string name="blueprint_desc">Imagen del Plano</string>
+
+    <!-- Details Screen -->
+    <string name="visualAnalysis">VISUALIZACIÓN TÉCNICA</string>
+    <string name="detectionsHeadline">DETECCIONES</string>
+    <string name="traceabilityHeadline">TRAZABILIDAD</string>
+    <string name="detailedAnalysis">Análisis Detallado</string>
+    <string name="partCode">Código Pieza</string>
+    <string name="modelType">Modelo/Tipo</string>
+    <string name="operator">Operario</string>
+    <string name="inspectionDate">Fecha Inspección</string>
+    <string name="finalStatus">Estado Final</string>
+    <string name="noTraceability">Sin información de trazabilidad disponible.</string>
+    <string name="reportIssueSent">Reporte de incidencia enviado</string>
 
     <!-- Settings -->
     <string name="settingsTitle">CONFIGURACIÓN</string>
@@ -122,4 +136,36 @@
     <string name="darkModeDesc">Forzar interfaz de alto contraste</string>
     <string name="hardwareOptics">HARDWARE Y ÓPTICA</string>
     <string name="opticsAutoAdjust">Las especificaciones ópticas se ajustan automáticamente según el perfil del hardware detectado para optimizar la precisión.</string>
+
+    <!-- Analysis Modes -->
+    <string name="modeMetals">Metales</string>
+    <string name="modeMetalsActivated">Modo metales activado</string>
+
+    <!-- Calibration Screen -->
+    <string name="calibrationTitle">CALIBRACIÓN</string>
+    <string name="lastCalibration">Última: %1$s</string>
+    <string name="reset">Reiniciar</string>
+    <string name="patternDetected">PATRÓN DETECTADO</string>
+    <string name="patternNotVisible">PATRÓN NO VISIBLE</string>
+    <string name="captures">CAPTURAS</string>
+    <string name="rmsError">ERROR RMS</string>
+    <string name="calibrate">CALIBRAR</string>
+    <string name="calibrationInstructions">Mueva el patrón a diferentes ángulos.</string>
+
+    <!-- Status Screen -->
+    <string name="systemStatus">ESTADO DEL SISTEMA</string>
+    <string name="hardwareInfo">INFO DE HARDWARE</string>
+    <string name="softwareInfo">INFO DE SOFTWARE</string>
+    <string name="configuration">CONFIGURACIÓN</string>
+
+    <!-- Login -->
+    <string name="fillAllFields">Por favor, rellene todos los campos</string>
+    <string name="authError">Error de autenticación</string>
+    <string name="offlineMode">Modo Offline / Firebase no inicializado</string>
+
+    <!-- Reports Screen -->
+    <string name="reportsTitle">INFORMES</string>
+    <string name="reportsModule">MÓDULO DE INFORMES</string>
+    <string name="reportsSelectRange">Seleccione un rango de fechas para generar estadísticas.</string>
+    <string name="generatePdfReport">GENERAR INFORME PDF</string>
 </resources>

@@ -99,161 +99,203 @@ fun DashboardScreen(
 
         Scaffold(
             topBar = {
-                // TopBar adaptativo y compacto
-                Surface(
-                    color = if (isDarkMode) Color.Black else Color.White,
-                    shadowElevation = 4.dp,
-                    modifier = Modifier.padding(
-                        horizontal = if (isLandscape) 16.dp else 8.dp,
-                        vertical = if (isLandscape) 4.dp else 2.dp
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(
-                        1.dp,
-                        if (isDarkMode) Color.White.copy(alpha = 0.1f) else Color.Black.copy(alpha = 0.05f)
-                    )
-                ) {
-                    TopAppBar(
-                        title = {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.PrecisionManufacturing,
-                                    contentDescription = null,
-                                    tint = accentColor,
-                                    modifier = Modifier.size(if (isLandscape) 22.dp else 18.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    stringResource(R.string.appName).uppercase(),
-                                    fontSize = if (isLandscape) 16.sp else 13.sp,
-                                    fontWeight = FontWeight.Black,
-                                    letterSpacing = if (isLandscape) 2.sp else 1.sp,
-                                    color = textPrimary
-                                )
-                            }
-                        },
-                        actions = {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                NavIconBtn(
-                                    Icons.Default.Build,
-                                    stringResource(R.string.cal_abbr),
-                                    isLandscape,
-                                    isDarkMode
-                                ) { navController.navigate("calibration") }
-                                NavIconBtn(
-                                    Icons.Default.History,
-                                    stringResource(R.string.hist_abbr),
-                                    isLandscape,
-                                    isDarkMode
-                                ) { navController.navigate("detection_list") }
-                                NavIconBtn(
-                                    Icons.Default.Assessment,
-                                    stringResource(R.string.rep_abbr),
-                                    isLandscape,
-                                    isDarkMode
-                                ) { navController.navigate("reports") }
-
-                                IconButton(
-                                    onClick = { navController.navigate("settings") },
-                                    modifier = Modifier.size(if (isLandscape) 40.dp else 32.dp)
-                                ) {
-                                    Icon(
-                                        Icons.Default.Settings,
-                                        null,
-                                        tint = textSecondary,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                }
-
-                                Spacer(modifier = Modifier.width(if (isLandscape) 8.dp else 4.dp))
-
-                                Button(
-                                    onClick = {
-                                        if (state == DashboardState.Idle) viewModel?.startInspection()
-                                        else viewModel?.resetState()
-                                    },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = if (state == DashboardState.Idle) Color(
-                                            0xFF00695C
-                                        ) else Color(0xFFB71C1C)
-                                    ),
-                                    shape = RoundedCornerShape(8.dp),
-                                    contentPadding = PaddingValues(horizontal = if (isLandscape) 12.dp else 8.dp),
-                                    modifier = Modifier.height(if (isLandscape) 36.dp else 30.dp)
-                                ) {
-                                    Text(
-                                        if (state == DashboardState.Idle) stringResource(R.string.start) else stringResource(
-                                            R.string.stop
-                                        ),
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = Color.White
-                                    )
-                                }
-                            }
-                        },
-                        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-                        windowInsets = WindowInsets(0)
-                    )
-                }
+                DashboardTopBar(
+                    state = state as DashboardState,
+                    isLandscape = isLandscape,
+                    isDarkMode = isDarkMode,
+                    accentColor = accentColor,
+                    textPrimary = textPrimary,
+                    textSecondary = textSecondary,
+                    navController = navController,
+                    viewModel = viewModel
+                )
             },
             containerColor = Color.Transparent
         ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(mainBackground)
-                    .padding(paddingValues)
-            ) {
-                // Layout principal
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(if (isLandscape) 12.dp else 8.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(20.dp))
-                            .border(2.dp, frameBorder, RoundedCornerShape(20.dp))
-                            .background(if (isDarkMode) Color.Black else Color.White)
-                    ) {
-                        CornerDecorations(accentColor)
-
-                        Crossfade(targetState = state, label = "dashboardContent") { currentState ->
-                            when (currentState) {
-                                DashboardState.Idle -> StandbyView(
-                                    isLandscape,
-                                    accentColor,
-                                    textPrimary
-                                )
-
-                                DashboardState.CameraReady -> CameraView(isLandscape, viewModel)
-                                DashboardState.Processing -> LoadingView(accentColor, textPrimary)
-                                is DashboardState.Approved -> SuccessView(isLandscape)
-                                is DashboardState.Error -> ErrorView(isLandscape, viewModel)
-                                else -> {}
-                            }
-                        }
-                    }
-
-                    if (!isLandscape) {
-                        Text(
-                            stringResource(R.string.systemVersion),
-                            color = textSecondary.copy(alpha = 0.4f),
-                            fontSize = 9.sp,
-                            modifier = Modifier
-                                .padding(top = 8.dp)
-                                .align(Alignment.CenterHorizontally)
-                        )
-                    }
-                }
-            }
+            DashboardMainContent(
+                paddingValues = paddingValues,
+                state = state as DashboardState,
+                isLandscape = isLandscape,
+                isDarkMode = isDarkMode,
+                accentColor = accentColor,
+                textPrimary = textPrimary,
+                textSecondary = textSecondary,
+                frameBorder = frameBorder,
+                mainBackground = mainBackground,
+                viewModel = viewModel
+            )
         }
 
         // Modales y Efectos
-        DashboardModals(state, viewModel, navController)
+        DashboardModals(state as DashboardState, viewModel, navController)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DashboardTopBar(
+    state: DashboardState,
+    isLandscape: Boolean,
+    isDarkMode: Boolean,
+    accentColor: Color,
+    textPrimary: Color,
+    textSecondary: Color,
+    navController: NavController,
+    viewModel: DashboardViewModel?
+) {
+    Surface(
+        color = if (isDarkMode) Color.Black else Color.White,
+        shadowElevation = 4.dp,
+        modifier = Modifier.padding(
+            horizontal = if (isLandscape) 16.dp else 8.dp,
+            vertical = if (isLandscape) 4.dp else 2.dp
+        ),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(
+            1.dp,
+            if (isDarkMode) Color.White.copy(alpha = 0.1f) else Color.Black.copy(alpha = 0.05f)
+        )
+    ) {
+        TopAppBar(
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.PrecisionManufacturing,
+                        contentDescription = null,
+                        tint = accentColor,
+                        modifier = Modifier.size(if (isLandscape) 22.dp else 18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        stringResource(R.string.appName).uppercase(),
+                        fontSize = if (isLandscape) 16.sp else 13.sp,
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = if (isLandscape) 2.sp else 1.sp,
+                        color = textPrimary
+                    )
+                }
+            },
+            actions = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    NavIconBtn(
+                        Icons.Default.Build,
+                        stringResource(R.string.cal_abbr),
+                        isLandscape,
+                        isDarkMode
+                    ) { navController.navigate("calibration") }
+                    NavIconBtn(
+                        Icons.Default.History,
+                        stringResource(R.string.hist_abbr),
+                        isLandscape,
+                        isDarkMode
+                    ) { navController.navigate("detection_list") }
+                    NavIconBtn(
+                        Icons.Default.Assessment,
+                        stringResource(R.string.rep_abbr),
+                        isLandscape,
+                        isDarkMode
+                    ) { navController.navigate("reports") }
+
+                    IconButton(
+                        onClick = { navController.navigate("settings") },
+                        modifier = Modifier.size(if (isLandscape) 40.dp else 32.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Settings,
+                            null,
+                            tint = textSecondary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(if (isLandscape) 8.dp else 4.dp))
+
+                    Button(
+                        onClick = {
+                            if (state == DashboardState.Idle) viewModel?.startInspection()
+                            else viewModel?.resetState()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (state == DashboardState.Idle) Color(0xFF00695C)
+                            else Color(0xFFB71C1C)
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = if (isLandscape) 12.dp else 8.dp),
+                        modifier = Modifier.height(if (isLandscape) 36.dp else 30.dp)
+                    ) {
+                        Text(
+                            if (state == DashboardState.Idle) stringResource(R.string.start)
+                            else stringResource(R.string.stop),
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color.White
+                        )
+                    }
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+            windowInsets = WindowInsets(0)
+        )
+    }
+}
+
+@Composable
+private fun DashboardMainContent(
+    paddingValues: PaddingValues,
+    state: DashboardState,
+    isLandscape: Boolean,
+    isDarkMode: Boolean,
+    accentColor: Color,
+    textPrimary: Color,
+    textSecondary: Color,
+    frameBorder: Color,
+    mainBackground: Brush,
+    viewModel: DashboardViewModel?
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(mainBackground)
+            .padding(paddingValues)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(if (isLandscape) 12.dp else 8.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(20.dp))
+                    .border(2.dp, frameBorder, RoundedCornerShape(20.dp))
+                    .background(if (isDarkMode) Color.Black else Color.White)
+            ) {
+                CornerDecorations(accentColor)
+
+                Crossfade(targetState = state, label = "dashboardContent") { currentState ->
+                    when (currentState) {
+                        DashboardState.Idle -> StandbyView(isLandscape, accentColor, textPrimary)
+                        DashboardState.CameraReady -> CameraView(isLandscape, viewModel)
+                        DashboardState.Processing -> LoadingView(accentColor, textPrimary)
+                        is DashboardState.Approved -> SuccessView(isLandscape)
+                        is DashboardState.Error -> ErrorView(isLandscape, viewModel)
+                        else -> {}
+                    }
+                }
+            }
+
+            if (!isLandscape) {
+                Text(
+                    stringResource(R.string.systemVersion),
+                    color = textSecondary.copy(alpha = 0.4f),
+                    fontSize = 9.sp,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+            }
+        }
     }
 }
 

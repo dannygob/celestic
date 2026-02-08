@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -18,7 +17,6 @@ import com.example.celestic.models.calibration.DetectedFeature
 @Composable
 fun BlueprintView(features: List<DetectedFeature>, useInches: Boolean = false) {
     val textMeasurer = rememberTextMeasurer()
-    LocalDensity.current
 
     // Colores de Blueprint
     val blueprintGridColor = Color(0xFF1B263B).copy(alpha = 0.5f)
@@ -80,7 +78,7 @@ fun BlueprintView(features: List<DetectedFeature>, useInches: Boolean = false) {
             dimension?.let {
                 drawText(
                     textMeasurer = textMeasurer,
-                    text = "${"%.2f".format(it)} $unit",
+                    text = "${String.format(java.util.Locale.getDefault(), "%.2f", it)} $unit",
                     style = TextStyle(color = textColor, fontSize = 10.sp),
                     topLeft = Offset(feature.xCoord + 45, feature.yCoord - 55)
                 )

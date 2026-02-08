@@ -1,10 +1,20 @@
 package com.example.celestic.data.repository
 
+import android.content.Context
 import com.example.celestic.data.dao.CelesticDao
 import com.example.celestic.models.DetectionItem
 import com.example.celestic.models.calibration.DetectedFeature
+import dagger.hilt.android.qualifiers.ApplicationContext
+import java.io.File
+import java.io.FileOutputStream
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class DetectionRepository(private val dao: CelesticDao) {
+@Singleton
+class DetectionRepository @Inject constructor(
+    private val dao: CelesticDao,
+    @ApplicationContext private val context: Context
+) {
 
     suspend fun saveDetection(detection: DetectedFeature) {
         dao.insertDetection(detection)
@@ -22,7 +32,7 @@ class DetectionRepository(private val dao: CelesticDao) {
         dao.clearDetections()
     }
 
-    suspend fun insertDetection(item: DetectionItem) = dao.insert(item)
+    suspend fun insertDetection(item: DetectionItem): Long = dao.insert(item)
 
     suspend fun deleteDetection(item: DetectionItem) = dao.delete(item)
 
@@ -35,11 +45,11 @@ class DetectionRepository(private val dao: CelesticDao) {
     }
 
     fun saveImage(bitmap: android.graphics.Bitmap, filename: String): String {
-        val dir = java.io.File(context.filesDir, "detection_images")
+        val dir = File(context.filesDir, "detection_images")
         if (!dir.exists()) dir.mkdirs()
-        val file = java.io.File(dir, "$filename.jpg")
+        val file = File(dir, "$filename.jpg")
         try {
-            java.io.FileOutputStream(file).use { out ->
+            FileOutputStream(file).use { out ->
                 bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, out)
             }
             return file.absolutePath
@@ -79,6 +89,10 @@ class DetectionRepository(private val dao: CelesticDao) {
 
     fun getLatestSpecification(): kotlinx.coroutines.flow.Flow<com.example.celestic.models.Specification?> {
         return dao.getLatestSpecification()
+    }
+
+    fun getAllFeaturesBySpecification(specId: Long): kotlinx.coroutines.flow.Flow<List<com.example.celestic.models.SpecificationFeature>> {
+        return dao.getAllFeaturesBySpecification(specId)
     }
 
     suspend fun getDetectionById(id: Long): DetectionItem? {

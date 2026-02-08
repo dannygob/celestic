@@ -1,0 +1,16 @@
+[
+  {
+    "code": "QR123456",
+    "partName": "Panel A",
+    "operatorName": "Juan Pérez",
+    "inspectionDate": "2025-07-27",
+    "finalStatus": "Irregular Curvature"
+  },
+  {
+    "code": "ARUCO_04",
+    "partName": "Connector Z",
+    "operatorName": "Lucía Gómez",
+    "inspectionDate": "2025-07-26",
+    "finalStatus": "No Defects"
+  }
+]

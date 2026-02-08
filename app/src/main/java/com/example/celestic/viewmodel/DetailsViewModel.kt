@@ -4,10 +4,9 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.celestic.data.repository.DetectionRepository
-import com.example.celestic.models.TrazabilidadItem
+import com.example.celestic.models.TraceabilityItem
+import com.example.celestic.utils.JsonLoader
 import com.example.celestic.utils.Result
-import com.example.celestic.utils.buscarPorCodigo
-import com.example.celestic.utils.cargarTrazabilidadDesdeJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,19 +20,19 @@ class DetailsViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    private val _trazabilidadItem = MutableStateFlow<Result<TrazabilidadItem?>>(Result.Loading)
-    val trazabilidadItem: StateFlow<Result<TrazabilidadItem?>> = _trazabilidadItem
+    private val _traceabilityItem = MutableStateFlow<Result<TraceabilityItem?>>(Result.Loading)
+    val traceabilityItem: StateFlow<Result<TraceabilityItem?>> = _traceabilityItem
 
     private val _features = MutableStateFlow<List<com.example.celestic.models.calibration.DetectedFeature>>(emptyList())
     val features: StateFlow<List<com.example.celestic.models.calibration.DetectedFeature>> = _features
 
-    fun loadTrazabilidad(codigo: String) {
+    fun loadTraceability(code: String) {
         viewModelScope.launch {
             try {
-                val lista = cargarTrazabilidadDesdeJson(context)
-                _trazabilidadItem.value = Result.Success(buscarPorCodigo(codigo, lista))
+                val list = JsonLoader.loadTraceabilityFromJson(context)
+                _traceabilityItem.value = Result.Success(JsonLoader.findByCode(code, list))
             } catch (e: Exception) {
-                _trazabilidadItem.value = Result.Error(e)
+                _traceabilityItem.value = Result.Error(e)
             }
         }
     }
@@ -46,4 +45,3 @@ class DetailsViewModel @Inject constructor(
         }
     }
 }
-

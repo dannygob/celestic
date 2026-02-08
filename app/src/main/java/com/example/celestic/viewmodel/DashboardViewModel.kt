@@ -2,6 +2,7 @@ package com.example.celestic.viewmodel
 
 import android.graphics.Bitmap
 import android.util.Log
+import androidx.core.graphics.createBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.celestic.data.repository.DetectionRepository
@@ -18,7 +19,7 @@ import com.example.celestic.models.enums.DetectionStatus
 import com.example.celestic.models.enums.DetectionType
 import com.example.celestic.models.geometry.BoundingBox
 import com.example.celestic.opencv.FrameAnalyzer
-import com.example.celestic.ui.scanner.QRScanner
+import com.example.celestic.ui.scanner.CelesticQRScanner
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,7 +37,7 @@ class DashboardViewModel @Inject constructor(
     private val calibrationManager: CalibrationManager,
     private val arucoManager: ArUcoManager,
     private val aprilTagManager: AprilTagManager,
-    private val qrScanner: QRScanner,
+    private val qrScanner: CelesticQRScanner,
     private val frameAnalyzer: FrameAnalyzer,
     private val sharedViewModel: SharedViewModel,
     private val imageClassifier: ImageClassifier,
@@ -45,8 +46,6 @@ class DashboardViewModel @Inject constructor(
 
     private val _state = MutableStateFlow<DashboardState>(DashboardState.Idle)
     val state: StateFlow<DashboardState> = _state
-
-    private var currentInspectionId: Long? = null
 
     private var currentInspectionId: Long? = null
 
@@ -183,9 +182,8 @@ class DashboardViewModel @Inject constructor(
         _state.value = DashboardState.Idle
     }
 
-    // -------------------------
+
     // INTERNAL FUNCTIONS
-    // -------------------------
 
     private fun detectFaceWithOpenCV(bitmap: Bitmap): FaceDetectionResult {
         // ... (Same code as before)
@@ -380,9 +378,9 @@ class DashboardViewModel @Inject constructor(
 
                     if (status != DetectionStatus.OK) {
                         if (detected.originalReference is FrameAnalyzer.Hole)
-                            failedHoles.add(detected.originalReference as FrameAnalyzer.Hole)
+                            failedHoles.add(detected.originalReference)
                         if (detected.originalReference is FrameAnalyzer.Countersink)
-                            failedCountersinks.add(detected.originalReference as FrameAnalyzer.Countersink)
+                            failedCountersinks.add(detected.originalReference)
                     }
                 }
 
@@ -436,11 +434,7 @@ class DashboardViewModel @Inject constructor(
                 !holesOk || !countersinksOk || !scratchesOk
 
         // Convert Mat (with base drawings) to Bitmap
-        val annotatedBmp = Bitmap.createBitmap(
-            result.annotatedMat.cols(),
-            result.annotatedMat.rows(),
-            Bitmap.Config.ARGB_8888
-        )
+        val annotatedBmp = createBitmap(result.annotatedMat.cols(), result.annotatedMat.rows())
         Utils.matToBitmap(result.annotatedMat, annotatedBmp)
 
         // POST-PROCESSING: Draw Traffic Light (Green/Red) on Bitmap using Android Canvas

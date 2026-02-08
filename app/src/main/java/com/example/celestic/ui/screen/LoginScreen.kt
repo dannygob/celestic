@@ -65,6 +65,10 @@ fun LoginScreen(
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
+    val fillFieldsMsg = stringResource(R.string.fillAllFields)
+    val authErrorMsg = stringResource(R.string.authError)
+    val offlineModeMsg = stringResource(R.string.offlineMode)
+
     // Colores dinámicos
     val textPrimary = if (isDarkMode) Color.White else Color.Black
     val textSecondary = Color.Gray
@@ -97,177 +101,220 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Logo y Título
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "CELESTIC",
-                    fontSize = if (isLandscape) 40.sp else 32.sp,
-                    color = textPrimary,
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = 6.sp
-                )
-                Text(
-                    text = "PRECISION VISION SYSTEM",
-                    fontSize = 12.sp,
-                    color = textSecondary,
-                    fontWeight = FontWeight.Medium,
-                    letterSpacing = 2.sp,
-                    modifier = Modifier.padding(bottom = if (isLandscape) 32.dp else 48.dp)
-                )
-            }
+            LoginHeader(isLandscape, textPrimary, textSecondary)
 
-            // Card de Contenido
-            Card(
-                colors = CardDefaults.cardColors(containerColor = cardBg),
-                shape = RoundedCornerShape(28.dp),
-                modifier = Modifier
-                    .fillMaxWidth(if (isLandscape) 0.7f else 1f)
-                    .padding(bottom = 16.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(if (isLandscape) 32.dp else 24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    OutlinedTextField(
-                        value = email,
-                        onValueChange = { email = it; errorMessage = null },
-                        label = { Text(stringResource(R.string.email), color = textSecondary) },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Default.Email,
-                                contentDescription = null,
-                                tint = textSecondary
-                            )
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = accentColor,
-                            unfocusedBorderColor = textSecondary.copy(alpha = 0.3f),
-                            focusedTextColor = textPrimary,
-                            unfocusedTextColor = textPrimary,
-                            cursorColor = accentColor,
-                            focusedLabelColor = accentColor
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                        shape = RoundedCornerShape(16.dp),
-                        singleLine = true
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    OutlinedTextField(
-                        value = password,
-                        onValueChange = { password = it; errorMessage = null },
-                        label = { Text(stringResource(R.string.password), color = textSecondary) },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Default.Lock,
-                                contentDescription = null,
-                                tint = textSecondary
-                            )
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = accentColor,
-                            unfocusedBorderColor = textSecondary.copy(alpha = 0.3f),
-                            focusedTextColor = textPrimary,
-                            unfocusedTextColor = textPrimary,
-                            cursorColor = accentColor,
-                            focusedLabelColor = accentColor
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                        visualTransformation = PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        shape = RoundedCornerShape(16.dp),
-                        singleLine = true
-                    )
-
-                    errorMessage?.let {
-                        Text(
-                            text = it,
-                            color = MaterialTheme.colorScheme.error,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(top = 12.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    Button(
-                        onClick = {
-                            if (email.isBlank() || password.isBlank()) {
-                                errorMessage = context.getString(R.string.fillAllFields)
-                                return@Button
-                            }
-
-                            if (email == "admin@celestic.com" && password == "celestic_dev") {
-                                isLoading = false
-                                navController.navigate("dashboard") {
-                                    popUpTo("login") { inclusive = true }
-                                }
-                                return@Button
-                            }
-
-                            isLoading = true
-                            try {
-                                val auth = FirebaseAuth.getInstance()
-                                auth.signInWithEmailAndPassword(email, password)
-                                    .addOnCompleteListener { task ->
-                                        isLoading = false
-                                        if (task.isSuccessful) {
-                                            navController.navigate("dashboard") {
-                                                popUpTo("login") { inclusive = true }
-                                            }
-                                        } else {
-                                            errorMessage = task.exception?.localizedMessage
-                                                ?: context.getString(R.string.authError)
-                                        }
-                                    }
-                            } catch (e: Exception) {
-                                isLoading = false
-                                errorMessage = context.getString(R.string.offlineMode)
-                                if (email == "admin" && password == "admin") {
-                                    navController.navigate("dashboard")
-                                }
-                            }
-                        },
-                        enabled = !isLoading,
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = accentColor,
-                            disabledContainerColor = Color.Gray.copy(alpha = 0.5f)
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                    ) {
-                        if (isLoading) {
-                            CircularProgressIndicator(
-                                color = Color.White,
-                                modifier = Modifier.size(24.dp),
-                                strokeWidth = 2.dp
-                            )
-                        } else {
-                            Text(
-                                stringResource(R.string.login),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = Color.White
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Pie de página opcional
-            Text(
-                text = "v2.0 Industrial Edition",
-                fontSize = 10.sp,
-                color = textSecondary.copy(alpha = 0.5f),
-                modifier = Modifier.padding(top = 16.dp)
+            LoginForm(
+                email = email,
+                onEmailChange = { email = it; errorMessage = null },
+                password = password,
+                onPasswordChange = { password = it; errorMessage = null },
+                isLoading = isLoading,
+                errorMessage = errorMessage,
+                fillFieldsMsg = fillFieldsMsg,
+                authErrorMsg = authErrorMsg,
+                offlineModeMsg = offlineModeMsg,
+                isLandscape = isLandscape,
+                accentColor = accentColor,
+                textPrimary = textPrimary,
+                textSecondary = textSecondary,
+                cardBg = cardBg,
+                context = context,
+                navController = navController,
+                onLoadingChange = { isLoading = it },
+                onErrorMessageChange = { errorMessage = it }
             )
+
+            LoginFooter(textSecondary)
         }
     }
+}
+
+@Composable
+private fun LoginHeader(isLandscape: Boolean, textPrimary: Color, textSecondary: Color) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "CELESTIC",
+            fontSize = if (isLandscape) 40.sp else 32.sp,
+            color = textPrimary,
+            fontWeight = FontWeight.Black,
+            letterSpacing = 6.sp
+        )
+        Text(
+            text = "PRECISION VISION SYSTEM",
+            fontSize = 12.sp,
+            color = textSecondary,
+            fontWeight = FontWeight.Medium,
+            letterSpacing = 2.sp,
+            modifier = Modifier.padding(bottom = if (isLandscape) 32.dp else 48.dp)
+        )
+    }
+}
+
+@Composable
+private fun LoginForm(
+    email: String,
+    onEmailChange: (String) -> Unit,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    isLoading: Boolean,
+    errorMessage: String?,
+    fillFieldsMsg: String,
+    authErrorMsg: String,
+    offlineModeMsg: String,
+    isLandscape: Boolean,
+    accentColor: Color,
+    textPrimary: Color,
+    textSecondary: Color,
+    cardBg: Color,
+    context: android.content.Context,
+    navController: NavController,
+    onLoadingChange: (Boolean) -> Unit,
+    onErrorMessageChange: (String?) -> Unit
+) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = cardBg),
+        shape = RoundedCornerShape(28.dp),
+        modifier = Modifier
+            .fillMaxWidth(if (isLandscape) 0.7f else 1f)
+            .padding(bottom = 16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(if (isLandscape) 32.dp else 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            OutlinedTextField(
+                value = email,
+                onValueChange = onEmailChange,
+                label = { Text(stringResource(R.string.email), color = textSecondary) },
+                leadingIcon = {
+                    Icon(Icons.Default.Email, null, tint = textSecondary)
+                },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = accentColor,
+                    unfocusedBorderColor = textSecondary.copy(alpha = 0.3f),
+                    focusedTextColor = textPrimary,
+                    unfocusedTextColor = textPrimary,
+                    cursorColor = accentColor,
+                    focusedLabelColor = accentColor
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                shape = RoundedCornerShape(16.dp),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = onPasswordChange,
+                label = { Text(stringResource(R.string.password), color = textSecondary) },
+                leadingIcon = {
+                    Icon(Icons.Default.Lock, null, tint = textSecondary)
+                },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = accentColor,
+                    unfocusedBorderColor = textSecondary.copy(alpha = 0.3f),
+                    focusedTextColor = textPrimary,
+                    unfocusedTextColor = textPrimary,
+                    cursorColor = accentColor,
+                    focusedLabelColor = accentColor
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                shape = RoundedCornerShape(16.dp),
+                singleLine = true
+            )
+
+            errorMessage?.let {
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.padding(top = 12.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = {
+                    if (email.isBlank() || password.isBlank()) {
+                        onErrorMessageChange(fillFieldsMsg)
+                        return@Button
+                    }
+
+                    if (email == "admin@celestic.com" && password == "celestic_dev") {
+                        onLoadingChange(false)
+                        navController.navigate("dashboard") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                        return@Button
+                    }
+
+                    onLoadingChange(true)
+                    try {
+                        val auth = FirebaseAuth.getInstance()
+                        auth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener { task ->
+                                onLoadingChange(false)
+                                if (task.isSuccessful) {
+                                    navController.navigate("dashboard") {
+                                        popUpTo("login") { inclusive = true }
+                                    }
+                                } else {
+                                    onErrorMessageChange(
+                                        task.exception?.localizedMessage ?: authErrorMsg
+                                    )
+                                }
+                            }
+                    } catch (e: Exception) {
+                        onLoadingChange(false)
+                        onErrorMessageChange(offlineModeMsg)
+                        if (email == "admin" && password == "admin") {
+                            navController.navigate("dashboard")
+                        }
+                    }
+                },
+                enabled = !isLoading,
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = accentColor,
+                    disabledContainerColor = Color.Gray.copy(alpha = 0.5f)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text(
+                        stringResource(R.string.login),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoginFooter(textSecondary: Color) {
+    Text(
+        text = "v2.0 Industrial Edition",
+        fontSize = 10.sp,
+        color = textSecondary.copy(alpha = 0.5f),
+        modifier = Modifier.padding(top = 16.dp)
+    )
 }
 
 @Preview(showBackground = true, locale = "en")

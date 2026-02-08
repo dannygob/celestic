@@ -13,8 +13,17 @@ import com.example.celestic.models.calibration.DetectedFeature
 import com.example.celestic.models.report.ReportConfig
 
 @Database(
-    entities = [DetectionItem::class, DetectedFeature::class, CameraCalibrationData::class, ReportConfig::class, com.example.celestic.models.Inspection::class, com.example.celestic.models.Specification::class, com.example.celestic.models.SpecificationFeature::class],
-    version = 4,
+    entities = [
+        DetectionItem::class,
+        DetectedFeature::class,
+        CameraCalibrationData::class,
+        ReportConfig::class,
+        com.example.celestic.models.Inspection::class,
+        com.example.celestic.models.Specification::class,
+        com.example.celestic.models.SpecificationFeature::class,
+        com.example.celestic.models.TraceabilityItem::class
+    ],
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

@@ -82,8 +82,8 @@ This file tracks the progress of the Celestic project.
 - [x] DetectionRepository.kt ✅
 - [x] Converters.kt ✅ (bonus)
 - [x] calibration.json ✅ (supported)
-- [ ] traceability.json ❌ (not found)
-- [ ] config_report.json ❌ (not found)
+- [x] trazabilidad.json ✅ (found and moved to assets/)
+- [x] config_report.json ✅ (created in assets/)
 
 **Bonus Models:**
 
@@ -170,7 +170,7 @@ This file tracks the progress of the Celestic project.
 - [x] SettingsScreen.kt ✅
 - [x] DetectionListScreen.kt ✅
 - [x] ReportsScreen.kt ✅
-- [ ] StatusScreen.kt ❌ (mentioned in README but doesn't exist)
+- [x] StatusScreen.kt ✅ (System metrics and logs)
 
 **Bonus Components:**
 
@@ -252,12 +252,12 @@ This file tracks the progress of the Celestic project.
 
 ### 11. Unit Tests
 
-- [ ] ViewModels tests ❌
-- [ ] Repository tests ❌
-- [ ] FrameAnalyzer tests ❌
+- [x] ViewModels tests ✅ (Found in src/test)
+- [x] Repository tests ✅ (Found in src/test)
+- [x] FrameAnalyzer tests ✅ (Found in src/test)
 - [ ] Business logic tests ❌
 
-**Status:** ❌ 0/4 (0%) - No tests found
+**Status:** 🔄 3/4 (75%) - Existing tests found
 
 ---
 

@@ -1,0 +1,10 @@
+{
+  "reportTitle": "Celestic Inspection Report",
+  "includeMetadata": true,
+  "includeRawFeatures": false,
+  "exportFormat": "PDF",
+  "generationDate": "2026-02-08 11:30",
+  "includeImages": true,
+  "outputFormat": "PDF",
+  "includeMeasurements": true
+}

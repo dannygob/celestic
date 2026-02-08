@@ -17,6 +17,7 @@ import com.example.celestic.ui.screen.LoginScreen
 import com.example.celestic.ui.screen.ReportRequestDialog
 import com.example.celestic.ui.screen.ReportsScreen
 import com.example.celestic.ui.screen.SettingsScreen
+import com.example.celestic.ui.screen.StatusScreen
 import com.example.celestic.viewmodel.SharedViewModel
 
 @Composable
@@ -69,6 +70,9 @@ fun NavigationGraph(
         }
         composable(NavigationRoutes.Reports.route) {
             ReportsScreen(navController, sharedViewModel = sharedViewModel)
+        }
+        composable(NavigationRoutes.Status.route) {
+            StatusScreen(navController, sharedViewModel = sharedViewModel)
         }
     }
 }

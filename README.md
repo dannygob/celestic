@@ -145,10 +145,11 @@ precisión milimétrica.
 10. **ReportsScreen.kt** - Report management
 11. **ReportRequestDialog.kt** - Report generation dialog
 12. **SettingsScreen.kt** - Application settings
+13. **StatusScreen.kt** - System metrics and logs
 
 #### ❌ Missing
 
-13. **StatusScreen.kt** - System metrics (mentioned in docs but not implemented)
+(None)
 
 ### UI Components (16 total)
 
