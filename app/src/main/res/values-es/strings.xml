@@ -3,18 +3,20 @@
     <string name="appName">Celestic</string>
 
     <!-- Common Actions -->
-    <string name="back">Atrás</string>
-    <string name="ok">Aceptar</string>
-    <string name="login">Iniciar Sesión</string>
-    <string name="retry">Reintentar</string>
-    <string name="capture">Capturar</string>
+    <string name="Back">Volver</string>
+    <string name="OK">Aceptar</string>
+    <string name="Login">Iniciar Sesión</string>
+    <string name="Retry">Reintentar</string>
+    <string name="Capture">Capturar</string>
 
     <!-- Auth -->
-    <string name="email">Correo electrónico</string>
-    <string name="password">Contraseña</string>
+    <string name="Email">Correo electrónico</string>
+    <string name="Password">Contraseña</string>
+
 
     <!-- Permissions -->
-    <string name="camera_permission_denied">Permiso de cámara no concedido.</string>
+    <string name="camera_permission_denied">Permiso de cámara denegado.</string>
+
 
     <!-- Technical Errors -->
     <string name="errorOpenCvInit">Error al inicializar OpenCV</string>
@@ -23,19 +25,20 @@
     <string name="errorInspection">Error de inspección</string>
 
     <!-- Details Screens -->
-    <string name="detailsHole">Detalles de Agujero</string>
+    <string name="detailsHole">Detalles del Agujero</string>
     <string name="detailsAlodine">Detalles de Alodine</string>
-    <string name="detailsCountersink">Detalles de Avellanado</string>
+    <string name="detailsCountersink">Detalles del Avellanado</string>
 
     <!-- Welcome / General -->
     <string name="welcomeMessage">Bienvenido a Celestic Detector</string>
     <string name="loading">Cargando...</string>
     <string name="languageSettingHint">El idioma se cambia en los ajustes del sistema.</string>
 
+
     <!-- Inspection Flow -->
     <string name="inspectionStart">Iniciar inspección</string>
     <string name="inspectionProcessing">Procesando inspección...</string>
-    <string name="analyzing">Analizando...</string>
+    <string name="Analyzing">Analizando...</string>
     <string name="inspectionApproved">Inspección aprobada</string>
     <string name="inspectionRedirecting">Redirigiendo a detalles...</string>
 
@@ -43,7 +46,7 @@
     <string name="scanComponent">Escanear componente</string>
 
     <!-- Issue Reporting -->
-    <string name="reportIssue">Reportar incidencia</string>
+    <string name="reportIssue">Informar problema</string>
 
     <!-- Status Labels -->
     <string name="statusPassed">Pieza aprobada</string>
@@ -56,24 +59,67 @@
     <string name="calibrationOpening">Abriendo calibración...</string>
 
     <!-- Reports -->
-    <string name="reportGenerate">Generar Reporte</string>
-    <string name="reportGenerateConfirm">¿Desea generar el reporte de inspección?</string>
-    <string name="reportRequesting">Solicitando reporte...</string>
-    <string name="reportSection">Reportes</string>
+    <string name="reportGenerate">Generar Informe</string>
+    <string name="reportGenerateConfirm">¿Desea generar el informe de inspección?</string>
+    <string name="reportRequesting">Solicitando informe...</string>
+    <string name="reportSection">Informes</string>
+
 
     <!-- Dashboard -->
     <string name="dashboardTitle">Panel Celestic</string>
     <string name="dashboardOpenDetails">Abriendo detalles...</string>
     <string name="viewHistory">Ver Historial</string>
 
+
     <!-- Analysis Modes -->
     <string name="analysisModes">Modos de Análisis</string>
+
     <string name="modeBodywork">Carrocería</string>
     <string name="modeBodyworkActivated">Modo carrocería activado</string>
+
     <string name="modePrecision">Precisión</string>
     <string name="modePrecisionActivated">Modo precisión activado</string>
+
     <string name="modeMetals">Metales</string>
     <string name="modeMetalsActivated">Modo metales activado</string>
     <string name="celesticMode">Celestic</string>
-    <string name="opencv_init_error">Error de inicialización de opencv</string>
+    <string name="CalibrationOpen">Calibración Abierta</string>
+    <string name="opencv_init_error">Error de inicialización de OpenCV</string>
+    <string name="capture">Capturar</string>
+    <string name="analyzing">Analizando</string>
+    <string name="retry">Reintentar</string>
+    <string name="email">Correo electrónico</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Iniciar Sesión</string>
+    <string name="ok">Aceptar</string>
+    <string name="back">Volver</string>
+
+    <!-- Dashboard & Details -->
+    <string name="systemVersion">Sistema de Visión Celestic v2.0</string>
+    <string name="standby">ESPERA</string>
+    <string name="success">ÉXITO</string>
+    <string name="inspectionFailed">INSPECCIÓN FALLIDA</string>
+    <string name="resetSystem">REINICIAR SISTEMA</string>
+    <string name="returnToDashboard">Volver al Panel</string>
+    <string name="statusLabel">ESTADO: %1$s</string>
+    <string name="start">INICIAR</string>
+    <string name="stop">PARAR</string>
+    <string name="cal_abbr">CAL</string>
+    <string name="hist_abbr">HIST</string>
+    <string name="rep_abbr">INF</string>
+    <string name="blueprint_desc">Imagen del Plano</string>
+
+    <!-- Settings -->
+    <string name="settingsTitle">CONFIGURACIÓN</string>
+    <string name="returnDesc">Regresar</string>
+    <string name="unitsPreferences">UNIDADES Y PREFERENCIAS</string>
+    <string name="imperialSystem">Sistema Imperial (Pulgadas)</string>
+    <string name="imperialSystemDesc">Alternar entre milímetros y pulgadas</string>
+    <string name="aprilTagDetection">Detección AprilTag</string>
+    <string name="aprilTagDetectionDesc">Usar AprilTag en lugar de ArUco</string>
+    <string name="appearance">APARIENCIA</string>
+    <string name="darkMode">Modo Oscuro</string>
+    <string name="darkModeDesc">Forzar interfaz de alto contraste</string>
+    <string name="hardwareOptics">HARDWARE Y ÓPTICA</string>
+    <string name="opticsAutoAdjust">Las especificaciones ópticas se ajustan automáticamente según el perfil del hardware detectado para optimizar la precisión.</string>
 </resources>

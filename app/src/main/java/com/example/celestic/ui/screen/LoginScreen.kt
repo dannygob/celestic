@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -57,6 +58,7 @@ fun LoginScreen(
     navController: NavController,
     sharedViewModel: SharedViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -194,7 +196,7 @@ fun LoginScreen(
                     Button(
                         onClick = {
                             if (email.isBlank() || password.isBlank()) {
-                                errorMessage = "Por favor, rellena todos los campos"
+                                errorMessage = context.getString(R.string.fillAllFields)
                                 return@Button
                             }
 
@@ -218,12 +220,12 @@ fun LoginScreen(
                                             }
                                         } else {
                                             errorMessage = task.exception?.localizedMessage
-                                                ?: "Error de autenticación"
+                                                ?: context.getString(R.string.authError)
                                         }
                                     }
                             } catch (e: Exception) {
                                 isLoading = false
-                                errorMessage = "Modo Offline / Firebase no inicializado"
+                                errorMessage = context.getString(R.string.offlineMode)
                                 if (email == "admin" && password == "admin") {
                                     navController.navigate("dashboard")
                                 }

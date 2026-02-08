@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.celestic.R
 import com.example.celestic.ui.theme.CelesticTheme
 import com.example.celestic.viewmodel.MarkerType
 import com.example.celestic.viewmodel.SharedViewModel
@@ -70,7 +72,7 @@ fun SettingsScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "CONFIGURACIÓN",
+                        stringResource(R.string.settingsTitle),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 2.sp,
@@ -81,7 +83,7 @@ fun SettingsScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Regresar",
+                            contentDescription = stringResource(R.string.returnDesc),
                             tint = textColor
                         )
                     }
@@ -103,7 +105,7 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                "UNIDADES Y PREFERENCIAS",
+                stringResource(R.string.unitsPreferences),
                 color = sectionColor,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
@@ -111,8 +113,8 @@ fun SettingsScreen(
             )
 
             SettingsItem(
-                title = "Sistema Imperial (Pulgadas)",
-                subtitle = "Alternar entre milímetros y pulgadas",
+                title = stringResource(R.string.imperialSystem),
+                subtitle = stringResource(R.string.imperialSystemDesc),
                 icon = Icons.Default.Straighten,
                 checked = useInches,
                 isDarkMode = isDarkMode,
@@ -120,8 +122,8 @@ fun SettingsScreen(
             )
 
             SettingsItem(
-                title = "Detección AprilTag",
-                subtitle = "Usar AprilTag en lugar de ArUco",
+                title = stringResource(R.string.aprilTagDetection),
+                subtitle = stringResource(R.string.aprilTagDetectionDesc),
                 icon = Icons.Default.Tag,
                 checked = markerType == MarkerType.APRILTAG,
                 isDarkMode = isDarkMode,
@@ -133,7 +135,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                "APARIENCIA",
+                stringResource(R.string.appearance),
                 color = sectionColor,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
@@ -141,8 +143,8 @@ fun SettingsScreen(
             )
 
             SettingsItem(
-                title = "Modo Oscuro",
-                subtitle = "Forzar interfaz de alto contraste",
+                title = stringResource(R.string.darkMode),
+                subtitle = stringResource(R.string.darkModeDesc),
                 icon = Icons.Default.DisplaySettings,
                 checked = isDarkMode,
                 isDarkMode = isDarkMode,
@@ -152,7 +154,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                "HARDWARE Y ÓPTICA",
+                stringResource(R.string.hardwareOptics),
                 color = sectionColor,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
@@ -194,7 +196,7 @@ fun SettingsScreen(
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        "Las especificaciones ópticas se ajustan automáticamente según el perfil del hardware detectado para optimizar la precisión de los mm.",
+                        stringResource(R.string.opticsAutoAdjust),
                         color = Color.Gray.copy(alpha = 0.8f),
                         fontSize = 11.sp,
                         lineHeight = 14.sp

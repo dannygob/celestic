@@ -53,6 +53,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.celestic.R
 import com.example.celestic.ui.component.ApprovedResultDialog
 import com.example.celestic.ui.component.CameraPreview
 import com.example.celestic.ui.component.triggerCameraCapture
@@ -122,7 +124,7 @@ fun DashboardScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    "CELESTIC",
+                                    stringResource(R.string.appName).uppercase(),
                                     fontSize = if (isLandscape) 16.sp else 13.sp,
                                     fontWeight = FontWeight.Black,
                                     letterSpacing = if (isLandscape) 2.sp else 1.sp,
@@ -134,19 +136,19 @@ fun DashboardScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 NavIconBtn(
                                     Icons.Default.Build,
-                                    "CAL",
+                                    stringResource(R.string.cal_abbr),
                                     isLandscape,
                                     isDarkMode
                                 ) { navController.navigate("calibration") }
                                 NavIconBtn(
                                     Icons.Default.History,
-                                    "HIST",
+                                    stringResource(R.string.hist_abbr),
                                     isLandscape,
                                     isDarkMode
                                 ) { navController.navigate("detection_list") }
                                 NavIconBtn(
                                     Icons.Default.Assessment,
-                                    "REP",
+                                    stringResource(R.string.rep_abbr),
                                     isLandscape,
                                     isDarkMode
                                 ) { navController.navigate("reports") }
@@ -180,7 +182,9 @@ fun DashboardScreen(
                                     modifier = Modifier.height(if (isLandscape) 36.dp else 30.dp)
                                 ) {
                                     Text(
-                                        if (state == DashboardState.Idle) "START" else "STOP",
+                                        if (state == DashboardState.Idle) stringResource(R.string.start) else stringResource(
+                                            R.string.stop
+                                        ),
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.ExtraBold,
                                         color = Color.White
@@ -236,7 +240,7 @@ fun DashboardScreen(
 
                     if (!isLandscape) {
                         Text(
-                            "Sistema de Visión de Alta Precisión Celestic v2.0",
+                            stringResource(R.string.systemVersion),
                             color = textSecondary.copy(alpha = 0.4f),
                             fontSize = 9.sp,
                             modifier = Modifier
@@ -300,7 +304,7 @@ fun StandbyView(isLandscape: Boolean, accentColor: Color, textPrimary: Color) {
                 tint = textPrimary.copy(alpha = 0.05f)
             )
             Text(
-                "STANDBY",
+                stringResource(R.string.standby),
                 color = accentColor.copy(alpha = 0.4f),
                 letterSpacing = 8.sp,
                 fontSize = 12.sp,
@@ -339,7 +343,7 @@ fun LoadingView(accentColor: Color, textPrimary: Color) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                "ANALIZing...",
+                stringResource(R.string.Analyzing),
                 color = textPrimary,
                 fontSize = 11.sp,
                 letterSpacing = 2.sp,
@@ -366,7 +370,7 @@ fun SuccessView(isLandscape: Boolean) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                "SUCCESS",
+                stringResource(R.string.success),
                 color = Color(0xFF00E676),
                 fontSize = if (isLandscape) 24.sp else 18.sp,
                 fontWeight = FontWeight.Black
@@ -393,7 +397,7 @@ fun ErrorView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            "INSPECTION FAILED",
+            stringResource(R.string.inspectionFailed),
             color = Color.Red,
             fontSize = if (isLandscape) 18.sp else 14.sp,
             fontWeight = FontWeight.Bold
@@ -404,7 +408,7 @@ fun ErrorView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text("RESET SYSTEM", fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.resetSystem), fontWeight = FontWeight.Bold)
         }
     }
 }

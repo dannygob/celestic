@@ -40,7 +40,7 @@ class CalibrationManager @Inject constructor(
             if (!calibrationFile.exists()) return false
             val json = JSONObject(FileInputStream(calibrationFile).bufferedReader().use { it.readText() })
 
-            // Parse cameraMatrix (esperamos un String dump de OpenCV o un array)
+            // Parse cameraMatrix (expect an OpenCV String dump or an array)
             val matrixData = json.getString("cameraMatrix")
             cameraMatrix = stringToMat(matrixData, 3, 3, CvType.CV_64F)
 
@@ -50,7 +50,7 @@ class CalibrationManager @Inject constructor(
             calibrationDate = json.optString("calibrationDate")
             true
         } catch (e: Exception) {
-            Log.e("CalibrationManager", "Error al cargar calibración", e)
+            Log.e("CalibrationManager", "Error loading calibration", e)
             false
         }
     }
@@ -65,19 +65,19 @@ class CalibrationManager @Inject constructor(
     }
 
     /**
-     * Calcula el factor de escala (mm por pixel) basándose en la calibración y la distancia al objeto.
-     * Si no tenemos calibración, retorna 1.0 (pixel = pixel).
-     * @param distanceMm Distancia aproximada de la cámara al objeto en mm.
-     * @return Factor de escala (mm/pixel)
+     * Calculates the scale factor (mm per pixel) based on calibration and distance to the object.
+     * If no calibration exists, returns 1.0 (pixel = pixel).
+     * @param distanceMm Approximate distance from camera to object in mm.
+     * @return Scale factor (mm/pixel)
      */
     fun getScaleFactor(distanceMm: Double): Double {
         val mat = cameraMatrix
             ?: return 0.264 // Default approx: 1 px ~= 0.264 mm (96 DPI) as fallback if totally unknown
 
-        // fx: distancia focal en pixeles (eje x)
+        // fx: focal distance in pixels (x-axis)
         val fx = mat.get(0, 0)[0]
 
-        // Relación: x_mm / z_mm = u_px / fx_px
+        // Relationship: x_mm / z_mm = u_px / fx_px
         // x_mm/u_px = z_mm / fx_px
         // scale (mm/px) = Z / fx
 
@@ -86,10 +86,10 @@ class CalibrationManager @Inject constructor(
     }
 
     /**
-     * Calcula la distancia estimada (Z) a un marcador conocido.
-     * @param detectedMarkerWidthPx Ancho del marcador en la imagen (pixeles)
-     * @param realMarkerSizeMm Tamaño real del marcador (mm)
-     * @return Distancia Z en mm
+     * Calculates estimated distance (Z) to a known marker.
+     * @param detectedMarkerWidthPx Width of detected marker in image (pixels)
+     * @param realMarkerSizeMm Real size of the marker (mm)
+     * @return distance Z in mm
      */
     fun estimateDistance(detectedMarkerWidthPx: Double, realMarkerSizeMm: Double): Double {
         val mat = cameraMatrix ?: return 1000.0 // Default 1m
@@ -99,7 +99,7 @@ class CalibrationManager @Inject constructor(
         return (realMarkerSizeMm * fx) / detectedMarkerWidthPx
     }
 
-    // Listas para acumular capturas
+    // Lists to accumulate captures
     private val allCharucoCorners = mutableListOf<Mat>()
     private val allCharucoIds = mutableListOf<Mat>()
     private var imageSize: Size? = null
@@ -124,7 +124,7 @@ class CalibrationManager @Inject constructor(
         detector.detectBoard(image, charucoCorners, charucoIds, markerCorners, markerIds)
 
         val success = if (charucoCorners.total() > 4) {
-            // Clonamos los objetos Mat antes de guardarlos para evitar que sean liberados prematuramente
+            // Clone Mat objects before saving them to prevent premature release
             allCharucoCorners.add(charucoCorners.clone())
             allCharucoIds.add(charucoIds.clone())
             imageSize = image.size()
@@ -133,7 +133,7 @@ class CalibrationManager @Inject constructor(
             false
         }
 
-        // Liberamos recursos temporales tras la detección
+        // Release temporary resources after detection
         charucoCorners.release()
         charucoIds.release()
         markerIds.release()
@@ -147,7 +147,7 @@ class CalibrationManager @Inject constructor(
         val dictionary = Objdetect.getPredefinedDictionary(Objdetect.DICT_6X6_250)
         val board = CharucoBoard(Size(5.0, 7.0), 0.04f, 0.02f, dictionary)
 
-        // Preparar listas de puntos 3D y 2D compatibles con Calib3d.calibrateCamera
+        // Prepare lists of 3D and 2D points compatible with Calib3d.calibrateCamera
         val allObjectPoints = ArrayList<Mat>()
         val allImagePoints = ArrayList<Mat>()
 
@@ -159,7 +159,7 @@ class CalibrationManager @Inject constructor(
                 val objPoints = MatOfPoint3f()
                 val imgPoints = MatOfPoint2f()
 
-                // La API de Java de OpenCV reqruiere listas para los corners e IDs incluso para un solo frame
+                // OpenCV Java API requires lists for corners and IDs even for a single frame
                 val cornersList = listOf(corners)
                 val idsList = listOf(ids)
 
@@ -174,7 +174,7 @@ class CalibrationManager @Inject constructor(
                         imgPoints.release()
                     }
                 } catch (e: Exception) {
-                    Log.e("CalibrationManager", "Error en matchImagePoints frame $i", e)
+                    Log.e("CalibrationManager", "Error in matchImagePoints frame $i", e)
                     objPoints.release()
                     imgPoints.release()
                 }
@@ -189,7 +189,7 @@ class CalibrationManager @Inject constructor(
         val tvecs = ArrayList<Mat>()
 
         return try {
-            // Calibración clásica usando Calib3d (Disponible siempre en el núcleo de OpenCV)
+            // Classic calibration using Calib3d (Always available in OpenCV core)
             val rms = Calib3d.calibrateCamera(
                 allObjectPoints,
                 allImagePoints,
@@ -211,10 +211,10 @@ class CalibrationManager @Inject constructor(
             }
             rms
         } catch (e: Exception) {
-            Log.e("CalibrationManager", "Error fatal en calibrateCamera", e)
+            Log.e("CalibrationManager", "Fatal error in calibrateCamera", e)
             -3.0
         } finally {
-            // Opcional: liberar puntos capturados para ahorrar memoria tras una calibración exitosa
+            // Optional: release captured points to save memory after successful calibration
         }
     }
 

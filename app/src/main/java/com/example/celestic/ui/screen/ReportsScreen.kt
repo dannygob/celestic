@@ -25,11 +25,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.celestic.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,7 +51,7 @@ fun ReportsScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "REPORTES",
+                        stringResource(R.string.reportsTitle),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 2.sp,
@@ -60,7 +62,7 @@ fun ReportsScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Regresar",
+                            contentDescription = stringResource(R.string.returnDesc),
                             tint = textColor
                         )
                     }
@@ -88,14 +90,14 @@ fun ReportsScreen(
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                "MÓDULO DE REPORTES",
+                stringResource(R.string.reportsModule),
                 color = textColor,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                "Seleccione un rango de fechas para generar estadísticas.",
+                stringResource(R.string.reportsSelectRange),
                 color = Color.Gray,
                 fontSize = 14.sp
             )
@@ -110,7 +112,7 @@ fun ReportsScreen(
                     ) else Color(0xFF3366CC)
                 )
             ) {
-                Text("GENERAR REPORTE PDF", color = Color.White)
+                Text(stringResource(R.string.generatePdfReport), color = Color.White)
             }
         }
     }

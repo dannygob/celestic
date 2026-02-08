@@ -47,16 +47,16 @@ class SpecificationValidator @Inject constructor() {
         return DetectionStatus.OK
     }
 
-    // Validación Granular (Digital Twin)
+    // Granular Validation (Digital Twin)
     fun validateFeatureMatch(
         expected: com.example.celestic.models.SpecificationFeature,
         detected: com.example.celestic.validation.MatcherDetectedFeature
     ): DetectionStatus {
-        // 1. Validar Dimensión (Diámetro)
+        // 1. Validate Dimension (Diameter)
         val diameterDiff = abs(detected.diameter - expected.diameter_mm)
         if (diameterDiff > expected.tolerance_mm) return DetectionStatus.NOT_ACCEPTED
 
-        // 2. Validar Alodine
+        // 2. Validate Alodine
         if (expected.requireAlodine && !detected.hasAlodine) return DetectionStatus.NOT_ACCEPTED
 
         return DetectionStatus.OK

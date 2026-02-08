@@ -96,4 +96,55 @@
     <string name="ok">OK</string>
     <string name="back">Back</string>
 
+    <!-- Dashboard & Details -->
+    <string name="systemVersion">Celestic High Precision Vision System v2.0</string>
+    <string name="standby">STANDBY</string>
+    <string name="success">SUCCESS</string>
+    <string name="inspectionFailed">INSPECTION FAILED</string>
+    <string name="resetSystem">RESET SYSTEM</string>
+    <string name="returnToDashboard">Return to Dashboard</string>
+    <string name="statusLabel">STATUS: %1$s</string>
+    <string name="start">START</string>
+    <string name="stop">STOP</string>
+    <string name="cal_abbr">CAL</string>
+    <string name="hist_abbr">HIST</string>
+    <string name="rep_abbr">REP</string>
+    <string name="blueprint_desc">Blueprint Image</string>
+
+    <!-- Settings -->
+    <string name="settingsTitle">SETTINGS</string>
+    <string name="returnDesc">Go Back</string>
+    <string name="unitsPreferences">UNITS AND PREFERENCES</string>
+    <string name="imperialSystem">Imperial System (Inches)</string>
+    <string name="imperialSystemDesc">Toggle between millimeters and inches</string>
+    <string name="aprilTagDetection">AprilTag Detection</string>
+    <string name="aprilTagDetectionDesc">Use AprilTag instead of ArUco</string>
+    <string name="appearance">APPEARANCE</string>
+    <string name="darkMode">Dark Mode</string>
+    <string name="darkModeDesc">Force high-contrast interface</string>
+    <string name="hardwareOptics">HARDWARE AND OPTICS</string>
+    <string name="opticsAutoAdjust">Optical specifications are automatically adjusted based on detected hardware profile to optimize measurement precision.</string>
+
+    <!-- Login -->
+    <string name="fillAllFields">Please fill all fields</string>
+    <string name="authError">Authentication error</string>
+    <string name="offlineMode">Offline Mode / Firebase not initialized</string>
+
+    <!-- Reports Screen -->
+    <string name="reportsTitle">REPORTS</string>
+    <string name="reportsModule">REPORTS MODULE</string>
+    <string name="reportsSelectRange">Select a date range to generate statistics.</string>
+    <string name="generatePdfReport">GENERATE PDF REPORT</string>
+
+    <!-- Calibration Screen -->
+    <string name="calibrationTitle">CALIBRATION</string>
+    <string name="lastCalibration">Last: %1$s</string>
+    <string name="reset">Reset</string>
+    <string name="patternDetected">PATTERN DETECTED</string>
+    <string name="patternNotVisible">PATTERN NOT VISIBLE</string>
+    <string name="captures">CAPTURES</string>
+    <string name="rmsError">RMS ERROR</string>
+    <string name="calibrate">CALIBRATE</string>
+    <string name="calibrationInstructions">Move the pattern to different angles.</string>
+
 </resources>

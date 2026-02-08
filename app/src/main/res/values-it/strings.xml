@@ -3,18 +3,20 @@
     <string name="appName">Celestic</string>
 
     <!-- Common Actions -->
-    <string name="back">Indietro</string>
-    <string name="ok">OK</string>
-    <string name="login">Accedi</string>
-    <string name="retry">Riprova</string>
-    <string name="capture">Cattura</string>
+    <string name="Back">Indietro</string>
+    <string name="OK">OK</string>
+    <string name="Login">Accesso</string>
+    <string name="Retry">Riprova</string>
+    <string name="Capture">Cattura</string>
 
     <!-- Auth -->
-    <string name="email">Email</string>
-    <string name="password">Password</string>
+    <string name="Email">Email</string>
+    <string name="Password">Password</string>
+
 
     <!-- Permissions -->
     <string name="camera_permission_denied">Permesso fotocamera non concesso.</string>
+
 
     <!-- Technical Errors -->
     <string name="errorOpenCvInit">Inizializzazione OpenCV fallita</string>
@@ -30,12 +32,13 @@
     <!-- Welcome / General -->
     <string name="welcomeMessage">Benvenuti in Celestic Detector</string>
     <string name="loading">Caricamento...</string>
-    <string name="languageSettingHint">La lingua viene cambiata nelle impostazioni di sistema.</string>
+    <string name="languageSettingHint">La lingua si cambia nelle impostazioni di sistema.</string>
+
 
     <!-- Inspection Flow -->
-    <string name="inspectionStart">Avvia ispezione</string>
-    <string name="inspectionProcessing">Elaborazione ispezione...</string>
-    <string name="analyzing">Analisi in corso...</string>
+    <string name="inspectionStart">Inizia ispezione</string>
+    <string name="inspectionProcessing">Ispezione in corso...</string>
+    <string name="Analyzing">Analisi in corso...</string>
     <string name="inspectionApproved">Ispezione approvata</string>
     <string name="inspectionRedirecting">Reindirizzamento ai dettagli...</string>
 
@@ -56,24 +59,67 @@
     <string name="calibrationOpening">Apertura calibrazione...</string>
 
     <!-- Reports -->
-    <string name="reportGenerate">Genera Report</string>
-    <string name="reportGenerateConfirm">Desideri generare il report di ispezione?</string>
-    <string name="reportRequesting">Richiesta report...</string>
-    <string name="reportSection">Report</string>
+    <string name="reportGenerate">Genera Rapporto</string>
+    <string name="reportGenerateConfirm">Vuoi generare il rapporto di ispezione?</string>
+    <string name="reportRequesting">Richiesta rapporto in corso...</string>
+    <string name="reportSection">Rapporti</string>
+
 
     <!-- Dashboard -->
-    <string name="dashboardTitle">Dashboard Celestic</string>
+    <string name="dashboardTitle">Cruscotto Celestic</string>
     <string name="dashboardOpenDetails">Apertura dettagli...</string>
-    <string name="viewHistory">Vedi Cronologia</string>
+    <string name="viewHistory">Visualizza Cronologia</string>
+
 
     <!-- Analysis Modes -->
     <string name="analysisModes">Modalità di Analisi</string>
+
     <string name="modeBodywork">Carrozzeria</string>
     <string name="modeBodyworkActivated">Modalità carrozzeria attivata</string>
+
     <string name="modePrecision">Precisione</string>
     <string name="modePrecisionActivated">Modalità precisione attivata</string>
+
     <string name="modeMetals">Metalli</string>
     <string name="modeMetalsActivated">Modalità metalli attivata</string>
     <string name="celesticMode">Celestic</string>
-    <string name="opencv_init_error">Errore inizializzazione opencv</string>
+    <string name="CalibrationOpen">Calibrazione Aperta</string>
+    <string name="opencv_init_error">Errore inizializzazione OpenCV</string>
+    <string name="capture">Cattura</string>
+    <string name="analyzing">In analisi</string>
+    <string name="retry">Riprova</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Accesso</string>
+    <string name="ok">OK</string>
+    <string name="back">Indietro</string>
+
+    <!-- Dashboard & Details -->
+    <string name="systemVersion">Sistema di Visione Celestic v2.0</string>
+    <string name="standby">STANDBY</string>
+    <string name="success">SUCCESSO</string>
+    <string name="inspectionFailed">ISPEZIONE FALLITA</string>
+    <string name="resetSystem">RIPRISTINA SISTEMA</string>
+    <string name="returnToDashboard">Torna al Cruscotto</string>
+    <string name="statusLabel">STATO: %1$s</string>
+    <string name="start">INIZIA</string>
+    <string name="stop">FERMA</string>
+    <string name="cal_abbr">CAL</string>
+    <string name="hist_abbr">CRON</string>
+    <string name="rep_abbr">RAPP</string>
+    <string name="blueprint_desc">Immagine Progetto</string>
+
+    <!-- Settings -->
+    <string name="settingsTitle">IMPOSTAZIONI</string>
+    <string name="returnDesc">Indietro</string>
+    <string name="unitsPreferences">UNITÀ E PREFERENZE</string>
+    <string name="imperialSystem">Sistema Imperiale (Pollici)</string>
+    <string name="imperialSystemDesc">Passa tra millimetri e pollici</string>
+    <string name="aprilTagDetection">Rilevamento AprilTag</string>
+    <string name="aprilTagDetectionDesc">Usa AprilTag invece di ArUco</string>
+    <string name="appearance">ASPETTO</string>
+    <string name="darkMode">Modalità Scura</string>
+    <string name="darkModeDesc">Forza interfaccia ad alto contrasto</string>
+    <string name="hardwareOptics">HARDWARE E OTTICA</string>
+    <string name="opticsAutoAdjust">Le specifiche ottiche vengono regolate automaticamente in base al profilo hardware rilevato per ottimizzare la precisione.</string>
 </resources>

@@ -1,20 +1,22 @@
 <resources>
     <!-- App Info -->
-    <string name="appName">Celestic</string>
+    <string name="appName">سليستيك</string>
 
     <!-- Common Actions -->
-    <string name="back">رجوع</string>
-    <string name="ok">موافق</string>
-    <string name="login">تسجيل الدخول</string>
-    <string name="retry">إعادة المحاولة</string>
-    <string name="capture">التقاط</string>
+    <string name="Back">رجوع</string>
+    <string name="OK">موافق</string>
+    <string name="Login">تسجيل الدخول</string>
+    <string name="Retry">إعادة المحاولة</string>
+    <string name="Capture">التقاط</string>
 
     <!-- Auth -->
-    <string name="email">البريد الإلكتروني</string>
-    <string name="password">كلمة المرور</string>
+    <string name="Email">البريد الإلكتروني</string>
+    <string name="Password">كلمة المرور</string>
+
 
     <!-- Permissions -->
     <string name="camera_permission_denied">لم يتم منح إذن الكاميرا.</string>
+
 
     <!-- Technical Errors -->
     <string name="errorOpenCvInit">فشل تهيئة OpenCV</string>
@@ -24,18 +26,19 @@
 
     <!-- Details Screens -->
     <string name="detailsHole">تفاصيل الثقب</string>
-    <string name="detailsAlodine">تفاصيل الألودين</string>
-    <string name="detailsCountersink">تفاصيل الخزق</string>
+    <string name="detailsAlodine">تفاصيل ألودين</string>
+    <string name="detailsCountersink">تفاصيل الغاطس</string>
 
     <!-- Welcome / General -->
-    <string name="welcomeMessage">مرحبًا بك في كاشف Celestic</string>
+    <string name="welcomeMessage">مرحباً بك في كاشف سليستيك</string>
     <string name="loading">جاري التحميل...</string>
     <string name="languageSettingHint">يتم تغيير اللغة في إعدادات النظام.</string>
+
 
     <!-- Inspection Flow -->
     <string name="inspectionStart">بدء الفحص</string>
     <string name="inspectionProcessing">جاري معالجة الفحص...</string>
-    <string name="analyzing">جاري التحليل...</string>
+    <string name="Analyzing">جاري التحليل...</string>
     <string name="inspectionApproved">تمت الموافقة على الفحص</string>
     <string name="inspectionRedirecting">جاري التوجيه إلى التفاصيل...</string>
 
@@ -48,7 +51,7 @@
     <!-- Status Labels -->
     <string name="statusPassed">تمت الموافقة على القطعة</string>
     <string name="statusWarning">يوصى بالمراجعة</string>
-    <string name="statusFailed">فشل ذريع</string>
+    <string name="statusFailed">فشل حرج</string>
 
     <!-- Calibration -->
     <string name="calibrationOpen">فتح المعايرة</string>
@@ -56,24 +59,67 @@
     <string name="calibrationOpening">جاري فتح المعايرة...</string>
 
     <!-- Reports -->
-    <string name="reportGenerate">إنشاء تقرير</string>
-    <string name="reportGenerateConfirm">هل تريد إنشاء تقرير الفحص؟</string>
+    <string name="reportGenerate">إصدار تقرير</string>
+    <string name="reportGenerateConfirm">هل تريد إصدار تقرير الفحص؟</string>
     <string name="reportRequesting">جاري طلب التقرير...</string>
     <string name="reportSection">التقارير</string>
 
+
     <!-- Dashboard -->
-    <string name="dashboardTitle">لوحة Celestic</string>
+    <string name="dashboardTitle">لوحة تحكم سليستيك</string>
     <string name="dashboardOpenDetails">جاري فتح التفاصيل...</string>
     <string name="viewHistory">عرض السجل</string>
 
+
     <!-- Analysis Modes -->
     <string name="analysisModes">أوضاع التحليل</string>
+
     <string name="modeBodywork">هيكل السيارة</string>
     <string name="modeBodyworkActivated">تم تفعيل وضع هيكل السيارة</string>
-    <string name="modePrecision">الدقة</string>
+
+    <string name="modePrecision">دقة</string>
     <string name="modePrecisionActivated">تم تفعيل وضع الدقة</string>
-    <string name="modeMetals">المعادن</string>
+
+    <string name="modeMetals">معادن</string>
     <string name="modeMetalsActivated">تم تفعيل وضع المعادن</string>
-    <string name="celesticMode">Celestic</string>
-    <string name="opencv_init_error">خطأ في تهيئة opencv</string>
+    <string name="celesticMode">سليستيك</string>
+    <string name="CalibrationOpen">المعايرة مفتوحة</string>
+    <string name="opencv_init_error">خطأ في تهيئة OpenCV</string>
+    <string name="capture">التقاط</string>
+    <string name="analyzing">جاري التحليل</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="email">البريد الإلكتروني</string>
+    <string name="password">كلمة المرور</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="ok">موافق</string>
+    <string name="back">رجوع</string>
+
+    <!-- Dashboard & Details -->
+    <string name="systemVersion">نظام رؤية سليستيك عالي الدقة v2.0</string>
+    <string name="standby">انتظار</string>
+    <string name="success">نجاح</string>
+    <string name="inspectionFailed">فشل الفحص</string>
+    <string name="resetSystem">إعادة ضبط النظام</string>
+    <string name="returnToDashboard">العودة إلى لوحة التحكم</string>
+    <string name="statusLabel">الحالة: %1$s</string>
+    <string name="start">ابدأ</string>
+    <string name="stop">إيقاف</string>
+    <string name="cal_abbr">معايرة</string>
+    <string name="hist_abbr">سجل</string>
+    <string name="rep_abbr">تقارير</string>
+    <string name="blueprint_desc">صورة المخطط</string>
+
+    <!-- Settings -->
+    <string name="settingsTitle">الإعدادات</string>
+    <string name="returnDesc">رجوع</string>
+    <string name="unitsPreferences">الوحدات والتفضيلات</string>
+    <string name="imperialSystem">النظام الإمبراطوري (بوصة)</string>
+    <string name="imperialSystemDesc">التبديل بين المليمتر والبوصة</string>
+    <string name="aprilTagDetection">كشف AprilTag</string>
+    <string name="aprilTagDetectionDesc">استخدام AprilTag بدلاً من ArUco</string>
+    <string name="appearance">المظهر</string>
+    <string name="darkMode">الوضع الداكن</string>
+    <string name="darkModeDesc">فرض واجهة عالية التباين</string>
+    <string name="hardwareOptics">الأجهزة والبصريات</string>
+    <string name="opticsAutoAdjust">يتم ضبط المواصفات البصرية تلقائيًا بناءً على ملف تعريف الأجهزة المكتشف لتحسين دقة القياس.</string>
 </resources>

@@ -64,7 +64,7 @@ class FrameAnalyzer @Inject constructor(
         val edges = Mat()
 
         try {
-            // Preprocesamiento
+            // Preprocessing
             Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_BGR2GRAY)
             Imgproc.GaussianBlur(grayMat, grayMat, org.opencv.core.Size(5.0, 5.0), 0.0)
 
@@ -81,7 +81,7 @@ class FrameAnalyzer @Inject constructor(
                 val center = org.opencv.core.Point(circle[0], circle[1])
                 val radius = circle[2]
 
-                // Chequear Alodine (Análisis de Color en anillo exterior)
+                // Check Alodine (Color Analysis on outer ring)
                 val hasAlodine = checkAlodine(mat, center, radius)
 
                 allCircles.add(Hole(center, radius, hasAlodine))
@@ -107,22 +107,22 @@ class FrameAnalyzer @Inject constructor(
             prevGrayMat?.let { detectDeformationsWithOpticalFlow(it, grayMat) }
             prevGrayMat = grayMat.clone()
 
-            // Dibujar resultados en una copia
+            // Draw results on a copy
             val annotatedMat = mat.clone()
 
-            // Contornos
+            // Contours
             Imgproc.drawContours(annotatedMat, filteredContours, -1, Scalar(0.0, 255.0, 0.0), 2)
 
-            // Deformaciones
+            // Deformations
             Imgproc.drawContours(annotatedMat, deformations, -1, Scalar(255.0, 0.0, 0.0), 2)
 
-            // Agujeros
+            // Holes
             for (hole in simpleHoles) {
                 val color = if (hole.hasAlodine) Scalar(0.0, 165.0, 255.0) else Scalar(
                     0.0,
                     0.0,
                     255.0
-                ) // Naranja si tiene Alodine
+                ) // Orange if it has Alodine
                 Imgproc.circle(annotatedMat, hole.center, hole.radius.toInt(), color, 2)
             }
 
@@ -134,7 +134,7 @@ class FrameAnalyzer @Inject constructor(
                     cs.outerRadius.toInt(),
                     Scalar(0.0, 255.0, 255.0),
                     2
-                ) // Amarillo
+                ) // Yellow
                 Imgproc.circle(
                     annotatedMat,
                     cs.center,
@@ -144,7 +144,7 @@ class FrameAnalyzer @Inject constructor(
                 )
             }
 
-            // Rayaduras (Scratches)
+            // Scratches
             for (scratch in scratches) {
                 Imgproc.line(
                     annotatedMat,
@@ -182,7 +182,7 @@ class FrameAnalyzer @Inject constructor(
             )
 
         } catch (e: Exception) {
-            Log.e("FrameAnalyzer", "Error al analizar frame", e)
+            Log.e("FrameAnalyzer", "Error analyzing frame", e)
             return AnalysisResult(
                 emptyList(),
                 mat,
@@ -200,8 +200,8 @@ class FrameAnalyzer @Inject constructor(
     }
 
     private fun checkAlodine(image: Mat, center: org.opencv.core.Point, radius: Double): Boolean {
-        // Analizar anillo entre radio y radio*1.5
-        // Convertir a HSV y buscar saturación (el Alodine es dorado/amarillo, el aluminio es gris)
+        // Analyze ring between radius and radius*1.5
+        // Convert to HSV and look for saturation (Alodine is gold/yellow, aluminum is gray)
         try {
             val roiSize = (radius * 3).toInt()
             val x = (center.x - roiSize / 2).toInt().coerceAtLeast(0)
@@ -215,19 +215,19 @@ class FrameAnalyzer @Inject constructor(
             val roi = Mat(image, roiRect)
 
             val hsvRoi = Mat()
-            Imgproc.cvtColor(roi, hsvRoi, Imgproc.COLOR_RGB2HSV) // Asumiendo input RGB/BGR
+            Imgproc.cvtColor(roi, hsvRoi, Imgproc.COLOR_RGB2HSV) // Assuming RGB/BGR input
 
             val saturation = Mat()
             org.opencv.core.Core.extractChannel(hsvRoi, saturation, 1) // Canal S
 
             val meanSat = org.opencv.core.Core.mean(saturation).`val`[0]
 
-            // Limpieza
+            // Cleanup
             roi.release()
             hsvRoi.release()
             saturation.release()
 
-            // Umbral empírico: 40 para distinguir gris metálico de dorado suave
+            // Empirical threshold: 40 to distinguish metallic gray from soft gold
             return meanSat > 40.0
 
         } catch (e: Exception) {
@@ -235,7 +235,7 @@ class FrameAnalyzer @Inject constructor(
         }
     }
 
-    // Identificar pares de círculos concéntricos
+    // Identify pairs of concentric circles
     private fun identifyCountersinks(circles: List<Hole>): Pair<List<Hole>, List<Countersink>> {
         val isolatedHoles = ArrayList<Hole>()
         val countersinks = ArrayList<Countersink>()
@@ -251,12 +251,12 @@ class FrameAnalyzer @Inject constructor(
                 val c1 = circles[i]
                 val c2 = circles[j]
 
-                // Distancia entre centros
+                // Distance between centers
                 val dx = c1.center.x - c2.center.x
                 val dy = c1.center.y - c2.center.y
                 val dist = kotlin.math.sqrt(dx * dx + dy * dy)
 
-                // Si centros están muy cerca (< 5 px), son concéntricos
+                // If centers are very close (< 5 px), they are concentric
                 if (dist < 5.0) {
                     val inner = if (c1.radius < c2.radius) c1.radius else c2.radius
                     val outer = if (c1.radius < c2.radius) c2.radius else c1.radius
@@ -266,7 +266,7 @@ class FrameAnalyzer @Inject constructor(
                             inner,
                             outer
                         )
-                    ) // Usamos el centro de c1 aprox
+                    ) // We use c1 center approx
                     usedIndices.add(i)
                     usedIndices.add(j)
                     matchFound = true
@@ -278,7 +278,7 @@ class FrameAnalyzer @Inject constructor(
             }
         }
 
-        // Agregar los que quedaron sin par pero que hemos marcado como 'no match'
+        // Add those that remained without a pair but we have marked as 'no match'
         // Logic fix: isolatedHoles loop above adds circles[i] only if no match for i found
         // But if i was matched as second pair (j), it is in usedIndices.
         // We need to verify if i is in usedIndices in the else branch? No, simple logic:
@@ -293,7 +293,7 @@ class FrameAnalyzer @Inject constructor(
 
     private fun detectScratches(edges: Mat, contours: List<MatOfPoint>): List<Scratch> {
         val lines = Mat()
-        // Detección de líneas probabilística
+        // Probabilistic line detection
         Imgproc.HoughLinesP(edges, lines, 1.0, Math.PI / 180, 50, 50.0, 10.0)
 
         val scratches = ArrayList<Scratch>()
@@ -303,9 +303,9 @@ class FrameAnalyzer @Inject constructor(
             val pt1 = org.opencv.core.Point(l[0], l[1])
             val pt2 = org.opencv.core.Point(l[2], l[3])
 
-            // Verificar si la línea está DENTRO de un contorno de pieza (para evitar bordes exteriores)
-            // O simplificamos: Una raya suele ser una línea recta.
-            // Aquí asumimos que todo HoughLine es scratch por ahora.
+            // Verify if line is INSIDE a part contour (to avoid outer edges)
+            // Simplifying: A scratch is usually a straight line.
+            // Assuming all HoughLines are scratches for now.
             val dx = pt2.x - pt1.x
             val dy = pt2.y - pt1.y
             val len = kotlin.math.sqrt(dx * dx + dy * dy)
@@ -319,10 +319,10 @@ class FrameAnalyzer @Inject constructor(
     private fun detectOrientation(markers: List<Marker>): com.example.celestic.models.enums.Orientation {
         if (markers.isEmpty()) return com.example.celestic.models.enums.Orientation.UNKNOWN
 
-        // Lógica simple basada en reglas de negocio hipotéticas
-        // Si detectamos ID < 10 es ANVERSO, ID >= 10 es REVERSO
-        // O si hay marcadores en general es ANVERSO.
-        // Por ahora: Marcador presente = ANVERSO.
+        // Simple logic based on hypothetical business rules
+        // If ID < 10 detected it is ANVERSO, ID >= 10 is REVERSO
+        // Or if markers present in general it is ANVERSO.
+        // For now: Marker present = ANVERSO.
 
         return com.example.celestic.models.enums.Orientation.ANVERSO
     }

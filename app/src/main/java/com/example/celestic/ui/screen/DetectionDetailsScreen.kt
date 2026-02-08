@@ -68,7 +68,10 @@ fun DetectionDetailsScreen(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "ESTADO: $status",
+                    text = androidx.compose.ui.res.stringResource(
+                        com.example.celestic.R.string.statusLabel,
+                        status
+                    ),
                     color = androidx.compose.ui.graphics.Color.White,
                     style = androidx.compose.material3.MaterialTheme.typography.titleLarge
                 )
@@ -79,7 +82,7 @@ fun DetectionDetailsScreen(
                 onClick = { navController.popBackStack() },
                 modifier = Modifier.align(Alignment.BottomCenter).padding(32.dp)
             ) {
-                Text("Volver al Dashboard")
+                Text(androidx.compose.ui.res.stringResource(com.example.celestic.R.string.returnToDashboard))
             }
         } else {
             androidx.compose.material3.CircularProgressIndicator()

@@ -3,18 +3,20 @@
     <string name="appName">Celestic</string>
 
     <!-- Common Actions -->
-    <string name="back">返回</string>
-    <string name="ok">确定</string>
-    <string name="login">登录</string>
-    <string name="retry">重试</string>
-    <string name="capture">拍摄</string>
+    <string name="Back">返回</string>
+    <string name="OK">确定</string>
+    <string name="Login">登录</string>
+    <string name="Retry">重试</string>
+    <string name="Capture">捕获</string>
 
     <!-- Auth -->
-    <string name="email">电子邮件</string>
-    <string name="password">密码</string>
+    <string name="Email">电子邮件</string>
+    <string name="Password">密码</string>
+
 
     <!-- Permissions -->
     <string name="camera_permission_denied">未授予相机权限。</string>
+
 
     <!-- Technical Errors -->
     <string name="errorOpenCvInit">OpenCV 初始化失败</string>
@@ -32,12 +34,13 @@
     <string name="loading">加载中...</string>
     <string name="languageSettingHint">语言在系统设置中更改。</string>
 
+
     <!-- Inspection Flow -->
     <string name="inspectionStart">开始检查</string>
     <string name="inspectionProcessing">正在处理检查...</string>
-    <string name="analyzing">正在分析...</string>
-    <string name="inspectionApproved">检查已通过</string>
-    <string name="inspectionRedirecting">正在跳转至详情...</string>
+    <string name="Analyzing">正在分析...</string>
+    <string name="inspectionApproved">检查通过</string>
+    <string name="inspectionRedirecting">正在重定向到详情...</string>
 
     <!-- Component Scan -->
     <string name="scanComponent">扫描组件</string>
@@ -47,7 +50,7 @@
 
     <!-- Status Labels -->
     <string name="statusPassed">零件已批准</string>
-    <string name="statusWarning">建议复检</string>
+    <string name="statusWarning">建议审查</string>
     <string name="statusFailed">严重故障</string>
 
     <!-- Calibration -->
@@ -61,19 +64,62 @@
     <string name="reportRequesting">正在请求报告...</string>
     <string name="reportSection">报告</string>
 
+
     <!-- Dashboard -->
     <string name="dashboardTitle">Celestic 仪表板</string>
     <string name="dashboardOpenDetails">正在打开详情...</string>
     <string name="viewHistory">查看历史记录</string>
 
+
     <!-- Analysis Modes -->
     <string name="analysisModes">分析模式</string>
-    <string name="modeBodywork">支腿/车身</string>
-    <string name="modeBodyworkActivated">支腿模式已激活</string>
+
+    <string name="modeBodywork">车身</string>
+    <string name="modeBodyworkActivated">车身模式已激活</string>
+
     <string name="modePrecision">精密</string>
     <string name="modePrecisionActivated">精密模式已激活</string>
+
     <string name="modeMetals">金属</string>
     <string name="modeMetalsActivated">金属模式已激活</string>
     <string name="celesticMode">Celestic</string>
+    <string name="CalibrationOpen">校准已打开</string>
     <string name="opencv_init_error">OpenCV 初始化错误</string>
+    <string name="capture">捕获</string>
+    <string name="analyzing">正在分析</string>
+    <string name="retry">重试</string>
+    <string name="email">电子邮件</string>
+    <string name="password">密码</string>
+    <string name="login">登录</string>
+    <string name="ok">确定</string>
+    <string name="back">返回</string>
+
+    <!-- Dashboard & Details -->
+    <string name="systemVersion">Celestic 高精度视觉系统 v2.0</string>
+    <string name="standby">待机</string>
+    <string name="success">成功</string>
+    <string name="inspectionFailed">检查失败</string>
+    <string name="resetSystem">重置系统</string>
+    <string name="returnToDashboard">返回仪表板</string>
+    <string name="statusLabel">状态: %1$s</string>
+    <string name="start">开始</string>
+    <string name="stop">停止</string>
+    <string name="cal_abbr">校准</string>
+    <string name="hist_abbr">历史</string>
+    <string name="rep_abbr">报告</string>
+    <string name="blueprint_desc">蓝图图像</string>
+
+    <!-- Settings -->
+    <string name="settingsTitle">设置</string>
+    <string name="returnDesc">返回</string>
+    <string name="unitsPreferences">单位与偏好</string>
+    <string name="imperialSystem">英制系统（英寸）</string>
+    <string name="imperialSystemDesc">在毫米和英寸之间切换</string>
+    <string name="aprilTagDetection">AprilTag 检测</string>
+    <string name="aprilTagDetectionDesc">使用 AprilTag 代替 ArUco</string>
+    <string name="appearance">外观</string>
+    <string name="darkMode">深色模式</string>
+    <string name="darkModeDesc">强制使用高对比度界面</string>
+    <string name="hardwareOptics">硬件与光学</string>
+    <string name="opticsAutoAdjust">光学规格根据检测到的硬件配置自动调整，以优化测量精度。</string>
 </resources>

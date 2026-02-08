@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.celestic.R
 import com.example.celestic.ui.component.CameraPreview
 import com.example.celestic.ui.component.triggerCameraCapture
 import com.example.celestic.ui.theme.CelesticTheme
@@ -85,14 +87,18 @@ fun CalibrationScreen(
                     title = {
                         Column {
                             Text(
-                                "CALIBRACIÓN",
+                                stringResource(R.string.calibrationTitle),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 2.sp,
                                 color = textColor
                             )
                             uiState.calibrationDate?.let {
-                                Text("Última: $it", fontSize = 10.sp, color = Color.Gray)
+                                Text(
+                                    stringResource(R.string.lastCalibration, it),
+                                    fontSize = 10.sp,
+                                    color = Color.Gray
+                                )
                             }
                         }
                     },
@@ -100,7 +106,7 @@ fun CalibrationScreen(
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Regresar",
+                                contentDescription = stringResource(R.string.returnDesc),
                                 tint = textColor
                             )
                         }
@@ -109,7 +115,7 @@ fun CalibrationScreen(
                         IconButton(onClick = { calibrationViewModel.reset() }) {
                             Icon(
                                 Icons.Default.Refresh,
-                                contentDescription = "Reiniciar",
+                                contentDescription = stringResource(R.string.reset),
                                 tint = textColor
                             )
                         }
@@ -158,7 +164,9 @@ fun CalibrationScreen(
                                     .padding(horizontal = 8.dp, vertical = 4.dp)
                             ) {
                                 Text(
-                                    if (success) "DETECTADO" else "NO VISIBLE",
+                                    if (success) stringResource(R.string.patternDetected) else stringResource(
+                                        R.string.patternNotVisible
+                                    ),
                                     color = Color.White,
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold
@@ -188,7 +196,7 @@ fun CalibrationScreen(
                             ) {
                                 Column {
                                     Text(
-                                        "CAPTURAS",
+                                        stringResource(R.string.captures),
                                         color = Color.Gray,
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold
@@ -203,7 +211,7 @@ fun CalibrationScreen(
                                 uiState.rmsError?.let { rms ->
                                     Column(horizontalAlignment = Alignment.End) {
                                         Text(
-                                            "ERR RMS",
+                                            stringResource(R.string.rmsError),
                                             color = Color.Gray,
                                             fontSize = 10.sp,
                                             fontWeight = FontWeight.Bold
@@ -229,7 +237,7 @@ fun CalibrationScreen(
                         ) {
                             Icon(Icons.Default.Camera, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("CAPTURAR", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.Capture), fontWeight = FontWeight.Bold)
                         }
 
                         Button(
@@ -253,12 +261,15 @@ fun CalibrationScreen(
                             } else {
                                 Icon(Icons.Default.Science, contentDescription = null)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("CALIBRAR", fontWeight = FontWeight.Bold)
+                                Text(
+                                    stringResource(R.string.calibrate),
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         }
 
                         Text(
-                            "Mueva el patrón a diferentes ángulos.",
+                            stringResource(R.string.calibrationInstructions),
                             color = Color.Gray,
                             fontSize = 11.sp,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -284,7 +295,7 @@ fun CalibrationScreen(
                     ) {
                         Column {
                             Text(
-                                "CAPTURAS",
+                                stringResource(R.string.captures),
                                 color = Color.Gray,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold
@@ -300,7 +311,7 @@ fun CalibrationScreen(
                         uiState.rmsError?.let { rms ->
                             Column(horizontalAlignment = Alignment.End) {
                                 Text(
-                                    "ERROR RMS",
+                                    stringResource(R.string.rmsError),
                                     color = Color.Gray,
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold
@@ -342,7 +353,9 @@ fun CalibrationScreen(
                                     .padding(horizontal = 12.dp, vertical = 6.dp)
                             ) {
                                 Text(
-                                    if (success) "¡PATRÓN DETECTADO!" else "PATRÓN NO VISIBLE",
+                                    if (success) stringResource(R.string.patternDetected) else stringResource(
+                                        R.string.patternNotVisible
+                                    ),
                                     color = Color.White,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
@@ -368,7 +381,7 @@ fun CalibrationScreen(
                         ) {
                             Icon(Icons.Default.Camera, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("CAPTURAR", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.Capture), fontWeight = FontWeight.Bold)
                         }
 
                         Button(
@@ -392,13 +405,16 @@ fun CalibrationScreen(
                             } else {
                                 Icon(Icons.Default.Science, contentDescription = null)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("CALIBRAR", fontWeight = FontWeight.Bold)
+                                Text(
+                                    stringResource(R.string.calibrate),
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         }
                     }
 
                     Text(
-                        "Mueva el patrón a diferentes ángulos.",
+                        stringResource(R.string.calibrationInstructions),
                         color = Color.Gray,
                         fontSize = 11.sp,
                         modifier = Modifier.padding(bottom = 16.dp)
