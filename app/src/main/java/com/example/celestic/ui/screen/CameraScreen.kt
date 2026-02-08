@@ -20,7 +20,7 @@ import com.example.celestic.R
 import com.example.celestic.ui.theme.CelesticTheme
 
 @Composable
-@UiComposable
+
 fun CameraScreen(navController: NavController) {
     val context = LocalContext.current
     val scanComponentText = stringResource(R.string.scanComponent)
@@ -45,6 +45,7 @@ fun CameraScreen(navController: NavController) {
 
 @Preview(showBackground = true)
 @Composable
+@UiComposable
 fun CameraScreen() {
     CelesticTheme {
         CameraScreen(navController = rememberNavController())

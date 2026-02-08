@@ -55,7 +55,6 @@ import com.example.celestic.viewmodel.SharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@UiComposable
 fun SettingsScreen(
     navController: NavController,
     sharedViewModel: SharedViewModel = hiltViewModel()
@@ -210,7 +209,7 @@ fun SettingsScreen(
 }
 
 @Composable
-@UiComposable
+
 fun SettingsItem(
     title: String,
     subtitle: String,
@@ -268,6 +267,7 @@ fun SettingsItem(
 
 @Preview(showBackground = true, locale = "en")
 @Composable
+@UiComposable
 fun SettingsScreen() {
     CelesticTheme {
         SettingsScreen(rememberNavController())

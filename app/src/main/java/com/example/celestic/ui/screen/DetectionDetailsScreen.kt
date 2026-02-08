@@ -1,18 +1,20 @@
 package com.example.celestic.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.UiComposable
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-@UiComposable
+
 fun DetectionDetailsScreen(
     navController: NavController,
     detectionId: String?,
@@ -48,7 +50,9 @@ fun DetectionDetailsScreen(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize().background(androidx.compose.ui.graphics.Color.Black),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(androidx.compose.ui.graphics.Color.Black),
         contentAlignment = Alignment.Center
     ) {
         if (imageBitmap != null) {

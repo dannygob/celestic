@@ -41,7 +41,7 @@ import com.example.celestic.viewmodel.SharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@UiComposable
+
 fun InspectionPreviewScreen(
     navController: NavController,
     sharedViewModel: SharedViewModel = hiltViewModel()
@@ -144,6 +144,7 @@ fun InspectionPreviewScreen(
 
 @Preview(showBackground = true)
 @Composable
+@UiComposable
 fun InspectionPreviewScreen() {
     CelesticTheme {
         InspectionPreviewScreen(navController = rememberNavController())

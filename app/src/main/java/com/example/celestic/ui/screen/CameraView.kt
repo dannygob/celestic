@@ -49,7 +49,7 @@ import java.util.concurrent.Executors
 
 
 @Composable
-@UiComposable
+
 fun CameraView(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = viewModel(),

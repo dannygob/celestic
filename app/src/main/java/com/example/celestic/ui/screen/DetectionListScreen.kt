@@ -38,7 +38,7 @@ import com.example.celestic.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@UiComposable
+
 fun DetectionListScreen(
     navController: NavController,
     viewModel: MainViewModel = hiltViewModel(),
@@ -139,6 +139,7 @@ fun DetectionListScreen(
 
 @Preview(showBackground = true, device = "spec:width=1280dp,height=800dp,orientation=landscape")
 @Composable
+@UiComposable
 fun DetectionListScreen() {
     CelesticTheme {
         DetectionListScreen(rememberNavController())

@@ -132,7 +132,7 @@ fun DashboardScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@UiComposable
+
 private fun DashboardTopBar(
     state: DashboardState,
     isLandscape: Boolean,
@@ -240,7 +240,7 @@ private fun DashboardTopBar(
 }
 
 @Composable
-@UiComposable
+
 private fun DashboardMainContent(
     paddingValues: PaddingValues,
     state: DashboardState,
@@ -301,7 +301,7 @@ private fun DashboardMainContent(
 }
 
 @Composable
-@UiComposable
+
 fun NavIconBtn(
     icon: ImageVector,
     label: String,
@@ -338,7 +338,7 @@ fun NavIconBtn(
 }
 
 @Composable
-@UiComposable
+
 fun StandbyView(isLandscape: Boolean, accentColor: Color, textPrimary: Color) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -360,7 +360,7 @@ fun StandbyView(isLandscape: Boolean, accentColor: Color, textPrimary: Color) {
 }
 
 @Composable
-@UiComposable
+
 fun DashboardCameraView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
     Box(modifier = Modifier
         .fillMaxSize()
@@ -379,7 +379,7 @@ fun DashboardCameraView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
 }
 
 @Composable
-@UiComposable
+
 fun LoadingView(accentColor: Color, textPrimary: Color) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -401,7 +401,7 @@ fun LoadingView(accentColor: Color, textPrimary: Color) {
 }
 
 @Composable
-@UiComposable
+
 fun SuccessView(isLandscape: Boolean) {
     Box(
         modifier = Modifier
@@ -428,7 +428,7 @@ fun SuccessView(isLandscape: Boolean) {
 }
 
 @Composable
-@UiComposable
+
 fun ErrorView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
     Column(
         modifier = Modifier
@@ -463,6 +463,7 @@ fun ErrorView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
 }
 
 @Composable
+@UiComposable
 fun DashboardModals(
     state: DashboardState,
     viewModel: DashboardViewModel?,
@@ -486,7 +487,7 @@ fun DashboardModals(
 }
 
 @Composable
-@UiComposable
+
 fun Round3DInspectionButton(onClick: () -> Unit) {
     Surface(
         onClick = onClick,
@@ -518,7 +519,7 @@ fun Round3DInspectionButton(onClick: () -> Unit) {
 }
 
 @Composable
-@UiComposable
+
 fun CornerDecorations(color: Color) {
     val thicknessDp = 3.dp
     val lengthDp = 30.dp
@@ -546,7 +547,7 @@ fun CornerDecorations(color: Color) {
 }
 
 @Composable
-@UiComposable
+
 fun HUDOverlay(isLandscape: Boolean) {
     val paddingDp = if (isLandscape) 80.dp else 40.dp
     val strokeWidthDp = 1.dp

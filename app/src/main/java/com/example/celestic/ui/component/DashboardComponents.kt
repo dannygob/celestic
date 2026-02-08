@@ -10,11 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.UiComposable
 import androidx.compose.ui.unit.dp
 
 @Composable
-@UiComposable
+
 fun PlaceholderCamera(text: String = "Listo para inspección") {
     Box(
         modifier = Modifier
@@ -27,7 +26,7 @@ fun PlaceholderCamera(text: String = "Listo para inspección") {
 }
 
 @Composable
-@UiComposable
+
 fun MainButton(text: String, onClick: () -> Unit) {
     Button(
         onClick = onClick,
@@ -38,7 +37,7 @@ fun MainButton(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-@UiComposable
+
 fun DisabledButton(text: String) {
     Button(
         onClick = {},
@@ -50,7 +49,7 @@ fun DisabledButton(text: String) {
 }
 
 @Composable
-@UiComposable
+
 fun ApprovedResultDialog(
     onNewInspection: () -> Unit,
     onViewReport: () -> Unit

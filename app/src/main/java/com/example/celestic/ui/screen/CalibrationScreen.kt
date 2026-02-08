@@ -39,7 +39,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.UiComposable
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -60,7 +59,7 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@UiComposable
+
 fun CalibrationScreen(
     navController: NavController,
     sharedViewModel: com.example.celestic.viewmodel.SharedViewModel = hiltViewModel(),
@@ -116,7 +115,7 @@ fun CalibrationScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@UiComposable
+
 private fun CalibrationTopBar(
     uiState: CalibrationState,
     textColor: Color,
@@ -169,7 +168,7 @@ private fun CalibrationTopBar(
 }
 
 @Composable
-@UiComposable
+
 private fun LandscapeCalibrationContent(
     paddingValues: androidx.compose.foundation.layout.PaddingValues,
     uiState: CalibrationState,
@@ -227,7 +226,7 @@ private fun LandscapeCalibrationContent(
 }
 
 @Composable
-@UiComposable
+
 private fun PortraitCalibrationContent(
     paddingValues: androidx.compose.foundation.layout.PaddingValues,
     uiState: CalibrationState,
@@ -284,7 +283,7 @@ private fun PortraitCalibrationContent(
 }
 
 @Composable
-@UiComposable
+
 private fun CalibrationStatsCard(
     uiState: CalibrationState,
     accentColor: Color,
@@ -337,7 +336,7 @@ private fun CalibrationStatsCard(
 }
 
 @Composable
-@UiComposable
+
 private fun CalibrationActions(
     uiState: CalibrationState,
     accentColor: Color,
@@ -364,7 +363,7 @@ private fun CalibrationActions(
 }
 
 @Composable
-@UiComposable
+
 private fun CalibrationButtons(
     uiState: CalibrationState,
     accentColor: Color,

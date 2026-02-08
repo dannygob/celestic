@@ -38,7 +38,7 @@ android {
     }
 
     composeCompiler {
-        enableStrongSkippingMode = true
+        featureFlags.set(setOf())
     }
 
     packaging {
@@ -90,6 +90,9 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.opencv)
     implementation(libs.litert)
+    implementation(libs.litert.gpu)
+    implementation(libs.litert.gpu.delegate)
+    implementation(libs.litert.support)
     implementation(libs.mpandroidchart)
     implementation(libs.gson)
     implementation(libs.itext7.core)

@@ -17,7 +17,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.UiComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -27,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.example.celestic.R
 
 @Composable
-@UiComposable
+
 fun ReportRequestDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
     val context = LocalContext.current
     val requestingMsg = stringResource(R.string.reportRequesting)
