@@ -53,4 +53,28 @@ interface CelesticDao {
     @Query("SELECT * FROM inspections ORDER BY timestamp DESC")
     fun getAllInspections(): Flow<List<com.example.celestic.models.Inspection>>
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSpecification(specification: com.example.celestic.models.Specification): Long
+
+    @Query("SELECT * FROM specifications ORDER BY id DESC LIMIT 1")
+    fun getLatestSpecification(): Flow<com.example.celestic.models.Specification?>
+
+    @Query("SELECT * FROM specifications")
+    fun getAllSpecifications(): Flow<List<com.example.celestic.models.Specification>>
+
+    @Query("SELECT * FROM detection_items WHERE id = :id")
+    suspend fun getDetectionItemById(id: Long): DetectionItem?
+
+    // Specification Features (Digital Twin Map)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSpecificationFeatures(features: List<com.example.celestic.models.SpecificationFeature>)
+
+    @Query("SELECT * FROM specification_features WHERE specificationId = :specId AND face = :face")
+    fun getFeaturesBySpecificationAndFace(
+        specId: Long,
+        face: com.example.celestic.models.enums.Orientation
+    ): Flow<List<com.example.celestic.models.SpecificationFeature>>
+
+    @Query("SELECT * FROM specification_features WHERE specificationId = :specId")
+    fun getAllFeaturesBySpecification(specId: Long): Flow<List<com.example.celestic.models.SpecificationFeature>>
 }

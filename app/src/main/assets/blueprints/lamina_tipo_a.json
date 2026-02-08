@@ -1,0 +1,68 @@
+{
+  "id": "LAMINA_A_001",
+  "name": "Lámina Tipo A",
+  "description": "Lámina rectangular básica con 4 agujeros y 2 avellanados",
+  "dimensions": {
+    "width_mm": 200.0,
+    "height_mm": 150.0,
+    "thickness_mm": 2.0
+  },
+  "expected_hole_count": 4,
+  "expected_holes": [
+    {
+      "id": "H1",
+      "x": 20.0,
+      "y": 20.0,
+      "diameter_mm": 6.0,
+      "tolerance_mm": 0.1
+    },
+    {
+      "id": "H2",
+      "x": 180.0,
+      "y": 20.0,
+      "diameter_mm": 6.0,
+      "tolerance_mm": 0.1
+    },
+    {
+      "id": "H3",
+      "x": 20.0,
+      "y": 130.0,
+      "diameter_mm": 6.0,
+      "tolerance_mm": 0.1
+    },
+    {
+      "id": "H4",
+      "x": 180.0,
+      "y": 130.0,
+      "diameter_mm": 6.0,
+      "tolerance_mm": 0.1
+    }
+  ],
+  "expected_countersinks": [
+    {
+      "id": "CS1",
+      "x": 100.0,
+      "y": 50.0,
+      "outer_diameter_mm": 10.0,
+      "inner_diameter_mm": 6.0,
+      "tolerance_mm": 0.15
+    },
+    {
+      "id": "CS2",
+      "x": 100.0,
+      "y": 100.0,
+      "outer_diameter_mm": 10.0,
+      "inner_diameter_mm": 6.0,
+      "tolerance_mm": 0.15
+    }
+  ],
+  "tolerances": {
+    "dimension_tolerance_mm": 0.5,
+    "hole_diameter_tolerance_mm": 0.1,
+    "max_scratch_length_mm": 5.0,
+    "max_allowed_scratches": 2,
+    "max_deformation_mm": 0.5
+  },
+  "position_tolerance": 3.0,
+  "requires_alodine": true
+}

@@ -34,6 +34,21 @@ class DetectionRepository(private val dao: CelesticDao) {
         return dao.getCameraCalibrationData()
     }
 
+    fun saveImage(bitmap: android.graphics.Bitmap, filename: String): String {
+        val dir = java.io.File(context.filesDir, "detection_images")
+        if (!dir.exists()) dir.mkdirs()
+        val file = java.io.File(dir, "$filename.jpg")
+        try {
+            java.io.FileOutputStream(file).use { out ->
+                bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, out)
+            }
+            return file.absolutePath
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return ""
+        }
+    }
+
     suspend fun insertReportConfig(reportConfig: com.example.celestic.models.report.ReportConfig) {
         dao.insertReportConfig(reportConfig)
     }
@@ -42,11 +57,11 @@ class DetectionRepository(private val dao: CelesticDao) {
         return dao.getReportConfig()
     }
 
-    fun getAll(): kotlinx.coroutines.flow.Flow<List<com.example.celestic.models.DetectionItem>> {
+    fun getAll(): kotlinx.coroutines.flow.Flow<List<DetectionItem>> {
         return dao.getAll()
     }
 
-    fun getFeaturesForDetection(detectionItemId: Long): kotlinx.coroutines.flow.Flow<List<com.example.celestic.models.calibration.DetectedFeature>> {
+    fun getFeaturesForDetection(detectionItemId: Long): kotlinx.coroutines.flow.Flow<List<DetectedFeature>> {
         return dao.getFeaturesForDetection(detectionItemId)
     }
 
@@ -57,5 +72,16 @@ class DetectionRepository(private val dao: CelesticDao) {
 
     fun getAllInspections(): kotlinx.coroutines.flow.Flow<List<com.example.celestic.models.Inspection>> {
         return dao.getAllInspections()
+    }
+    suspend fun insertSpecification(specification: com.example.celestic.models.Specification): Long {
+        return dao.insertSpecification(specification)
+    }
+
+    fun getLatestSpecification(): kotlinx.coroutines.flow.Flow<com.example.celestic.models.Specification?> {
+        return dao.getLatestSpecification()
+    }
+
+    suspend fun getDetectionById(id: Long): DetectionItem? {
+        return dao.getDetectionItemById(id)
     }
 }

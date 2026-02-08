@@ -64,11 +64,39 @@ class CalibrationManager @Inject constructor(
         return mat
     }
 
-    fun getScaleFactor(pixelLength: Double): Double {
-        val mat = cameraMatrix ?: return 0.0
-        val focalLength = mat.get(0, 0)[0]
-        val mmPerPixel = 1.0 / focalLength
-        return pixelLength * mmPerPixel
+    /**
+     * Calcula el factor de escala (mm por pixel) basándose en la calibración y la distancia al objeto.
+     * Si no tenemos calibración, retorna 1.0 (pixel = pixel).
+     * @param distanceMm Distancia aproximada de la cámara al objeto en mm.
+     * @return Factor de escala (mm/pixel)
+     */
+    fun getScaleFactor(distanceMm: Double): Double {
+        val mat = cameraMatrix
+            ?: return 0.264 // Default approx: 1 px ~= 0.264 mm (96 DPI) as fallback if totally unknown
+
+        // fx: distancia focal en pixeles (eje x)
+        val fx = mat.get(0, 0)[0]
+
+        // Relación: x_mm / z_mm = u_px / fx_px
+        // x_mm/u_px = z_mm / fx_px
+        // scale (mm/px) = Z / fx
+
+        val scale = distanceMm / fx
+        return if (scale.isNaN() || scale.isInfinite() || scale == 0.0) 0.264 else scale
+    }
+
+    /**
+     * Calcula la distancia estimada (Z) a un marcador conocido.
+     * @param detectedMarkerWidthPx Ancho del marcador en la imagen (pixeles)
+     * @param realMarkerSizeMm Tamaño real del marcador (mm)
+     * @return Distancia Z en mm
+     */
+    fun estimateDistance(detectedMarkerWidthPx: Double, realMarkerSizeMm: Double): Double {
+        val mat = cameraMatrix ?: return 1000.0 // Default 1m
+        val fx = mat.get(0, 0)[0]
+
+        // Z = (real_size * fx) / pixel_size
+        return (realMarkerSizeMm * fx) / detectedMarkerWidthPx
     }
 
     // Listas para acumular capturas

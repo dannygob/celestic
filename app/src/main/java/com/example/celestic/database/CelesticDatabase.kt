@@ -12,7 +12,11 @@ import com.example.celestic.models.calibration.CameraCalibrationData
 import com.example.celestic.models.calibration.DetectedFeature
 import com.example.celestic.models.report.ReportConfig
 
-@Database(entities = [DetectionItem::class, DetectedFeature::class, CameraCalibrationData::class, ReportConfig::class, com.example.celestic.models.Inspection::class], version = 2, exportSchema = false)
+@Database(
+    entities = [DetectionItem::class, DetectedFeature::class, CameraCalibrationData::class, ReportConfig::class, com.example.celestic.models.Inspection::class, com.example.celestic.models.Specification::class, com.example.celestic.models.SpecificationFeature::class],
+    version = 4,
+    exportSchema = false
+)
 @TypeConverters(Converters::class)
 abstract class CelesticDatabase : RoomDatabase() {
     abstract fun celesticDao(): CelesticDao

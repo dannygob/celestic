@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.celestic.manager.AprilTagManager
 import com.example.celestic.manager.ArUcoManager
 import com.example.celestic.viewmodel.MarkerType
-import com.example.celestic.viewmodel.SharedViewModel
 import org.opencv.calib3d.Calib3d
 import org.opencv.core.Mat
 import org.opencv.core.MatOfByte
@@ -15,22 +14,51 @@ import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.Objdetect
 import org.opencv.video.Video
+import javax.inject.Inject
 
-class FrameAnalyzer(private val sharedViewModel: SharedViewModel) {
+class FrameAnalyzer @Inject constructor(
+    private val arucoManager: ArUcoManager,
+    private val aprilTagManager: AprilTagManager
+) {
 
     data class Marker(val id: Int, val corners: Mat)
+    data class Hole(
+        val center: org.opencv.core.Point,
+        val radius: Double,
+        val hasAlodine: Boolean = false
+    )
 
+    data class Countersink(
+        val center: org.opencv.core.Point,
+        val innerRadius: Double,
+        val outerRadius: Double
+    )
+
+    data class Scratch(
+        val startPoint: org.opencv.core.Point,
+        val endPoint: org.opencv.core.Point,
+        val length: Double
+    )
+
+    data class AlodineHalo(
+        val center: org.opencv.core.Point,
+        val radius: Double,
+        val intensityInfo: Double
+    )
+    
     data class AnalysisResult(
         val contours: List<MatOfPoint>,
         val annotatedMat: Mat,
-        val markers: List<Marker>
+        val markers: List<Marker>,
+        val holes: List<Hole>,
+        val orientation: com.example.celestic.models.enums.Orientation,
+        val countersinks: List<Countersink>,
+        val scratches: List<Scratch>
     )
 
     private var prevGrayMat: Mat? = null
-    private val arucoManager = ArUcoManager()
-    private val aprilTagManager = AprilTagManager()
 
-    fun analyze(mat: Mat): AnalysisResult {
+    fun analyze(mat: Mat, markerType: MarkerType): AnalysisResult {
         val grayMat = Mat()
         val thresholdedImage = Mat()
         val edges = Mat()
@@ -44,46 +72,87 @@ class FrameAnalyzer(private val sharedViewModel: SharedViewModel) {
             val contours = findContours(thresholded)
             val filteredContours = filterContours(contours, 100.0)
             val deformations = detectDeformations(filteredContours)
-            val holes = detectHoles(grayMat)
+            val holesMat = detectHoles(grayMat)
+
+            // Raw holes for internal logic
+            val allCircles = ArrayList<Hole>()
+            for (i in 0 until holesMat.cols()) {
+                val circle = holesMat.get(0, i)
+                val center = org.opencv.core.Point(circle[0], circle[1])
+                val radius = circle[2]
+
+                // Chequear Alodine (Análisis de Color en anillo exterior)
+                val hasAlodine = checkAlodine(mat, center, radius)
+
+                allCircles.add(Hole(center, radius, hasAlodine))
+            }
+
+            // Distinguish Holes vs Countersinks
+            val (simpleHoles, countersinks) = identifyCountersinks(allCircles)
+
+            // Detect Scratches using edges
+            Imgproc.Canny(grayMat, edges, 50.0, 150.0)
+            val scratches = detectScratches(edges, filteredContours)
+
+            // Detect Orientation
+            val markers = when (markerType) {
+                MarkerType.ARUCO -> arucoManager.detectMarkers(mat)
+                    .map { Marker(it.id, it.corners) }
+
+                MarkerType.APRILTAG -> aprilTagManager.detectMarkers(mat)
+                    .map { Marker(it.id, it.corners) }
+            }
+            val orientation = detectOrientation(markers)
 
             prevGrayMat?.let { detectDeformationsWithOpticalFlow(it, grayMat) }
             prevGrayMat = grayMat.clone()
 
-            // Detección de marcadores
-            val markers = when (sharedViewModel.markerType.value) {
-                MarkerType.ARUCO -> arucoManager.detectMarkers(mat).map { Marker(it.id, it.corners) }
-                MarkerType.APRILTAG -> aprilTagManager.detectMarkers(mat)
-                    .map { Marker(it.id, it.corners) }
-            }
-
             // Dibujar resultados en una copia
             val annotatedMat = mat.clone()
 
-            // Forzamos el tipo List<MatOfPoint> para drawContours
-            val contoursToDraw: MutableList<MatOfPoint> = ArrayList()
-            contoursToDraw.addAll(filteredContours)
+            // Contornos
+            Imgproc.drawContours(annotatedMat, filteredContours, -1, Scalar(0.0, 255.0, 0.0), 2)
 
-            val deformationsToDraw: MutableList<MatOfPoint> = ArrayList()
-            deformationsToDraw.addAll(deformations)
+            // Deformaciones
+            Imgproc.drawContours(annotatedMat, deformations, -1, Scalar(255.0, 0.0, 0.0), 2)
 
-            if (contoursToDraw.isNotEmpty()) {
-                Imgproc.drawContours(annotatedMat, contoursToDraw, -1, Scalar(0.0, 255.0, 0.0), 2)
+            // Agujeros
+            for (hole in simpleHoles) {
+                val color = if (hole.hasAlodine) Scalar(0.0, 165.0, 255.0) else Scalar(
+                    0.0,
+                    0.0,
+                    255.0
+                ) // Naranja si tiene Alodine
+                Imgproc.circle(annotatedMat, hole.center, hole.radius.toInt(), color, 2)
             }
-            if (deformationsToDraw.isNotEmpty()) {
-                Imgproc.drawContours(
+
+            // Avellanados (Countersinks)
+            for (cs in countersinks) {
+                Imgproc.circle(
                     annotatedMat,
-                    deformationsToDraw,
-                    -1,
-                    Scalar(255.0, 0.0, 0.0),
+                    cs.center,
+                    cs.outerRadius.toInt(),
+                    Scalar(0.0, 255.0, 255.0),
                     2
+                ) // Amarillo
+                Imgproc.circle(
+                    annotatedMat,
+                    cs.center,
+                    cs.innerRadius.toInt(),
+                    Scalar(0.0, 165.0, 255.0),
+                    1
                 )
             }
-            
-            for (i in 0 until holes.cols()) {
-                val circle = holes.get(0, i)
-                val center = org.opencv.core.Point(circle[0], circle[1])
-                val radius = circle[2].toInt()
-                Imgproc.circle(annotatedMat, center, radius, Scalar(0.0, 0.0, 255.0), 2)
+
+            // Rayaduras (Scratches)
+            for (scratch in scratches) {
+                Imgproc.line(
+                    annotatedMat,
+                    scratch.startPoint,
+                    scratch.endPoint,
+                    Scalar(255.0, 0.0, 255.0),
+                    2
+                )
             }
 
             if (markers.isNotEmpty()){
@@ -91,17 +160,174 @@ class FrameAnalyzer(private val sharedViewModel: SharedViewModel) {
                 Objdetect.drawDetectedMarkers(annotatedMat, cornersList, Mat())
             }
 
-            return AnalysisResult(contours, annotatedMat, markers)
+            // Text info on screen
+            Imgproc.putText(
+                annotatedMat,
+                "Orient: $orientation",
+                org.opencv.core.Point(50.0, 50.0),
+                Imgproc.FONT_HERSHEY_SIMPLEX,
+                1.0,
+                Scalar(255.0, 255.0, 0.0),
+                2
+            )
+
+            return AnalysisResult(
+                filteredContours,
+                annotatedMat,
+                markers,
+                simpleHoles,
+                orientation,
+                countersinks,
+                scratches
+            )
 
         } catch (e: Exception) {
             Log.e("FrameAnalyzer", "Error al analizar frame", e)
-            return AnalysisResult(emptyList(), mat, emptyList())
+            return AnalysisResult(
+                emptyList(),
+                mat,
+                emptyList(),
+                emptyList(),
+                com.example.celestic.models.enums.Orientation.UNKNOWN,
+                emptyList(),
+                emptyList()
+            )
         } finally {
             grayMat.release()
             thresholdedImage.release()
             edges.release()
         }
     }
+
+    private fun checkAlodine(image: Mat, center: org.opencv.core.Point, radius: Double): Boolean {
+        // Analizar anillo entre radio y radio*1.5
+        // Convertir a HSV y buscar saturación (el Alodine es dorado/amarillo, el aluminio es gris)
+        try {
+            val roiSize = (radius * 3).toInt()
+            val x = (center.x - roiSize / 2).toInt().coerceAtLeast(0)
+            val y = (center.y - roiSize / 2).toInt().coerceAtLeast(0)
+            val w = roiSize.coerceAtMost(image.width() - x)
+            val h = roiSize.coerceAtMost(image.height() - y)
+
+            if (w <= 0 || h <= 0) return false
+
+            val roiRect = org.opencv.core.Rect(x, y, w, h)
+            val roi = Mat(image, roiRect)
+
+            val hsvRoi = Mat()
+            Imgproc.cvtColor(roi, hsvRoi, Imgproc.COLOR_RGB2HSV) // Asumiendo input RGB/BGR
+
+            val saturation = Mat()
+            org.opencv.core.Core.extractChannel(hsvRoi, saturation, 1) // Canal S
+
+            val meanSat = org.opencv.core.Core.mean(saturation).`val`[0]
+
+            // Limpieza
+            roi.release()
+            hsvRoi.release()
+            saturation.release()
+
+            // Umbral empírico: 40 para distinguir gris metálico de dorado suave
+            return meanSat > 40.0
+
+        } catch (e: Exception) {
+            return false
+        }
+    }
+
+    // Identificar pares de círculos concéntricos
+    private fun identifyCountersinks(circles: List<Hole>): Pair<List<Hole>, List<Countersink>> {
+        val isolatedHoles = ArrayList<Hole>()
+        val countersinks = ArrayList<Countersink>()
+        val usedIndices = HashSet<Int>()
+
+        for (i in circles.indices) {
+            if (usedIndices.contains(i)) continue
+
+            var matchFound = false
+            for (j in circles.indices) {
+                if (i == j || usedIndices.contains(j)) continue
+
+                val c1 = circles[i]
+                val c2 = circles[j]
+
+                // Distancia entre centros
+                val dx = c1.center.x - c2.center.x
+                val dy = c1.center.y - c2.center.y
+                val dist = kotlin.math.sqrt(dx * dx + dy * dy)
+
+                // Si centros están muy cerca (< 5 px), son concéntricos
+                if (dist < 5.0) {
+                    val inner = if (c1.radius < c2.radius) c1.radius else c2.radius
+                    val outer = if (c1.radius < c2.radius) c2.radius else c1.radius
+                    countersinks.add(
+                        Countersink(
+                            c1.center,
+                            inner,
+                            outer
+                        )
+                    ) // Usamos el centro de c1 aprox
+                    usedIndices.add(i)
+                    usedIndices.add(j)
+                    matchFound = true
+                    break
+                }
+            }
+            if (!matchFound) {
+                isolatedHoles.add(circles[i])
+            }
+        }
+
+        // Agregar los que quedaron sin par pero que hemos marcado como 'no match'
+        // Logic fix: isolatedHoles loop above adds circles[i] only if no match for i found
+        // But if i was matched as second pair (j), it is in usedIndices.
+        // We need to verify if i is in usedIndices in the else branch? No, simple logic:
+        // We rebuild isolatedHoles from scratch based on usedIndices logic?
+        // Better:
+        // Return detected countersinks and remaining circles.
+
+        val finalHoles = circles.filterIndexed { index, _ -> !usedIndices.contains(index) }
+
+        return Pair(finalHoles, countersinks)
+    }
+
+    private fun detectScratches(edges: Mat, contours: List<MatOfPoint>): List<Scratch> {
+        val lines = Mat()
+        // Detección de líneas probabilística
+        Imgproc.HoughLinesP(edges, lines, 1.0, Math.PI / 180, 50, 50.0, 10.0)
+
+        val scratches = ArrayList<Scratch>()
+
+        for (i in 0 until lines.rows()) {
+            val l = lines.get(i, 0)
+            val pt1 = org.opencv.core.Point(l[0], l[1])
+            val pt2 = org.opencv.core.Point(l[2], l[3])
+
+            // Verificar si la línea está DENTRO de un contorno de pieza (para evitar bordes exteriores)
+            // O simplificamos: Una raya suele ser una línea recta.
+            // Aquí asumimos que todo HoughLine es scratch por ahora.
+            val dx = pt2.x - pt1.x
+            val dy = pt2.y - pt1.y
+            val len = kotlin.math.sqrt(dx * dx + dy * dy)
+
+            scratches.add(Scratch(pt1, pt2, len))
+        }
+        lines.release()
+        return scratches
+    }
+
+    private fun detectOrientation(markers: List<Marker>): com.example.celestic.models.enums.Orientation {
+        if (markers.isEmpty()) return com.example.celestic.models.enums.Orientation.UNKNOWN
+
+        // Lógica simple basada en reglas de negocio hipotéticas
+        // Si detectamos ID < 10 es ANVERSO, ID >= 10 es REVERSO
+        // O si hay marcadores en general es ANVERSO.
+        // Por ahora: Marcador presente = ANVERSO.
+
+        return com.example.celestic.models.enums.Orientation.ANVERSO
+    }
+
+    // ... rest of existing methods (applyCalibration, etc) ...
 
     fun applyCalibration(image: Mat, cameraMatrix: Mat, distortionCoeffs: Mat): Mat {
         val undistortedImage = Mat()
@@ -178,8 +404,6 @@ class FrameAnalyzer(private val sharedViewModel: SharedViewModel) {
 
     fun detectDeformationsWithOpticalFlow(prevFrame: Mat, nextFrame: Mat): MatOfPoint2f {
         MatOfPoint2f()
-        // GoodFeaturesToTrack expects MatOfPoint for Corners but we can adapt it.
-        // Actually it returns MatOfPoint.
         val corners = MatOfPoint()
         Imgproc.goodFeaturesToTrack(prevFrame, corners, 100, 0.3, 7.0)
 
