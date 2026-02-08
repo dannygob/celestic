@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val repository: DetectionRepository,
-    @ApplicationContext private val context: Context
+    @field:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _traceabilityItem = MutableStateFlow<Result<TraceabilityItem?>>(Result.Loading)

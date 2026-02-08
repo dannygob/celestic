@@ -34,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.UiComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -47,6 +48,7 @@ import com.example.celestic.viewmodel.SharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@UiComposable
 fun StatusScreen(
     navController: NavController,
     sharedViewModel: SharedViewModel = hiltViewModel()
@@ -147,6 +149,7 @@ fun StatusScreen(
 }
 
 @Composable
+@UiComposable
 fun StatusHeader(isDarkMode: Boolean) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -184,6 +187,7 @@ fun StatusHeader(isDarkMode: Boolean) {
 }
 
 @Composable
+@UiComposable
 fun StatusSection(
     title: String,
     icon: ImageVector,
@@ -216,6 +220,7 @@ fun StatusSection(
 }
 
 @Composable
+@UiComposable
 fun StatusItem(label: String, value: String, textColor: Color) {
     Row(
         modifier = Modifier

@@ -37,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.UiComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -54,6 +55,7 @@ import com.example.celestic.viewmodel.SharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@UiComposable
 fun SettingsScreen(
     navController: NavController,
     sharedViewModel: SharedViewModel = hiltViewModel()
@@ -208,6 +210,7 @@ fun SettingsScreen(
 }
 
 @Composable
+@UiComposable
 fun SettingsItem(
     title: String,
     subtitle: String,

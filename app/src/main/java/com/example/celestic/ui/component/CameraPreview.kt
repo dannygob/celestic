@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.UiComposable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -39,6 +40,7 @@ fun triggerCameraCapture() {
 }
 
 @Composable
+@UiComposable
 fun CameraPreview(
     onFrameCaptured: (Bitmap) -> Unit
 ) {
@@ -93,14 +95,18 @@ fun CameraPreview(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        AndroidView(factory = { previewView }, modifier = Modifier.fillMaxSize())
+        AndroidView(
+            factory = { _ -> previewView },
+            modifier = Modifier.fillMaxSize(),
+            update = { _ -> }
+        )
 
-        // Mira de precisión (HUD overlay)
         PrecisionReticle()
     }
 }
 
 @Composable
+@UiComposable
 fun PrecisionReticle() {
     val paddingDp = 32.dp
     Canvas(modifier = Modifier

@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.UiComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +36,7 @@ import com.example.celestic.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@UiComposable
 fun ReportsScreen(
     navController: NavController,
     sharedViewModel: com.example.celestic.viewmodel.SharedViewModel = hiltViewModel()

@@ -35,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.UiComposable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -54,6 +55,7 @@ import com.example.celestic.viewmodel.SharedViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
+@UiComposable
 fun LoginScreen(
     navController: NavController,
     sharedViewModel: SharedViewModel = hiltViewModel()
@@ -130,6 +132,7 @@ fun LoginScreen(
 }
 
 @Composable
+@UiComposable
 private fun LoginHeader(isLandscape: Boolean, textPrimary: Color, textSecondary: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -151,6 +154,7 @@ private fun LoginHeader(isLandscape: Boolean, textPrimary: Color, textSecondary:
 }
 
 @Composable
+@UiComposable
 private fun LoginForm(
     email: String,
     onEmailChange: (String) -> Unit,
@@ -308,6 +312,7 @@ private fun LoginForm(
 }
 
 @Composable
+@UiComposable
 private fun LoginFooter(textSecondary: Color) {
     Text(
         text = "v2.0 Industrial Edition",

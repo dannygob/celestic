@@ -11,7 +11,7 @@ hiltNavigation = "1.2.0"
 room = "2.6.1"
 camerax = "1.4.1"
 opencv = "4.10.0"
-litert = "2.1.0"
+litert = "1.0.1"
 firebaseAuth = "23.1.0"
 material = "1.13.0"
 # Nuevas incorporaciones estables
@@ -57,6 +57,9 @@ androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", 
 androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
 litert = { group = "com.google.ai.edge.litert", name = "litert", version.ref = "litert" }
+litert-gpu = { group = "com.google.ai.edge.litert", name = "litert-gpu", version.ref = "litert" }
+litert-gpu-delegate = { group = "com.google.ai.edge.litert", name = "litert-gpu-delegate-plugin", version.ref = "litert" }
+litert-support = { group = "com.google.ai.edge.litert", name = "litert-support", version.ref = "litert" }
 opencv = { group = "org.opencv", name = "opencv", version.ref = "opencv" }
 
 # Firebase

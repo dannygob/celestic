@@ -22,7 +22,7 @@ import kotlin.math.sqrt
  */
 @Singleton
 class BlueprintMatcher @Inject constructor(
-    @ApplicationContext private val context: Context
+    @field:ApplicationContext private val context: Context
 ) {
     private val blueprints = mutableMapOf<String, Blueprint>()
     private val templates = mutableMapOf<String, Mat>()

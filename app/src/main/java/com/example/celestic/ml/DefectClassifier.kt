@@ -3,6 +3,7 @@ package com.example.celestic.ml
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
+import androidx.core.graphics.scale
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.gpu.CompatibilityList
@@ -21,7 +22,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class DefectClassifier @Inject constructor(
-    @ApplicationContext private val context: Context
+    @field:ApplicationContext private val context: Context
 ) {
     private var interpreter: Interpreter? = null
     private var gpuDelegate: GpuDelegate? = null
@@ -45,11 +46,6 @@ class DefectClassifier @Inject constructor(
         ALODINE_IRREGULAR(11, "alodine_irregular")
     }
 
-    init {
-        // El modelo se cargará cuando esté disponible
-        // loadModel()
-    }
-
     private fun loadModel() {
         try {
             // Configurar opciones del intérprete
@@ -59,8 +55,9 @@ class DefectClassifier @Inject constructor(
             val compatList = CompatibilityList()
             if (compatList.isDelegateSupportedOnThisDevice) {
                 try {
-                    gpuDelegate = GpuDelegate(compatList.bestOptionsForThisDevice)
-                    options.addDelegate(gpuDelegate)
+                    val delegate = GpuDelegate()
+                    gpuDelegate = delegate
+                    options.addDelegate(delegate)
                     Log.d(TAG, "GPU delegate habilitado")
                 } catch (e: Exception) {
                     Log.w(TAG, "GPU no disponible, usando CPU", e)
@@ -71,7 +68,7 @@ class DefectClassifier @Inject constructor(
             options.setNumThreads(4)
 
             // Cargar modelo
-            val modelBuffer = loadModelFile("models/defect_classifier.tflite")
+            val modelBuffer = loadModelFile()
             interpreter = Interpreter(modelBuffer, options)
 
             Log.d(TAG, "Modelo TFLite cargado exitosamente")
@@ -104,7 +101,7 @@ class DefectClassifier @Inject constructor(
             val inputBuffer = preprocessImage(bitmap)
 
             // 2. Preparar output
-            val outputArray = Array(1) { FloatArray(DefectClass.values().size) }
+            val outputArray = Array(1) { FloatArray(DefectClass.entries.size) }
 
             // 3. Ejecutar inferencia
             val startTime = System.currentTimeMillis()
@@ -144,7 +141,7 @@ class DefectClassifier @Inject constructor(
         buffer.order(ByteOrder.nativeOrder())
 
         // Redimensionar bitmap
-        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, inputSize, inputSize, true)
+        val resizedBitmap = bitmap.scale(inputSize, inputSize)
 
         val intValues = IntArray(inputSize * inputSize)
         resizedBitmap.getPixels(intValues, 0, inputSize, 0, 0, inputSize, inputSize)
@@ -184,48 +181,48 @@ class DefectClassifier @Inject constructor(
         return when (detectionType) {
             DNNDetector.DetectionClass.HOLE -> {
                 when (classId) {
-                    0, 1 -> DefectClass.values()[classId]
+                    0, 1 -> DefectClass.entries[classId]
                     else -> DefectClass.HOLE_OK
                 }
             }
 
             DNNDetector.DetectionClass.COUNTERSINK -> {
                 when (classId) {
-                    2, 3 -> DefectClass.values()[classId]
+                    2, 3 -> DefectClass.entries[classId]
                     else -> DefectClass.COUNTERSINK_OK
                 }
             }
 
             DNNDetector.DetectionClass.SCRATCH -> {
                 when (classId) {
-                    4, 5, 6 -> DefectClass.values()[classId]
+                    4, 5, 6 -> DefectClass.entries[classId]
                     else -> DefectClass.SCRATCH_NONE
                 }
             }
 
             DNNDetector.DetectionClass.DEFORMATION -> {
                 when (classId) {
-                    7, 8 -> DefectClass.values()[classId]
+                    7, 8 -> DefectClass.entries[classId]
                     else -> DefectClass.DEFORMATION_OK
                 }
             }
 
             DNNDetector.DetectionClass.ALODINE_HALO -> {
                 when (classId) {
-                    9, 10, 11 -> DefectClass.values()[classId]
+                    9, 10, 11 -> DefectClass.entries[classId]
                     else -> DefectClass.ALODINE_OK
                 }
             }
 
-            else -> DefectClass.values().getOrNull(classId) ?: DefectClass.HOLE_OK
+            else -> DefectClass.entries.getOrNull(classId) ?: DefectClass.HOLE_OK
         }
     }
 
     /**
      * Carga el archivo del modelo desde assets
      */
-    private fun loadModelFile(modelPath: String): MappedByteBuffer {
-        val fileDescriptor = context.assets.openFd(modelPath)
+    private fun loadModelFile(): MappedByteBuffer {
+        val fileDescriptor = context.assets.openFd(MODEL_PATH)
         val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
         val fileChannel = inputStream.channel
         val startOffset = fileDescriptor.startOffset
@@ -246,6 +243,7 @@ class DefectClassifier @Inject constructor(
 
     companion object {
         private const val TAG = "DefectClassifier"
+        private const val MODEL_PATH = "models/defect_classifier.tflite"
     }
 }
 

@@ -47,6 +47,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.UiComposable
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -73,12 +74,13 @@ import com.example.celestic.viewmodel.SharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@UiComposable
 fun DashboardScreen(
     navController: NavController,
     viewModel: DashboardViewModel? = null,
     sharedViewModel: SharedViewModel = hiltViewModel()
 ) {
-    val state = viewModel?.state?.collectAsState()?.value ?: DashboardState.Idle
+    val dashboardState = viewModel?.state?.collectAsState()?.value ?: DashboardState.Idle
     val isDarkMode = sharedViewModel.isDarkMode.collectAsState().value
 
     val accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
@@ -100,7 +102,7 @@ fun DashboardScreen(
         Scaffold(
             topBar = {
                 DashboardTopBar(
-                    state = state as DashboardState,
+                    state = dashboardState as DashboardState,
                     isLandscape = isLandscape,
                     isDarkMode = isDarkMode,
                     accentColor = accentColor,
@@ -114,7 +116,7 @@ fun DashboardScreen(
         ) { paddingValues ->
             DashboardMainContent(
                 paddingValues = paddingValues,
-                state = state as DashboardState,
+                state = dashboardState as DashboardState,
                 isLandscape = isLandscape,
                 isDarkMode = isDarkMode,
                 accentColor = accentColor,
@@ -125,14 +127,12 @@ fun DashboardScreen(
                 viewModel = viewModel
             )
         }
-
-        // Modales y Efectos
-        DashboardModals(state as DashboardState, viewModel, navController)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@UiComposable
 private fun DashboardTopBar(
     state: DashboardState,
     isLandscape: Boolean,
@@ -240,6 +240,7 @@ private fun DashboardTopBar(
 }
 
 @Composable
+@UiComposable
 private fun DashboardMainContent(
     paddingValues: PaddingValues,
     state: DashboardState,
@@ -276,7 +277,7 @@ private fun DashboardMainContent(
                 Crossfade(targetState = state, label = "dashboardContent") { currentState ->
                     when (currentState) {
                         DashboardState.Idle -> StandbyView(isLandscape, accentColor, textPrimary)
-                        DashboardState.CameraReady -> CameraView(isLandscape, viewModel)
+                        DashboardState.CameraReady -> DashboardCameraView(isLandscape, viewModel)
                         DashboardState.Processing -> LoadingView(accentColor, textPrimary)
                         is DashboardState.Approved -> SuccessView(isLandscape)
                         is DashboardState.Error -> ErrorView(isLandscape, viewModel)
@@ -300,6 +301,7 @@ private fun DashboardMainContent(
 }
 
 @Composable
+@UiComposable
 fun NavIconBtn(
     icon: ImageVector,
     label: String,
@@ -336,6 +338,7 @@ fun NavIconBtn(
 }
 
 @Composable
+@UiComposable
 fun StandbyView(isLandscape: Boolean, accentColor: Color, textPrimary: Color) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -357,7 +360,8 @@ fun StandbyView(isLandscape: Boolean, accentColor: Color, textPrimary: Color) {
 }
 
 @Composable
-fun CameraView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
+@UiComposable
+fun DashboardCameraView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
     Box(modifier = Modifier
         .fillMaxSize()
         .padding(2.dp)) {
@@ -375,6 +379,7 @@ fun CameraView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
 }
 
 @Composable
+@UiComposable
 fun LoadingView(accentColor: Color, textPrimary: Color) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -396,6 +401,7 @@ fun LoadingView(accentColor: Color, textPrimary: Color) {
 }
 
 @Composable
+@UiComposable
 fun SuccessView(isLandscape: Boolean) {
     Box(
         modifier = Modifier
@@ -422,6 +428,7 @@ fun SuccessView(isLandscape: Boolean) {
 }
 
 @Composable
+@UiComposable
 fun ErrorView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
     Column(
         modifier = Modifier
@@ -479,6 +486,7 @@ fun DashboardModals(
 }
 
 @Composable
+@UiComposable
 fun Round3DInspectionButton(onClick: () -> Unit) {
     Surface(
         onClick = onClick,
@@ -510,6 +518,7 @@ fun Round3DInspectionButton(onClick: () -> Unit) {
 }
 
 @Composable
+@UiComposable
 fun CornerDecorations(color: Color) {
     val thicknessDp = 3.dp
     val lengthDp = 30.dp
@@ -537,6 +546,7 @@ fun CornerDecorations(color: Color) {
 }
 
 @Composable
+@UiComposable
 fun HUDOverlay(isLandscape: Boolean) {
     val paddingDp = if (isLandscape) 80.dp else 40.dp
     val strokeWidthDp = 1.dp

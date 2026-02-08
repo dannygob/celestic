@@ -7,8 +7,9 @@ import org.opencv.core.Core
 import org.opencv.core.Mat
 import org.opencv.core.MatOfFloat
 import org.opencv.core.MatOfInt
-import org.opencv.core.MatOfRect
+import org.opencv.core.MatOfRect2d
 import org.opencv.core.Rect
+import org.opencv.core.Rect2d
 import org.opencv.core.Scalar
 import org.opencv.core.Size
 import org.opencv.dnn.Dnn
@@ -22,7 +23,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class DNNDetector @Inject constructor(
-    @ApplicationContext private val context: Context
+    @field:ApplicationContext private val context: Context
 ) {
     private var net: Net? = null
     private val inputSize = Size(640.0, 640.0) // YOLOv8 input size
@@ -39,10 +40,7 @@ class DNNDetector @Inject constructor(
         ALODINE_HALO(5, "halo_alodine")
     }
 
-    init {
-        // El modelo se cargará cuando esté disponible
-        // loadModel()
-    }
+
 
     private fun loadModel() {
         try {
@@ -123,9 +121,20 @@ class DNNDetector @Inject constructor(
 
             // 4. Non-Maximum Suppression
             val indices = MatOfInt()
+            val boxes2d = boxes.map {
+                Rect2d(
+                    it.x.toDouble(),
+                    it.y.toDouble(),
+                    it.width.toDouble(),
+                    it.height.toDouble()
+                )
+            }
+            val boxesMat = MatOfRect2d(*boxes2d.toTypedArray())
+            val confidencesMat = MatOfFloat(*confidences.toFloatArray())
+
             Dnn.NMSBoxes(
-                MatOfRect(boxes),
-                MatOfFloat(*confidences.toFloatArray()),
+                boxesMat,
+                confidencesMat,
                 confThreshold,
                 nmsThreshold,
                 indices
@@ -133,7 +142,7 @@ class DNNDetector @Inject constructor(
 
             // 5. Crear objetos Detection
             indices.toArray().forEach { idx ->
-                val className = DetectionClass.values()
+                val className = DetectionClass.entries
                     .find { it.id == classIds[idx] }?.label ?: "unknown"
 
                 detections.add(

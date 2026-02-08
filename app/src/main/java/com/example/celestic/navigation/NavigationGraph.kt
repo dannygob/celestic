@@ -2,6 +2,7 @@ package com.example.celestic.navigation
 
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.UiComposable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -21,6 +22,7 @@ import com.example.celestic.ui.screen.StatusScreen
 import com.example.celestic.viewmodel.SharedViewModel
 
 @Composable
+@UiComposable
 fun NavigationGraph(
     navController: NavHostController,
     sharedViewModel: SharedViewModel

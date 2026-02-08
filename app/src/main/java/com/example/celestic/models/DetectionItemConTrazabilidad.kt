@@ -3,9 +3,9 @@ package com.example.celestic.models
 
 data class DetectionItemConTrazabilidad(
     val detectionItem: DetectionItem,
-    val trazabilidad: TrazabilidadItem?,
+    val trazabilidad: TraceabilityItem?,
 )
 
-fun DetectionItem.conTrazabilidad(info: TrazabilidadItem?): DetectionItemConTrazabilidad {
+fun DetectionItem.conTrazabilidad(info: TraceabilityItem?): DetectionItemConTrazabilidad {
     return DetectionItemConTrazabilidad(this, info)
 }

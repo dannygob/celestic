@@ -21,7 +21,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 class CalibrationManager @Inject constructor(
-    @ApplicationContext private val context: Context
+    @field:ApplicationContext private val context: Context
 ) {
 
     var cameraMatrix: Mat? = null
@@ -42,10 +42,10 @@ class CalibrationManager @Inject constructor(
 
             // Parse cameraMatrix (expect an OpenCV String dump or an array)
             val matrixData = json.getString("cameraMatrix")
-            cameraMatrix = stringToMat(matrixData, 3, 3, CvType.CV_64F)
+            cameraMatrix = stringToMat(matrixData, 3, 3)
 
             val distData = json.getString("distortionCoeffs")
-            distortionCoeffs = stringToMat(distData, 1, 5, CvType.CV_64F)
+            distortionCoeffs = stringToMat(distData, 1, 5)
 
             calibrationDate = json.optString("calibrationDate")
             true
@@ -55,8 +55,8 @@ class CalibrationManager @Inject constructor(
         }
     }
 
-    private fun stringToMat(data: String, rows: Int, cols: Int, type: Int): Mat {
-        val mat = Mat(rows, cols, type)
+    private fun stringToMat(data: String, rows: Int, cols: Int): Mat {
+        val mat = Mat(rows, cols, CvType.CV_64F)
         val cleanData = data.replace("[", "").replace("]", "").replace(";", "").trim()
         val values = cleanData.split(Regex("\\s*,\\s*|\\s+")).filter { it.isNotBlank() }
         val doubleValues = values.map { it.toDouble() }.toDoubleArray()

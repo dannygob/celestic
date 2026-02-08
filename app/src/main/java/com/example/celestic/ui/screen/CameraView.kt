@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.UiComposable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
@@ -48,6 +49,7 @@ import java.util.concurrent.Executors
 
 
 @Composable
+@UiComposable
 fun CameraView(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = viewModel(),
@@ -109,6 +111,7 @@ fun CameraView(
 
 //  CONTENEDOR SEGURO PARA ANDROIDVIEW (ELIMINA WARNING)
 @Composable
+@UiComposable
 private fun CameraPreviewContainer(
     viewModel: MainViewModel,
     cameraExecutor: ExecutorService,
@@ -137,7 +140,8 @@ private fun CameraPreviewContainer(
                     viewModel = viewModel
                 )
             }
-        }
+        },
+        update = { }
     )
 }
 

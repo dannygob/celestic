@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.UiComposable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.example.celestic.models.calibration.DetectedFeature
 
 @Composable
+@UiComposable
 fun BlueprintView(features: List<DetectedFeature>, useInches: Boolean = false) {
     val textMeasurer = rememberTextMeasurer()
 
