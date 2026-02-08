@@ -58,7 +58,7 @@ class FrameAnalyzer @Inject constructor(
 
     private var prevGrayMat: Mat? = null
 
-    fun analyze(mat: Mat, markerType: MarkerType): AnalysisResult {
+    fun analyze(mat: Mat, markerType: MarkerType?): AnalysisResult {
         val grayMat = Mat()
         val thresholdedImage = Mat()
         val edges = Mat()
@@ -95,13 +95,16 @@ class FrameAnalyzer @Inject constructor(
             val scratches = detectScratches(edges, filteredContours)
 
             // Detect Orientation
-            val markers = when (markerType) {
+            val markers: List<Marker> = when (markerType) {
                 MarkerType.ARUCO -> arucoManager.detectMarkers(mat)
                     .map { Marker(it.id, it.corners) }
 
                 MarkerType.APRILTAG -> aprilTagManager.detectMarkers(mat)
                     .map { Marker(it.id, it.corners) }
+
+                else -> emptyList()
             }
+
             val orientation = detectOrientation(markers)
 
             prevGrayMat?.let { detectDeformationsWithOpticalFlow(it, grayMat) }

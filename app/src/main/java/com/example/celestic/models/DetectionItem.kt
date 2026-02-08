@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.celestic.models.enums.DetectionStatus
 import com.example.celestic.models.enums.DetectionType
@@ -19,6 +20,9 @@ import kotlinx.parcelize.Parcelize
             childColumns = ["inspectionId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["inspectionId"])  // ← ÍNDICE AÑADIDO
     ]
 )
 @Parcelize

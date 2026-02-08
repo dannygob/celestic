@@ -46,7 +46,7 @@ fun CameraScreen(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 @UiComposable
-fun CameraScreen() {
+fun CameraScreenPreview() {
     CelesticTheme {
         CameraScreen(navController = rememberNavController())
     }

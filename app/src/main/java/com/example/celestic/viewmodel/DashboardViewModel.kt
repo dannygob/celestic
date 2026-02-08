@@ -39,10 +39,18 @@ class DashboardViewModel @Inject constructor(
     private val aprilTagManager: AprilTagManager,
     private val qrScanner: CelesticQRScanner,
     private val frameAnalyzer: FrameAnalyzer,
-    private val sharedViewModel: SharedViewModel,
+//    private val sharedViewModel: SharedViewModel,
     private val imageClassifier: ImageClassifier,
     private val specificationValidator: com.example.celestic.utils.SpecificationValidator
 ) : ViewModel() {
+
+    private var sharedViewModel: SharedViewModel? = null
+
+    fun attachSharedViewModel(vm: SharedViewModel) {
+        sharedViewModel = vm
+    }
+
+
 
     private val _state = MutableStateFlow<DashboardState>(DashboardState.Idle)
     val state: StateFlow<DashboardState> = _state
@@ -274,7 +282,7 @@ class DashboardViewModel @Inject constructor(
         val mat = Mat()
         Utils.bitmapToMat(bitmap, mat)
 
-        val markerType = sharedViewModel.markerType.value
+        val markerType = sharedViewModel?.markerType?.value
         val result = frameAnalyzer.analyze(mat, markerType)
 
         // Estimate distance and scale

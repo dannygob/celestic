@@ -23,7 +23,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class DNNDetector @Inject constructor(
-    @field:ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context
 ) {
     private var net: Net? = null
     private val inputSize = Size(640.0, 640.0) // YOLOv8 input size

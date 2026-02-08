@@ -15,7 +15,29 @@ data class ClassificationResult(
     val type: String,
     val score: Float,
     val probabilities: FloatArray
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ClassificationResult
+
+        if (score != other.score) return false
+        if (status != other.status) return false
+        if (type != other.type) return false
+        if (!probabilities.contentEquals(other.probabilities)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = score.hashCode()
+        result = 31 * result + status.hashCode()
+        result = 31 * result + type.hashCode()
+        result = 31 * result + probabilities.contentHashCode()
+        return result
+    }
+}
 
 data class FrameAnalysisResult(
     val contoursCount: Int,

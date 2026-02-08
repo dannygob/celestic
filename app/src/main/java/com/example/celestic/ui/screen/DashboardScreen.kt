@@ -1,5 +1,6 @@
 package com.example.celestic.ui.screen
 
+import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -7,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -53,7 +53,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,11 +65,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.celestic.R
+import com.example.celestic.models.DashboardState
 import com.example.celestic.ui.component.ApprovedResultDialog
 import com.example.celestic.ui.component.CameraPreview
 import com.example.celestic.ui.component.triggerCameraCapture
 import com.example.celestic.ui.theme.CelesticTheme
-import com.example.celestic.viewmodel.DashboardState
+
 import com.example.celestic.viewmodel.DashboardViewModel
 import com.example.celestic.viewmodel.SharedViewModel
 
@@ -77,12 +80,22 @@ import com.example.celestic.viewmodel.SharedViewModel
 @UiComposable
 fun DashboardScreen(
     navController: NavController,
-    viewModel: DashboardViewModel? = null,
+    viewModel: DashboardViewModel = hiltViewModel(),
     sharedViewModel: SharedViewModel = hiltViewModel()
 ) {
-    val dashboardState = viewModel?.state?.collectAsState()?.value ?: DashboardState.Idle
+    // Conectar SharedViewModel → DashboardViewModel
+    LaunchedEffect(Unit) {
+        viewModel.attachSharedViewModel(sharedViewModel)
+    }
+
+    val dashboardState = viewModel.state.collectAsState().value
     val isDarkMode = sharedViewModel.isDarkMode.collectAsState().value
 
+    // Orientación sin BoxWithConstraints
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    // Colores
     val accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
     val frameBorder = if (isDarkMode) Color(0xFF1B263B) else Color(0xFFD1D9E6)
     val textPrimary = if (isDarkMode) Color.White else Color.Black
@@ -90,49 +103,49 @@ fun DashboardScreen(
 
     val mainBackground = Brush.verticalGradient(
         colors = if (isDarkMode) {
-            listOf(Color(0xFF0A0E14), Color(0xFF000000))
+            listOf(Color(0xFF0A0E14), Color.Black)
         } else {
             listOf(Color(0xFFF2F2F2), Color(0xFFE0E0E0))
         }
     )
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val isLandscape = maxWidth.value > maxHeight.value
-
-        Scaffold(
-            topBar = {
-                DashboardTopBar(
-                    state = dashboardState as DashboardState,
-                    isLandscape = isLandscape,
-                    isDarkMode = isDarkMode,
-                    accentColor = accentColor,
-                    textPrimary = textPrimary,
-                    textSecondary = textSecondary,
-                    navController = navController,
-                    viewModel = viewModel
-                )
-            },
-            containerColor = Color.Transparent
-        ) { paddingValues ->
-            DashboardMainContent(
-                paddingValues = paddingValues,
-                state = dashboardState as DashboardState,
+    Scaffold(
+        topBar = {
+            DashboardTopBar(
+                state = dashboardState,
                 isLandscape = isLandscape,
                 isDarkMode = isDarkMode,
                 accentColor = accentColor,
                 textPrimary = textPrimary,
                 textSecondary = textSecondary,
-                frameBorder = frameBorder,
-                mainBackground = mainBackground,
+                navController = navController,
                 viewModel = viewModel
             )
-        }
+        },
+        containerColor = Color.Transparent
+    ) { paddingValues ->
+        DashboardMainContent(
+            paddingValues = paddingValues,
+            state = dashboardState,
+            isLandscape = isLandscape,
+            isDarkMode = isDarkMode,
+            accentColor = accentColor,
+            textPrimary = textPrimary,
+            textSecondary = textSecondary,
+            frameBorder = frameBorder,
+            mainBackground = mainBackground,
+            viewModel = viewModel
+        )
     }
+    DashboardModals(
+        state = dashboardState,
+        viewModel = viewModel,
+        navController = navController
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 private fun DashboardTopBar(
     state: DashboardState,
     isLandscape: Boolean,
@@ -141,7 +154,7 @@ private fun DashboardTopBar(
     textPrimary: Color,
     textSecondary: Color,
     navController: NavController,
-    viewModel: DashboardViewModel?
+    viewModel: DashboardViewModel
 ) {
     Surface(
         color = if (isDarkMode) Color.Black else Color.White,
@@ -183,12 +196,14 @@ private fun DashboardTopBar(
                         isLandscape,
                         isDarkMode
                     ) { navController.navigate("calibration") }
+
                     NavIconBtn(
                         Icons.Default.History,
                         stringResource(R.string.hist_abbr),
                         isLandscape,
                         isDarkMode
                     ) { navController.navigate("detection_list") }
+
                     NavIconBtn(
                         Icons.Default.Assessment,
                         stringResource(R.string.rep_abbr),
@@ -212,11 +227,12 @@ private fun DashboardTopBar(
 
                     Button(
                         onClick = {
-                            if (state == DashboardState.Idle) viewModel?.startInspection()
-                            else viewModel?.resetState()
+                            if (state == DashboardState.Idle) viewModel.startInspection()
+                            else viewModel.resetState()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (state == DashboardState.Idle) Color(0xFF00695C)
+                            containerColor = if (state == DashboardState.Idle)
+                                Color(0xFF00695C)
                             else Color(0xFFB71C1C)
                         ),
                         shape = RoundedCornerShape(8.dp),
@@ -240,7 +256,6 @@ private fun DashboardTopBar(
 }
 
 @Composable
-
 private fun DashboardMainContent(
     paddingValues: PaddingValues,
     state: DashboardState,
@@ -251,7 +266,7 @@ private fun DashboardMainContent(
     textSecondary: Color,
     frameBorder: Color,
     mainBackground: Brush,
-    viewModel: DashboardViewModel?
+    viewModel: DashboardViewModel
 ) {
     Box(
         modifier = Modifier
@@ -281,9 +296,10 @@ private fun DashboardMainContent(
                         DashboardState.Processing -> LoadingView(accentColor, textPrimary)
                         is DashboardState.Approved -> SuccessView(isLandscape)
                         is DashboardState.Error -> ErrorView(isLandscape, viewModel)
-                        else -> {}
+                        is DashboardState.NavigateToDetails -> {}
                     }
                 }
+
             }
 
             if (!isLandscape) {
@@ -301,7 +317,6 @@ private fun DashboardMainContent(
 }
 
 @Composable
-
 fun NavIconBtn(
     icon: ImageVector,
     label: String,
@@ -338,7 +353,6 @@ fun NavIconBtn(
 }
 
 @Composable
-
 fun StandbyView(isLandscape: Boolean, accentColor: Color, textPrimary: Color) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -361,12 +375,15 @@ fun StandbyView(isLandscape: Boolean, accentColor: Color, textPrimary: Color) {
 
 @Composable
 
-fun DashboardCameraView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(2.dp)) {
-        CameraPreview(onFrameCaptured = { bitmap -> viewModel?.onFrameCaptured(bitmap) })
+fun DashboardCameraView(isLandscape: Boolean, viewModel: DashboardViewModel) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(2.dp)
+    ) {
+        CameraPreview(onFrameCaptured = { bitmap -> viewModel.onFrameCaptured(bitmap) })
         HUDOverlay(isLandscape)
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -379,7 +396,6 @@ fun DashboardCameraView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
 }
 
 @Composable
-
 fun LoadingView(accentColor: Color, textPrimary: Color) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -401,7 +417,6 @@ fun LoadingView(accentColor: Color, textPrimary: Color) {
 }
 
 @Composable
-
 fun SuccessView(isLandscape: Boolean) {
     Box(
         modifier = Modifier
@@ -428,8 +443,7 @@ fun SuccessView(isLandscape: Boolean) {
 }
 
 @Composable
-
-fun ErrorView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
+fun ErrorView(isLandscape: Boolean, viewModel: DashboardViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -453,7 +467,7 @@ fun ErrorView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(
-            onClick = { viewModel?.resetState() },
+            onClick = { viewModel.resetState() },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             shape = RoundedCornerShape(8.dp)
         ) {
@@ -466,13 +480,13 @@ fun ErrorView(isLandscape: Boolean, viewModel: DashboardViewModel?) {
 @UiComposable
 fun DashboardModals(
     state: DashboardState,
-    viewModel: DashboardViewModel?,
+    viewModel: DashboardViewModel,
     navController: NavController
 ) {
     if (state is DashboardState.Approved) {
         val detectionId = state.detectionId
         ApprovedResultDialog(
-            onNewInspection = { viewModel?.startNewInspection() },
+            onNewInspection = { viewModel.startNewInspection() },
             onViewReport = { navController.navigate("report/$detectionId") }
         )
     }
@@ -481,13 +495,12 @@ fun DashboardModals(
         val detectionId = state.detectionId
         LaunchedEffect(detectionId) {
             navController.navigate("details/$detectionId")
-            viewModel?.resetState()
+            viewModel.resetState()
         }
     }
 }
 
 @Composable
-
 fun Round3DInspectionButton(onClick: () -> Unit) {
     Surface(
         onClick = onClick,
@@ -519,20 +532,22 @@ fun Round3DInspectionButton(onClick: () -> Unit) {
 }
 
 @Composable
-
 fun CornerDecorations(color: Color) {
     val thicknessDp = 3.dp
     val lengthDp = 30.dp
     Canvas(modifier = Modifier.fillMaxSize()) {
         val thickness = thicknessDp.toPx()
         val length = lengthDp.toPx()
-        // Dibujar las 4 esquinas industriales
+
         drawRect(color, Offset(0f, 0f), Size(length, thickness))
         drawRect(color, Offset(0f, 0f), Size(thickness, length))
+
         drawRect(color, Offset(size.width - length, 0f), Size(length, thickness))
         drawRect(color, Offset(size.width - thickness, 0f), Size(thickness, length))
+
         drawRect(color, Offset(0f, size.height - thickness), Size(length, thickness))
         drawRect(color, Offset(0f, size.height - length), Size(thickness, length))
+
         drawRect(
             color,
             Offset(size.width - length, size.height - thickness),
@@ -547,17 +562,18 @@ fun CornerDecorations(color: Color) {
 }
 
 @Composable
-
 fun HUDOverlay(isLandscape: Boolean) {
     val paddingDp = if (isLandscape) 80.dp else 40.dp
     val strokeWidthDp = 1.dp
-    Canvas(modifier = Modifier
-        .fillMaxSize()
-        .padding(paddingDp)) {
+
+    Canvas(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingDp)
+    ) {
         val color = Color(0xFF4FC3F7).copy(alpha = 0.15f)
         val strokeWidth = strokeWidthDp.toPx()
 
-        // El 'size' aquí es de DrawScope y es un objeto Size (Float)
         drawLine(
             color,
             Offset(size.width / 2 - 15, size.height / 2),
@@ -574,13 +590,9 @@ fun HUDOverlay(isLandscape: Boolean) {
         val bSize = 60f
 
         drawArc(
-            color,
-            180f,
-            90f,
-            false,
-            Offset(0f, 0f),
-            Size(bSize, bSize),
-            style = androidx.compose.ui.graphics.drawscope.Stroke(strokeWidth)
+            color, 180f, 90f, false, Offset(0f, 0f), Size(bSize, bSize), style = Stroke(
+                strokeWidth
+        )
         )
         drawArc(
             color,
@@ -589,7 +601,7 @@ fun HUDOverlay(isLandscape: Boolean) {
             false,
             Offset(size.width - bSize, 0f),
             Size(bSize, bSize),
-            style = androidx.compose.ui.graphics.drawscope.Stroke(strokeWidth)
+            style = Stroke(strokeWidth)
         )
         drawArc(
             color,
@@ -598,7 +610,7 @@ fun HUDOverlay(isLandscape: Boolean) {
             false,
             Offset(0f, size.height - bSize),
             Size(bSize, bSize),
-            style = androidx.compose.ui.graphics.drawscope.Stroke(strokeWidth)
+            style = Stroke(strokeWidth)
         )
         drawArc(
             color,
@@ -607,7 +619,7 @@ fun HUDOverlay(isLandscape: Boolean) {
             false,
             Offset(size.width - bSize, size.height - bSize),
             Size(bSize, bSize),
-            style = androidx.compose.ui.graphics.drawscope.Stroke(strokeWidth)
+            style = Stroke(strokeWidth)
         )
     }
 }

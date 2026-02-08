@@ -80,8 +80,8 @@
     <string name="modePrecision">Precisión</string>
     <string name="modePrecisionActivated">Modo precisión activado</string>
 
-    <string name="modeMetals">Metales</string>
-    <string name="modeMetalsActivated">Modo metales activado</string>
+    <!--    <string name="modeMetals">Metales</string>-->
+    <!--    <string name="modeMetalsActivated">Modo metales activado</string>-->
     <string name="celesticMode">Celestic</string>
     <string name="CalibrationOpen">Calibración Abierta</string>
     <string name="opencv_init_error">Error de inicialización de OpenCV</string>

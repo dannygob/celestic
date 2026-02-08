@@ -145,7 +145,7 @@ fun InspectionPreviewScreen(
 @Preview(showBackground = true)
 @Composable
 @UiComposable
-fun InspectionPreviewScreen() {
+fun InspectionPreviewScreenPreview() {
     CelesticTheme {
         InspectionPreviewScreen(navController = rememberNavController())
     }

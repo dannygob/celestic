@@ -268,7 +268,7 @@ fun SettingsItem(
 @Preview(showBackground = true, locale = "en")
 @Composable
 @UiComposable
-fun SettingsScreen() {
+fun SettingsScreenPreview() {
     CelesticTheme {
         SettingsScreen(rememberNavController())
     }

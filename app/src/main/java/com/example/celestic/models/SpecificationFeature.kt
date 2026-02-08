@@ -2,6 +2,7 @@ package com.example.celestic.models
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.celestic.models.enums.DetectionType
 import com.example.celestic.models.enums.Orientation
@@ -15,6 +16,9 @@ import com.example.celestic.models.enums.Orientation
             childColumns = ["specificationId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["specificationId"])  // ← ÍNDICE AÑADIDO
     ]
 )
 data class SpecificationFeature(

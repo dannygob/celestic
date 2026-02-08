@@ -1,9 +1,9 @@
 package com.example.celestic.ui.screen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -72,14 +73,16 @@ fun CalibrationScreen(
     val background = if (isDarkMode) Color(0xFF0A0E14) else Color(0xFFF2F2F2)
     val textColor = if (isDarkMode) Color.White else Color.Black
     val topBarBg = if (isDarkMode) Color.Black else Color.White
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    BoxWithConstraints(
+
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(background)
     ) {
-        val isLandscape = maxWidth > maxHeight
-
         Scaffold(
             topBar = {
                 CalibrationTopBar(
@@ -112,6 +115,7 @@ fun CalibrationScreen(
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

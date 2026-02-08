@@ -13,7 +13,7 @@ import javax.inject.Singleton
 @Singleton
 class DetectionRepository @Inject constructor(
     private val dao: CelesticDao,
-    @field:ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context  // ← CAMBIADO: sin @field:
 ) {
 
     suspend fun saveDetection(detection: DetectedFeature) {
@@ -83,6 +83,7 @@ class DetectionRepository @Inject constructor(
     fun getAllInspections(): kotlinx.coroutines.flow.Flow<List<com.example.celestic.models.Inspection>> {
         return dao.getAllInspections()
     }
+
     suspend fun insertSpecification(specification: com.example.celestic.models.Specification): Long {
         return dao.insertSpecification(specification)
     }

@@ -1,8 +1,11 @@
 package com.example.celestic.ui.screen
 
+import android.R.attr.maxHeight
+import android.R.attr.maxWidth
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -84,8 +88,12 @@ fun LoginScreen(
             listOf(Color(0xFFF2F2F2), Color(0xFFDEE4ED))
         }
     )
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    if (isLandscape) 64.dp else 24.dp
 
-    BoxWithConstraints(
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundGradient)

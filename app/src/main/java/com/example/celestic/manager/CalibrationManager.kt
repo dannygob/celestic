@@ -21,7 +21,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 class CalibrationManager @Inject constructor(
-    @field:ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context
 ) {
 
     var cameraMatrix: Mat? = null
