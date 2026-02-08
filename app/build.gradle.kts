@@ -78,10 +78,7 @@ android {
                 "META-INF/INDEX.LIST",
                 "META-INF/*.kotlin_module"
             )
-        }
-        jniLibs {
-            useLegacyPackaging = true
-        }
+
     }
 }
 
@@ -158,4 +155,5 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
     arg("room.expandProjection", "true")
+}
 }
