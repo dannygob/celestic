@@ -3,7 +3,7 @@ package com.example.celestic.ml
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
-import androidx.core.graphics.scale
+import com.example.celestic.utils.MLUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.gpu.CompatibilityList
@@ -22,7 +22,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class DefectClassifier @Inject constructor(
-    @ApplicationContext private val context: Context
+    @field:ApplicationContext private val context: Context
 ) {
     private var interpreter: Interpreter? = null
     private var gpuDelegate: GpuDelegate? = null
@@ -77,6 +77,12 @@ class DefectClassifier @Inject constructor(
         }
     }
 
+    private val inputBuffer: ByteBuffer by lazy {
+        ByteBuffer.allocateDirect(4 * inputSize * inputSize * numChannels).apply {
+            order(ByteOrder.nativeOrder())
+        }
+    }
+
     /**
      * Clasifica una imagen (ROI) según el tipo de detección
      */
@@ -98,7 +104,7 @@ class DefectClassifier @Inject constructor(
 
         try {
             // 1. Preprocesar imagen
-            val inputBuffer = preprocessImage(bitmap)
+            preprocessImage(bitmap)
 
             // 2. Preparar output
             val outputArray = Array(1) { FloatArray(DefectClass.entries.size) }
@@ -136,39 +142,10 @@ class DefectClassifier @Inject constructor(
     /**
      * Preprocesa la imagen para el modelo
      */
-    private fun preprocessImage(bitmap: Bitmap): ByteBuffer {
-        val buffer = ByteBuffer.allocateDirect(4 * inputSize * inputSize * numChannels)
-        buffer.order(ByteOrder.nativeOrder())
-
-        // Redimensionar bitmap
-        val resizedBitmap = bitmap.scale(inputSize, inputSize)
-
-        val intValues = IntArray(inputSize * inputSize)
-        resizedBitmap.getPixels(intValues, 0, inputSize, 0, 0, inputSize, inputSize)
-
-        // Normalizar y agregar al buffer
-        var pixel = 0
-        for (i in 0 until inputSize) {
-            for (j in 0 until inputSize) {
-                val value = intValues[pixel++]
-
-                // Normalización ImageNet (mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-                val r = ((value shr 16 and 0xFF) / 255f - 0.485f) / 0.229f
-                val g = ((value shr 8 and 0xFF) / 255f - 0.456f) / 0.224f
-                val b = ((value and 0xFF) / 255f - 0.406f) / 0.225f
-
-                buffer.putFloat(r)
-                buffer.putFloat(g)
-                buffer.putFloat(b)
-            }
-        }
-
-        if (resizedBitmap != bitmap) {
-            resizedBitmap.recycle()
-        }
-
-        return buffer
+    private fun preprocessImage(bitmap: Bitmap) {
+        MLUtils.fillBufferFromBitmap(bitmap, inputSize, inputBuffer, useImageNetNorm = true)
     }
+
 
     /**
      * Filtra el resultado de clasificación según el tipo de detección

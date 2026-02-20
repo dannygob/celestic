@@ -2,8 +2,7 @@ package com.example.celestic.manager
 
 import android.content.Context
 import android.graphics.Bitmap
-import androidx.core.graphics.get
-import androidx.core.graphics.scale
+import com.example.celestic.utils.MLUtils
 import org.tensorflow.lite.Interpreter
 import java.io.FileInputStream
 import java.nio.ByteBuffer
@@ -18,6 +17,11 @@ class ImageClassifier(context: Context) {
     private val numClasses = 1001
 
     private var interpreter: Interpreter? = null
+    private val inputBuffer: ByteBuffer by lazy {
+        ByteBuffer.allocateDirect(4 * inputImageSize * inputImageSize * numChannels).apply {
+            order(ByteOrder.nativeOrder())
+        }
+    }
 
     init {
         try {
@@ -44,40 +48,19 @@ class ImageClassifier(context: Context) {
 
     fun runInference(bitmap: Bitmap): FloatArray {
         if (interpreter == null) {
-            // Simulación de resultados si no hay modelo
-            // Retorna un array con probabilidades simuladas (mayormente OK)
             val dummyOutput = FloatArray(numClasses)
-            dummyOutput[501] = 0.95f // Simular "Pieza sin defecto" (índice 501+)
+            dummyOutput[501] = 0.95f 
             return dummyOutput
         }
 
-        val inputBuffer = convertBitmapToByteBuffer(bitmap)
+        convertBitmapToByteBuffer(bitmap)
         val output = Array(1) { FloatArray(numClasses) }
         interpreter!!.run(inputBuffer, output)
         return output[0]
     }
 
-    private fun convertBitmapToByteBuffer(bitmap: Bitmap): ByteBuffer {
-        val byteBuffer =
-            ByteBuffer.allocateDirect(4 * inputImageSize * inputImageSize * numChannels)
-        byteBuffer.order(ByteOrder.nativeOrder())
-
-        val resizedBitmap = bitmap.scale(inputImageSize, inputImageSize)
-
-        for (y in 0 until inputImageSize) {
-            for (x in 0 until inputImageSize) {
-                val pixel = resizedBitmap[x, y]
-                val r = (pixel shr 16 and 0xFF) / 255f
-                val g = (pixel shr 8 and 0xFF) / 255f
-                val b = (pixel and 0xFF) / 255f
-
-                byteBuffer.putFloat(r)
-                byteBuffer.putFloat(g)
-                byteBuffer.putFloat(b)
-            }
-        }
-
-        return byteBuffer
+    private fun convertBitmapToByteBuffer(bitmap: Bitmap) {
+        MLUtils.fillBufferFromBitmap(bitmap, inputImageSize, inputBuffer, useImageNetNorm = false)
     }
 
     fun mapPredictionToFeatureType(predictions: FloatArray): String {

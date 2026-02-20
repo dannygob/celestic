@@ -22,7 +22,7 @@ import kotlin.math.sqrt
  */
 @Singleton
 class BlueprintMatcher @Inject constructor(
-    @ApplicationContext private val context: Context
+    @field:ApplicationContext private val context: Context
 ) {
     private val blueprints = mutableMapOf<String, Blueprint>()
     private val templates = mutableMapOf<String, Mat>()
@@ -88,9 +88,9 @@ class BlueprintMatcher @Inject constructor(
                 return@forEach
             }
 
+            val result = Mat()
             try {
                 // Template matching
-                val result = Mat()
                 Imgproc.matchTemplate(image, template, result, Imgproc.TM_CCOEFF_NORMED)
 
                 val minMaxResult = Core.minMaxLoc(result)
@@ -105,10 +105,10 @@ class BlueprintMatcher @Inject constructor(
                         orientation = detectOrientation(image, template)
                     )
                 }
-
-                result.release()
             } catch (e: Exception) {
                 Log.e(TAG, "Error en template matching para ${blueprint.name}", e)
+            } finally {
+                result.release()
             }
         }
 
@@ -119,23 +119,20 @@ class BlueprintMatcher @Inject constructor(
      * Detecta la orientación de la lámina (anverso/reverso)
      */
     private fun detectOrientation(image: Mat, template: Mat): Orientation {
+        val resultNormal = Mat()
+        val templateFlipped = Mat()
+        val resultFlipped = Mat()
+        
         try {
             // Intentar match normal
-            val resultNormal = Mat()
             Imgproc.matchTemplate(image, template, resultNormal, Imgproc.TM_CCOEFF_NORMED)
             val scoreNormal = Core.minMaxLoc(resultNormal).maxVal
 
             // Intentar match rotado 180°
-            val templateFlipped = Mat()
             Core.flip(template, templateFlipped, -1) // Flip horizontal y vertical
 
-            val resultFlipped = Mat()
             Imgproc.matchTemplate(image, templateFlipped, resultFlipped, Imgproc.TM_CCOEFF_NORMED)
             val scoreFlipped = Core.minMaxLoc(resultFlipped).maxVal
-
-            resultNormal.release()
-            resultFlipped.release()
-            templateFlipped.release()
 
             return if (scoreNormal > scoreFlipped) {
                 Orientation.ANVERSO
@@ -145,8 +142,13 @@ class BlueprintMatcher @Inject constructor(
         } catch (e: Exception) {
             Log.e(TAG, "Error al detectar orientación", e)
             return Orientation.UNKNOWN
+        } finally {
+            resultNormal.release()
+            resultFlipped.release()
+            templateFlipped.release()
         }
     }
+
 
     /**
      * Valida las detecciones contra el plano de referencia

@@ -3,14 +3,12 @@ package com.example.celestic.ui.screen
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.util.Log
 import android.util.Size
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionStrategy
@@ -19,13 +17,7 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
@@ -33,17 +25,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.createBitmap
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.celestic.R
-import com.example.celestic.manager.ImageClassifier
 import com.example.celestic.utils.OpenCVInitializer
+import com.example.celestic.utils.imageProxyToBitmap
 import com.example.celestic.viewmodel.MainViewModel
-import org.opencv.android.Utils
-import org.opencv.core.CvType
-import org.opencv.core.Mat
-import org.opencv.imgproc.Imgproc
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -165,6 +152,8 @@ private fun startCamera(
         }
 
         // ANÁLISIS DE IMAGEN
+        val classifier = viewModel.imageClassifier
+
         val imageAnalysis = ImageAnalysis.Builder()
             .setResolutionSelector(
                 ResolutionSelector.Builder()
@@ -185,8 +174,7 @@ private fun startCamera(
                         // Convertir imagen a Bitmap
                         val bitmap = imageProxyToBitmap(imageProxy)
 
-                        // Clasificador
-                        val classifier = ImageClassifier(context)
+                        // Clasificador (USO DE INSTANCIA REUTILIZADA)
                         val predictions = classifier.runInference(bitmap)
                         val tipo = classifier.mapPredictionToFeatureType(predictions)
 
@@ -195,13 +183,17 @@ private fun startCamera(
                         // Enviar resultado al ViewModel
                         viewModel.setTipoClasificacion(tipo)
 
+                        // IMPORTANTE: Reciclar bitmap para liberar memoria Heap
+                        bitmap.recycle()
+
                     } catch (e: Exception) {
-                        Log.e("Clasificador", context.getString(R.string.errorInference), e)
+                        Log.e("Clasificador", "Error en inferencia", e)
                     } finally {
                         imageProxy.close()
                     }
                 }
             }
+
 
         val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
@@ -218,31 +210,4 @@ private fun startCamera(
         }
 
     }, ContextCompat.getMainExecutor(context))
-}
-
-
-//  CONVERTIR ImageProxy → Bitmap (OpenCV)
-private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
-    val plane = image.planes[0]
-    val buffer = plane.buffer
-    val bytes = ByteArray(buffer.remaining())
-    buffer.get(bytes)
-
-    // Mat YUV
-    val yuvMat = Mat(image.height + image.height / 2, image.width, CvType.CV_8UC1)
-    yuvMat.put(0, 0, bytes)
-
-    // Convertir a RGB
-    val rgbMat = Mat()
-    Imgproc.cvtColor(yuvMat, rgbMat, Imgproc.COLOR_YUV2RGB_NV21)
-
-    // Crear Bitmap
-    val bmp = createBitmap(rgbMat.cols(), rgbMat.rows())
-    Utils.matToBitmap(rgbMat, bmp)
-
-    // Liberar memoria
-    yuvMat.release()
-    rgbMat.release()
-
-    return bmp
 }

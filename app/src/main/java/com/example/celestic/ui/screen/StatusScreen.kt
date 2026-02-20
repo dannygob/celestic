@@ -1,16 +1,6 @@
 package com.example.celestic.ui.screen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -20,15 +10,7 @@ import androidx.compose.material.icons.filled.Dns
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material.icons.filled.SettingsSuggest
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,18 +25,17 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.celestic.R
+import com.example.celestic.ui.theme.rememberScreenColors
 import com.example.celestic.viewmodel.SharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun StatusScreen(
     navController: NavController,
     sharedViewModel: SharedViewModel = hiltViewModel()
 ) {
     val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
-    val background = if (isDarkMode) Color(0xFF0A0E14) else Color(0xFFF2F2F2)
-    val textColor = if (isDarkMode) Color.White else Color.Black
+    val colors = rememberScreenColors(isDarkMode)
     val surfaceColor = if (isDarkMode) Color(0xFF1B263B) else Color.White
 
     Scaffold(
@@ -75,13 +56,13 @@ fun StatusScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = background,
-                    titleContentColor = textColor,
-                    navigationIconContentColor = textColor
+                    containerColor = colors.background,
+                    titleContentColor = colors.textColor,
+                    navigationIconContentColor = colors.textColor
                 )
             )
         },
-        containerColor = background
+        containerColor = colors.background
     ) { padding ->
         Column(
             modifier = Modifier
@@ -97,17 +78,17 @@ fun StatusScreen(
                 title = stringResource(R.string.hardwareInfo),
                 icon = Icons.Default.Memory,
                 surfaceColor = surfaceColor,
-                textColor = textColor
+                textColor = colors.textColor
             ) {
                 StatusItem(
                     label = "Device",
                     value = sharedViewModel.deviceModel,
-                    textColor = textColor
+                    textColor = colors.textColor
                 )
                 StatusItem(
                     label = "Hardware",
                     value = sharedViewModel.hardwareInfo,
-                    textColor = textColor
+                    textColor = colors.textColor
                 )
             }
 
@@ -115,24 +96,24 @@ fun StatusScreen(
                 title = stringResource(R.string.softwareInfo),
                 icon = Icons.Default.Dns,
                 surfaceColor = surfaceColor,
-                textColor = textColor
+                textColor = colors.textColor
             ) {
-                StatusItem(label = "App Version", value = "0.7.0-alpha", textColor = textColor)
-                StatusItem(label = "OpenCV", value = "4.9.0", textColor = textColor)
-                StatusItem(label = "TensorFlow Lite", value = "2.14.0", textColor = textColor)
+                StatusItem(label = "App Version", value = "0.7.0-alpha", textColor = colors.textColor)
+                StatusItem(label = "OpenCV", value = "4.9.0", textColor = colors.textColor)
+                StatusItem(label = "TensorFlow Lite", value = "2.14.0", textColor = colors.textColor)
             }
 
             StatusSection(
                 title = stringResource(R.string.configuration),
                 icon = Icons.Default.SettingsSuggest,
                 surfaceColor = surfaceColor,
-                textColor = textColor
+                textColor = colors.textColor
             ) {
                 val markerType by sharedViewModel.markerType.collectAsState()
                 val units =
                     if (sharedViewModel.useInches.collectAsState().value) "Inches" else "Millimeters"
-                StatusItem(label = "Marker System", value = markerType.name, textColor = textColor)
-                StatusItem(label = "Measurement Units", value = units, textColor = textColor)
+                StatusItem(label = "Marker System", value = markerType.name, textColor = colors.textColor)
+                StatusItem(label = "Measurement Units", value = units, textColor = colors.textColor)
             }
 
             Spacer(modifier = Modifier.height(24.dp))

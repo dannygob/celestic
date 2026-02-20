@@ -1,26 +1,11 @@
 package com.example.celestic.ui.screen
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ViewInAr
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,22 +22,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.celestic.ui.theme.CelesticTheme
+import com.example.celestic.ui.theme.rememberScreenColors
 import com.example.celestic.viewmodel.SharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun InspectionPreviewScreen(
     navController: NavController,
     sharedViewModel: SharedViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
-
-    val background = if (isDarkMode) Color(0xFF0A0E14) else Color(0xFFF2F2F2)
-    val topBarBg = if (isDarkMode) Color.Black else Color.White
-    val textColor = if (isDarkMode) Color.White else Color.Black
-    val accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
+    val colors = rememberScreenColors(isDarkMode)
 
     Scaffold(
         topBar = {
@@ -63,7 +44,7 @@ fun InspectionPreviewScreen(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 2.sp,
-                        color = textColor
+                        color = colors.textColor
                     )
                 },
                 navigationIcon = {
@@ -71,17 +52,17 @@ fun InspectionPreviewScreen(
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Regresar",
-                            tint = textColor
+                            tint = colors.textColor
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = topBarBg,
-                    titleContentColor = textColor
+                    containerColor = colors.topBarBg,
+                    titleContentColor = colors.textColor
                 )
             )
         },
-        containerColor = background
+        containerColor = colors.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -95,14 +76,14 @@ fun InspectionPreviewScreen(
                 Icons.Default.ViewInAr,
                 contentDescription = null,
                 modifier = Modifier.size(80.dp),
-                tint = accentColor
+                tint = colors.accentColor
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
                 text = "CARGANDO MODELO 3D",
-                color = textColor,
+                color = colors.textColor,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
             )

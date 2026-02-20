@@ -3,15 +3,7 @@ package com.example.celestic.ml
 import android.content.Context
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.opencv.core.Core
-import org.opencv.core.Mat
-import org.opencv.core.MatOfFloat
-import org.opencv.core.MatOfInt
-import org.opencv.core.MatOfRect2d
-import org.opencv.core.Rect
-import org.opencv.core.Rect2d
-import org.opencv.core.Scalar
-import org.opencv.core.Size
+import org.opencv.core.*
 import org.opencv.dnn.Dnn
 import org.opencv.dnn.Net
 import javax.inject.Inject
@@ -23,7 +15,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class DNNDetector @Inject constructor(
-    @ApplicationContext private val context: Context
+    @field:ApplicationContext private val context: Context
 ) {
     private var net: Net? = null
     private val inputSize = Size(640.0, 640.0) // YOLOv8 input size
@@ -91,12 +83,11 @@ class DNNDetector @Inject constructor(
                 return emptyList()
             }
 
-            // 3. Post-procesamiento (YOLOv8 format)
+            // 3. Post-procesamiento
             val boxes = mutableListOf<Rect>()
             val confidences = mutableListOf<Float>()
             val classIds = mutableListOf<Int>()
 
-            // Procesar salidas del modelo
             for (i in 0 until outputs.rows()) {
                 val row = outputs.row(i)
                 val scores = row.colRange(5, outputs.cols())
@@ -110,59 +101,52 @@ class DNNDetector @Inject constructor(
                     val width = (row.get(0, 2)[0] * image.cols()).toInt()
                     val height = (row.get(0, 3)[0] * image.rows()).toInt()
 
-                    val left = centerX - width / 2
-                    val top = centerY - height / 2
-
-                    boxes.add(Rect(left, top, width, height))
+                    boxes.add(Rect(centerX - width / 2, centerY - height / 2, width, height))
                     confidences.add(confidence)
                     classIds.add(classId)
                 }
+                // Liberar Mats temporales de la fila
+                row.release()
+                scores.release()
             }
 
             // 4. Non-Maximum Suppression
-            val indices = MatOfInt()
-            val boxes2d = boxes.map {
-                Rect2d(
-                    it.x.toDouble(),
-                    it.y.toDouble(),
-                    it.width.toDouble(),
-                    it.height.toDouble()
-                )
-            }
-            val boxesMat = MatOfRect2d(*boxes2d.toTypedArray())
-            val confidencesMat = MatOfFloat(*confidences.toFloatArray())
+            if (boxes.isNotEmpty()) {
+                val indices = MatOfInt()
+                val boxes2d =
+                    boxes.map { Rect2d(it.x.toDouble(), it.y.toDouble(), it.width.toDouble(), it.height.toDouble()) }
+                val boxesMat = MatOfRect2d(*boxes2d.toTypedArray())
+                val confidencesMat = MatOfFloat(*confidences.toFloatArray())
 
-            Dnn.NMSBoxes(
-                boxesMat,
-                confidencesMat,
-                confThreshold,
-                nmsThreshold,
-                indices
-            )
+                Dnn.NMSBoxes(boxesMat, confidencesMat, confThreshold, nmsThreshold, indices)
 
-            // 5. Crear objetos Detection
-            indices.toArray().forEach { idx ->
-                val className = DetectionClass.entries
-                    .find { it.id == classIds[idx] }?.label ?: "unknown"
-
-                detections.add(
-                    Detection(
-                        classId = classIds[idx],
-                        className = className,
-                        confidence = confidences[idx],
-                        boundingBox = boxes[idx],
-                        roi = extractROI(image, boxes[idx])
+                // 5. Crear objetos Detection
+                indices.toArray().forEach { idx ->
+                    val className = DetectionClass.entries.find { it.id == classIds[idx] }?.label ?: "unknown"
+                    detections.add(
+                        Detection(
+                            classId = classIds[idx],
+                            className = className,
+                            confidence = confidences[idx],
+                            boundingBox = boxes[idx],
+                            roi = extractROI(image, boxes[idx])
+                        )
                     )
-                )
+                }
+
+                // Cleanup Suppression Mats
+                indices.release()
+                boxesMat.release()
+                confidencesMat.release()
             }
 
             blob.release()
             outputs.release()
-            indices.release()
 
         } catch (e: Exception) {
             Log.e(TAG, "Error en detección DNN", e)
         }
+
 
         return detections
     }

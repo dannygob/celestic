@@ -41,6 +41,9 @@ class CalibrationViewModel @Inject constructor(
             val success = calibrationManager.addCalibrationFrame(mat)
             mat.release()
 
+            // Reciclar bitmap capturado para liberar memoria
+            bitmap.recycle()
+
             _uiState.value = _uiState.value.copy(
                 capturedFrames = _uiState.value.capturedFrames + if (success) 1 else 0,
                 lastCaptureSuccess = success

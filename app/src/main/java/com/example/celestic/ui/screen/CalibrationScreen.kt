@@ -2,18 +2,7 @@ package com.example.celestic.ui.screen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -22,18 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Science
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -54,25 +32,23 @@ import com.example.celestic.R
 import com.example.celestic.ui.component.CameraPreview
 import com.example.celestic.ui.component.triggerCameraCapture
 import com.example.celestic.ui.theme.CelesticTheme
+import com.example.celestic.ui.theme.rememberScreenColors
 import com.example.celestic.viewmodel.CalibrationState
 import com.example.celestic.viewmodel.CalibrationViewModel
-import java.util.Locale
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun CalibrationScreen(
     navController: NavController,
     sharedViewModel: com.example.celestic.viewmodel.SharedViewModel = hiltViewModel(),
     calibrationViewModel: CalibrationViewModel = hiltViewModel()
 ) {
     val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
+    val colors = rememberScreenColors(isDarkMode)
     val uiState by calibrationViewModel.uiState.collectAsState()
     val locale = Locale.getDefault()
 
-    val background = if (isDarkMode) Color(0xFF0A0E14) else Color(0xFFF2F2F2)
-    val textColor = if (isDarkMode) Color.White else Color.Black
-    val topBarBg = if (isDarkMode) Color.Black else Color.White
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -81,19 +57,19 @@ fun CalibrationScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(background)
+            .background(colors.background)
     ) {
         Scaffold(
             topBar = {
                 CalibrationTopBar(
                     uiState = uiState,
-                    textColor = textColor,
-                    topBarBg = topBarBg,
+                    textColor = colors.textColor,
+                    topBarBg = colors.topBarBg,
                     onBack = { navController.popBackStack() },
                     onReset = { calibrationViewModel.reset() }
                 )
             },
-            containerColor = background
+            containerColor = colors.background
         ) { paddingValues ->
             if (isLandscape) {
                 LandscapeCalibrationContent(
@@ -125,9 +101,11 @@ private fun CalibrationTopBar(
     textColor: Color,
     topBarBg: Color,
     onBack: () -> Unit,
-    onReset: () -> Unit
+    onReset: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     TopAppBar(
+        modifier = modifier,
         title = {
             Column {
                 Text(
@@ -174,18 +152,19 @@ private fun CalibrationTopBar(
 @Composable
 
 private fun LandscapeCalibrationContent(
-    paddingValues: androidx.compose.foundation.layout.PaddingValues,
+    paddingValues: PaddingValues,
     uiState: CalibrationState,
     viewModel: CalibrationViewModel,
     locale: Locale,
-    isDarkMode: Boolean
+    isDarkMode: Boolean,
+    modifier: Modifier = Modifier
 ) {
     val accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
     val cardBg =
         if (isDarkMode) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(paddingValues)
             .padding(16.dp),
@@ -232,18 +211,19 @@ private fun LandscapeCalibrationContent(
 @Composable
 
 private fun PortraitCalibrationContent(
-    paddingValues: androidx.compose.foundation.layout.PaddingValues,
+    paddingValues: PaddingValues,
     uiState: CalibrationState,
     viewModel: CalibrationViewModel,
     locale: Locale,
-    isDarkMode: Boolean
+    isDarkMode: Boolean,
+    modifier: Modifier = Modifier
 ) {
     val accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
     val cardBg =
         if (isDarkMode) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(paddingValues),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -373,11 +353,11 @@ private fun CalibrationButtons(
     accentColor: Color,
     onCapture: () -> Unit,
     onCalibrate: () -> Unit,
-    buttonModifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     Button(
         onClick = onCapture,
-        modifier = buttonModifier.height(56.dp),
+        modifier = modifier.height(56.dp),
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(containerColor = accentColor)
     ) {
@@ -392,7 +372,7 @@ private fun CalibrationButtons(
     Button(
         onClick = onCalibrate,
         enabled = uiState.capturedFrames >= 5 && !uiState.isCalibrating,
-        modifier = buttonModifier.height(56.dp),
+        modifier = modifier.height(56.dp),
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(0xFF1B263B),
@@ -417,10 +397,14 @@ private fun CalibrationButtons(
 }
 
 @Composable
-private fun CaptureStatusOverlay(success: Boolean?, alignment: Alignment) {
+private fun CaptureStatusOverlay(
+    success: Boolean?,
+    alignment: Alignment,
+    modifier: Modifier = Modifier
+) {
     success?.let { isSuccess ->
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(16.dp),
             contentAlignment = alignment

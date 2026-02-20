@@ -3,16 +3,7 @@ package com.example.celestic.ui.screen
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,24 +11,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ReportProblem
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.UiComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -52,12 +33,13 @@ import com.example.celestic.R
 import com.example.celestic.models.DetectionItem
 import com.example.celestic.ui.component.BlueprintView
 import com.example.celestic.ui.theme.CelesticTheme
+import com.example.celestic.ui.theme.rememberScreenColors
 import com.example.celestic.viewmodel.DetailsViewModel
 import com.example.celestic.viewmodel.SharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
+@UiComposable
 fun DetailsScreen(
     navController: NavController,
     detailType: String,
@@ -67,6 +49,7 @@ fun DetailsScreen(
 ) {
     val context = LocalContext.current
     val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
+    val colors = rememberScreenColors(isDarkMode)
 
     // Si no hay viewModel (Preview), usamos estados fijos
     val traceabilityResult = detailsViewModel?.traceabilityItem?.collectAsState()?.value
@@ -74,10 +57,6 @@ fun DetailsScreen(
     val features = detailsViewModel?.features?.collectAsState()?.value ?: emptyList()
     val useInches = sharedViewModel.useInches.collectAsState().value
 
-    val background = if (isDarkMode) Color(0xFF0A0E14) else Color(0xFFF2F2F2)
-    val topBarBg = if (isDarkMode) Color.Black else Color.White
-    val textColor = if (isDarkMode) Color.White else Color.Black
-    val sectionColor = if (isDarkMode) Color(0xFF415A77) else Color(0xFF3366CC)
     val cardBg =
         if (isDarkMode) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
 
@@ -107,7 +86,7 @@ fun DetailsScreen(
                         title,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
-                        color = textColor
+                        color = colors.textColor
                     )
                 },
                 navigationIcon = {
@@ -115,17 +94,17 @@ fun DetailsScreen(
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             stringResource(R.string.back),
-                            tint = textColor
+                            tint = colors.textColor
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = topBarBg,
-                    titleContentColor = textColor
+                    containerColor = colors.topBarBg,
+                    titleContentColor = colors.textColor
                 )
             )
         },
-        containerColor = background
+        containerColor = colors.background
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -136,13 +115,7 @@ fun DetailsScreen(
         ) {
             // Sección de Visualización Técnica
             item {
-                Text(
-                    stringResource(R.string.visualAnalysis),
-                    color = sectionColor,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
-                )
+                SectionHeader(stringResource(R.string.visualAnalysis), colors.accentColor)
                 Spacer(modifier = Modifier.height(8.dp))
                 Card(
                     shape = RoundedCornerShape(16.dp),
@@ -158,13 +131,7 @@ fun DetailsScreen(
 
             // Sección de Características Detectadas
             item {
-                Text(
-                    stringResource(R.string.detectionsHeadline),
-                    color = sectionColor,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
-                )
+                SectionHeader(stringResource(R.string.detectionsHeadline), colors.accentColor)
             }
 
             items(features) { feature ->
@@ -178,12 +145,12 @@ fun DetailsScreen(
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Info, contentDescription = null, tint = sectionColor)
+                        Icon(Icons.Default.Info, contentDescription = null, tint = colors.accentColor)
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
                             Text(
                                 feature.featureType.uppercase(),
-                                color = textColor,
+                                color = colors.textColor,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             )
@@ -200,13 +167,7 @@ fun DetailsScreen(
             // Sección de Trazabilidad
             item {
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    stringResource(R.string.traceabilityHeadline),
-                    color = sectionColor,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
-                )
+                SectionHeader(stringResource(R.string.traceabilityHeadline), colors.accentColor)
                 Spacer(modifier = Modifier.height(8.dp))
 
                 AnimatedContent(
@@ -230,31 +191,31 @@ fun DetailsScreen(
                                             TraceabilityRow(
                                                 stringResource(R.string.partCode),
                                                 data.code,
-                                                textColor,
+                                                colors.textColor,
                                                 Color.Gray
                                             )
                                             TraceabilityRow(
                                                 stringResource(R.string.modelType),
                                                 data.partName,
-                                                textColor,
+                                                colors.textColor,
                                                 Color.Gray
                                             )
                                             TraceabilityRow(
                                                 stringResource(R.string.operator),
                                                 data.operatorName,
-                                                textColor,
+                                                colors.textColor,
                                                 Color.Gray
                                             )
                                             TraceabilityRow(
                                                 stringResource(R.string.inspectionDate),
                                                 data.inspectionDate,
-                                                textColor,
+                                                colors.textColor,
                                                 Color.Gray
                                             )
                                             TraceabilityRow(
                                                 stringResource(R.string.finalStatus),
                                                 data.finalStatus,
-                                                textColor,
+                                                colors.textColor,
                                                 Color.Gray,
                                                 isStatus = true
                                             )
@@ -264,7 +225,7 @@ fun DetailsScreen(
                             }
 
                             is com.example.celestic.utils.Result.Loading -> {
-                                CircularProgressIndicator(color = sectionColor)
+                                CircularProgressIndicator(color = colors.accentColor)
                             }
 
                             else -> {
@@ -305,7 +266,6 @@ fun DetailsScreen(
 }
 
 @Composable
-
 fun TraceabilityRow(
     label: String,
     value: String,
@@ -333,25 +293,22 @@ fun TraceabilityRow(
     }
 }
 
+@Composable
+fun SectionHeader(title: String, color: Color) {
+    Text(
+        text = title,
+        color = color,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Bold,
+        letterSpacing = 1.sp
+    )
+}
+
 @Preview(showBackground = true, locale = "en")
-@Composable
-fun DetailsScreenPreviewEn() {
-    CelesticTheme {
-        DetailsScreen(rememberNavController(), "hole")
-    }
-}
-
 @Preview(showBackground = true, locale = "es")
-@Composable
-fun DetailsScreenPreviewEs() {
-    CelesticTheme {
-        DetailsScreen(rememberNavController(), "hole")
-    }
-}
-
 @Preview(showBackground = true, locale = "zh")
 @Composable
-fun DetailsScreenPreviewZh() {
+fun DetailsScreenPreview() {
     CelesticTheme {
         DetailsScreen(rememberNavController(), "hole")
     }

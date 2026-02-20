@@ -5,6 +5,7 @@ import com.example.celestic.models.enums.DetectionStatus
 import javax.inject.Inject
 import kotlin.math.abs
 
+@javax.inject.Singleton
 class SpecificationValidator @Inject constructor() {
 
     fun validateHole(diameterMm: Double, spec: Specification): DetectionStatus {

@@ -5,23 +5,19 @@ import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONObject
 import org.opencv.calib3d.Calib3d
-import org.opencv.core.CvType
-import org.opencv.core.Mat
-import org.opencv.core.MatOfPoint2f
-import org.opencv.core.MatOfPoint3f
-import org.opencv.core.Size
+import org.opencv.core.*
 import org.opencv.objdetect.CharucoBoard
 import org.opencv.objdetect.CharucoDetector
 import org.opencv.objdetect.Objdetect
 import java.io.File
 import java.io.FileInputStream
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 import javax.inject.Inject
 
+@javax.inject.Singleton
 class CalibrationManager @Inject constructor(
-    @ApplicationContext private val context: Context
+    @field:ApplicationContext private val context: Context
 ) {
 
     var cameraMatrix: Mat? = null
@@ -42,9 +38,11 @@ class CalibrationManager @Inject constructor(
 
             // Parse cameraMatrix (expect an OpenCV String dump or an array)
             val matrixData = json.getString("cameraMatrix")
+            cameraMatrix?.release()
             cameraMatrix = stringToMat(matrixData, 3, 3)
 
             val distData = json.getString("distortionCoeffs")
+            distortionCoeffs?.release()
             distortionCoeffs = stringToMat(distData, 1, 5)
 
             calibrationDate = json.optString("calibrationDate")
@@ -104,6 +102,10 @@ class CalibrationManager @Inject constructor(
     private val allCharucoIds = mutableListOf<Mat>()
     private var imageSize: Size? = null
 
+    private val dictionary by lazy { Objdetect.getPredefinedDictionary(Objdetect.DICT_6X6_250) }
+    private val board by lazy { CharucoBoard(Size(5.0, 7.0), 0.04f, 0.02f, dictionary) }
+    private val detector by lazy { CharucoDetector(board) }
+
     fun resetData() {
         allCharucoCorners.forEach { it.release() }
         allCharucoIds.forEach { it.release() }
@@ -112,111 +114,95 @@ class CalibrationManager @Inject constructor(
     }
 
     fun addCalibrationFrame(image: Mat): Boolean {
-        val dictionary = Objdetect.getPredefinedDictionary(Objdetect.DICT_6X6_250)
-        val board = CharucoBoard(Size(5.0, 7.0), 0.04f, 0.02f, dictionary)
-        val detector = CharucoDetector(board)
-        
         val charucoCorners = Mat()
         val charucoIds = Mat()
         val markerCorners = ArrayList<Mat>()
         val markerIds = Mat()
 
-        detector.detectBoard(image, charucoCorners, charucoIds, markerCorners, markerIds)
+        try {
+            detector.detectBoard(image, charucoCorners, charucoIds, markerCorners, markerIds)
 
-        val success = if (charucoCorners.total() > 4) {
-            // Clone Mat objects before saving them to prevent premature release
-            allCharucoCorners.add(charucoCorners.clone())
-            allCharucoIds.add(charucoIds.clone())
-            imageSize = image.size()
-            true
-        } else {
-            false
+            return if (charucoCorners.total() > 4) {
+                allCharucoCorners.add(charucoCorners.clone())
+                allCharucoIds.add(charucoIds.clone())
+                imageSize = image.size()
+                true
+            } else {
+                false
+            }
+        } finally {
+            charucoCorners.release()
+            charucoIds.release()
+            markerIds.release()
+            markerCorners.forEach { it.release() }
         }
-
-        // Release temporary resources after detection
-        charucoCorners.release()
-        charucoIds.release()
-        markerIds.release()
-        markerCorners.forEach { it.release() }
-
-        return success
     }
 
     fun runCalibration(): Double {
         val size = imageSize ?: return -1.0
-        val dictionary = Objdetect.getPredefinedDictionary(Objdetect.DICT_6X6_250)
-        val board = CharucoBoard(Size(5.0, 7.0), 0.04f, 0.02f, dictionary)
 
-        // Prepare lists of 3D and 2D points compatible with Calib3d.calibrateCamera
         val allObjectPoints = ArrayList<Mat>()
         val allImagePoints = ArrayList<Mat>()
 
-        for (i in allCharucoCorners.indices) {
-            val corners = allCharucoCorners[i]
-            val ids = allCharucoIds[i]
+        try {
+            for (i in allCharucoCorners.indices) {
+                val corners = allCharucoCorners[i]
+                val ids = allCharucoIds[i]
 
-            if (corners.total() > 0) {
-                val objPoints = MatOfPoint3f()
-                val imgPoints = MatOfPoint2f()
+                if (corners.total() > 0) {
+                    val objPoints = MatOfPoint3f()
+                    val imgPoints = MatOfPoint2f()
 
-                // OpenCV Java API requires lists for corners and IDs even for a single frame
-                val cornersList = listOf(corners)
-                val idsList = listOf(ids)
+                    try {
+                        board.matchImagePoints(listOf(corners), ids, objPoints, imgPoints)
 
-                try {
-                    board.matchImagePoints(cornersList, idsList as Mat?, objPoints, imgPoints)
-
-                    if (objPoints.total() > 4) {
-                        allObjectPoints.add(objPoints)
-                        allImagePoints.add(imgPoints)
-                    } else {
+                        if (objPoints.total() > 4) {
+                            allObjectPoints.add(objPoints)
+                            allImagePoints.add(imgPoints)
+                        } else {
+                            objPoints.release()
+                            imgPoints.release()
+                        }
+                    } catch (e: Exception) {
+                        Log.e("CalibrationManager", "Error matching points frame $i", e)
                         objPoints.release()
                         imgPoints.release()
                     }
-                } catch (e: Exception) {
-                    Log.e("CalibrationManager", "Error in matchImagePoints frame $i", e)
-                    objPoints.release()
-                    imgPoints.release()
                 }
             }
-        }
 
-        if (allObjectPoints.isEmpty()) return -2.0
+            if (allObjectPoints.isEmpty()) return -2.0
 
-        val cameraMat = Mat.eye(3, 3, CvType.CV_64F)
-        val distCoeffs = Mat.zeros(5, 1, CvType.CV_64F)
-        val rvecs = ArrayList<Mat>()
-        val tvecs = ArrayList<Mat>()
+            val cameraMat = Mat.eye(3, 3, CvType.CV_64F)
+            val distCoeffs = Mat.zeros(5, 1, CvType.CV_64F)
+            val rvecs = ArrayList<Mat>()
+            val tvecs = ArrayList<Mat>()
 
-        return try {
-            // Classic calibration using Calib3d (Always available in OpenCV core)
-            val rms = Calib3d.calibrateCamera(
-                allObjectPoints,
-                allImagePoints,
-                size,
-                cameraMat,
-                distCoeffs,
-                rvecs,
-                tvecs
-            )
+            val rms =
+                Calib3d.calibrateCamera(allObjectPoints, allImagePoints, size, cameraMat, distCoeffs, rvecs, tvecs)
 
             if (rms > 0) {
+                this.cameraMatrix?.release()
                 this.cameraMatrix = cameraMat
+                this.distortionCoeffs?.release()
                 this.distortionCoeffs = distCoeffs
-                saveCalibrationToJson(
-                    cameraMat,
-                    distCoeffs,
-                    Pair(size.width.toInt(), size.height.toInt())
-                )
+                saveCalibrationToJson(cameraMat, distCoeffs, Pair(size.width.toInt(), size.height.toInt()))
             }
-            rms
+
+            // Cleanup rotation and translation vectors as they are huge and not saved
+            rvecs.forEach { it.release() }
+            tvecs.forEach { it.release() }
+
+            return rms
         } catch (e: Exception) {
             Log.e("CalibrationManager", "Fatal error in calibrateCamera", e)
-            -3.0
+            return -3.0
         } finally {
-            // Optional: release captured points to save memory after successful calibration
+            allObjectPoints.forEach { it.release() }
+            allImagePoints.forEach { it.release() }
         }
     }
+
 
     fun saveCalibrationToJson(cameraMatrix: Mat, distortionCoeffs: Mat, resolution: Pair<Int, Int>) {
         val json = JSONObject()

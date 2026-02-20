@@ -1,17 +1,7 @@
 package com.example.celestic.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -21,17 +11,7 @@ import androidx.compose.material.icons.filled.DeveloperBoard
 import androidx.compose.material.icons.filled.DisplaySettings
 import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material.icons.filled.Tag
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,6 +30,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.celestic.R
 import com.example.celestic.ui.theme.CelesticTheme
+import com.example.celestic.ui.theme.rememberScreenColors
 import com.example.celestic.viewmodel.MarkerType
 import com.example.celestic.viewmodel.SharedViewModel
 
@@ -62,11 +43,7 @@ fun SettingsScreen(
     val useInches by sharedViewModel.useInches.collectAsState()
     val markerType by sharedViewModel.markerType.collectAsState()
     val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
-
-    val background = if (isDarkMode) Color(0xFF0A0E14) else Color(0xFFF2F2F2)
-    val topBarBg = if (isDarkMode) Color.Black else Color.White
-    val textColor = if (isDarkMode) Color.White else Color.Black
-    val sectionColor = if (isDarkMode) Color(0xFF415A77) else Color(0xFF3366CC)
+    val colors = rememberScreenColors(isDarkMode)
 
     Scaffold(
         topBar = {
@@ -77,7 +54,7 @@ fun SettingsScreen(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 2.sp,
-                        color = textColor
+                        color = colors.textColor
                     )
                 },
                 navigationIcon = {
@@ -85,17 +62,17 @@ fun SettingsScreen(
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.returnDesc),
-                            tint = textColor
+                            tint = colors.textColor
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = topBarBg,
-                    titleContentColor = textColor
+                    containerColor = colors.topBarBg,
+                    titleContentColor = colors.textColor
                 )
             )
         },
-        containerColor = background
+        containerColor = colors.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -107,7 +84,7 @@ fun SettingsScreen(
         ) {
             Text(
                 stringResource(R.string.unitsPreferences),
-                color = sectionColor,
+                color = colors.accentColor,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -137,7 +114,7 @@ fun SettingsScreen(
 
             Text(
                 stringResource(R.string.appearance),
-                color = sectionColor,
+                color = colors.accentColor,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -156,7 +133,7 @@ fun SettingsScreen(
 
             Text(
                 stringResource(R.string.hardwareOptics),
-                color = sectionColor,
+                color = colors.accentColor,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -176,14 +153,14 @@ fun SettingsScreen(
                         Icon(
                             Icons.Default.DeveloperBoard,
                             contentDescription = null,
-                            tint = sectionColor,
+                            tint = colors.accentColor,
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
                                 sharedViewModel.deviceModel.uppercase(),
-                                color = textColor,
+                                color = colors.textColor,
                                 fontWeight = FontWeight.Black,
                                 fontSize = 14.sp
                             )
@@ -218,11 +195,10 @@ fun SettingsItem(
     isDarkMode: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
+    val colors = rememberScreenColors(isDarkMode)
     val cardBg =
         if (isDarkMode) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
-    val textColor = if (isDarkMode) Color.White else Color.Black
     val iconBoxBg = if (isDarkMode) Color(0xFF1B263B) else Color(0xFFD1D9E6)
-    val accentColor = if (isDarkMode) Color(0xFF415A77) else Color(0xFF3366CC)
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -241,13 +217,13 @@ fun SettingsItem(
                     .background(iconBoxBg, RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(icon, contentDescription = null, tint = accentColor)
+                Icon(icon, contentDescription = null, tint = colors.accentColor)
             }
 
             Spacer(modifier = Modifier.width(16.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(title, color = textColor, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(title, color = colors.textColor, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 Text(subtitle, color = Color.Gray, fontSize = 12.sp)
             }
             
@@ -256,7 +232,7 @@ fun SettingsItem(
                 onCheckedChange = onCheckedChange,
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color.White,
-                    checkedTrackColor = accentColor,
+                    checkedTrackColor = colors.accentColor,
                     uncheckedThumbColor = Color.Gray,
                     uncheckedTrackColor = Color.DarkGray
                 )

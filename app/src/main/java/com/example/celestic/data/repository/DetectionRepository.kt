@@ -13,7 +13,7 @@ import javax.inject.Singleton
 @Singleton
 class DetectionRepository @Inject constructor(
     private val dao: CelesticDao,
-    @ApplicationContext private val context: Context  // ← CAMBIADO: sin @field:
+    @field:ApplicationContext private val context: Context
 ) {
 
     suspend fun saveDetection(detection: DetectedFeature) {
