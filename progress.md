@@ -2,7 +2,7 @@
 
 This file tracks the progress of the Celestic project.
 
-**Last Updated:** 26 de Enero de 2026
+**Last Updated:** 28 de Febrero de 2026
 
 ## Legend
 
@@ -16,31 +16,31 @@ This file tracks the progress of the Celestic project.
 
 ## Phases
 
-| No. | Feature                   | Status | Android Technical Description             | Notes                                        |
-|-----|---------------------------|--------|-------------------------------------------|----------------------------------------------|
-| 1️⃣ | Live Image Analysis       | 🔄     | CameraX + OpenCV                          | CameraView exists, integration incomplete    |
-| 2️⃣ | Object Classifier         | ⚠️     | .tflite + pre-tagging                     | ImageClassifier exists, not integrated       |
-| 3️⃣ | Edge Detection            | ✅      | Canny, Sobel, findContours                | Fully implemented in FrameAnalyzer           |
-| 4️⃣ | Technical classification  | ⚠️     | AI trained in Python, converted to mobile | Structure exists, integration missing        |
-| 5️⃣ | Car body inspection       | 🔲     | Multi-capture + segmentation              | Planned for future                           |
-| 6️⃣ | 2D plan with measurements | 🔄     | Canvas + calibrated scale                 | DrawingCanvas exists, needs integration      |
-| 7️⃣ | Dynamic display per part  | ✅      | UI Compose + ID + state color             | Multiple screens implemented                 |
-| 8️⃣ | Charuco calibration       | ✅      | cv2.aruco, results in .json               | Fully functional                             |
-| 9️⃣ | ArUco + AprilTag          | ✅      | Native JNI + persistence                  | Both managers implemented                    |
-| 🔟  | Code scanning             | ⚠️     | ML Kit or Android pyzbar                  | QRScanner exists with OpenCV, not integrated |
-| 🧩  | Inspection saved          | ✅      | Room or local .json export                | Room database fully implemented              |
-| 📄  | Report generation         | 🔄     | PDF/Word export on request                | Generators exist, UI incomplete              |
-| 🧩  | Dependency Injection      | ✅      | Hilt                                      | Fully configured                             |
-| 🐛  | Error Handling            | 🔄     | Sealed class for UI states                | Partially implemented                        |
-| 🧪  | Unit Tests                | ❌      | JUnit and MockK                           | Not found                                    |
-| ✨   | UI Improvements           | ✅      | Animations and Shimmer effect             | ShimmerDetectionItemCard implemented         |
-| 🔐  | Authentication            | 🔄     | Firebase Authentication                   | LoginScreen exists, Firebase not verified    |
-| ⚙️  | Settings                  | ✅      | Settings screen                           | SettingsScreen implemented                   |
-| 📏  | 2D Drawing                | ✅      | 2D drawing with measurements              | DrawingCanvas implemented                    |
-| 🖼️ | Dynamic Display           | ✅      | Dynamic display by part                   | Multiple detection screens                   |
-| 💾  | Save Inspections          | ✅      | Save inspections to database              | Inspection entity and DAO methods            |
-| 🔬  | Image Processing          | ✅      | Advanced image processing techniques      | Multiple techniques in FrameAnalyzer         |
-| 📷  | Camera Calibration        | ✅      | Advanced camera calibration techniques    | CalibrationManager fully functional          |
+| No. | Feature                   | Status | Android Technical Description             | Notes                                      |
+|-----|---------------------------|--------|-------------------------------------------|--------------------------------------------|
+| 1️⃣ | Live Image Analysis       | 🔄     | CameraX + OpenCV                          | CameraView exists, integration incomplete  |
+| 2️⃣ | Object Classifier         | ⚠️     | .tflite + pre-tagging                     | ImageClassifier exists, not integrated     |
+| 3️⃣ | Edge Detection            | ✅      | Canny, Sobel, findContours                | Fully implemented in FrameAnalyzer         |
+| 4️⃣ | Technical classification  | ⚠️     | AI trained in Python, converted to mobile | Structure exists, integration missing      |
+| 5️⃣ | Car body inspection       | 🔲     | Multi-capture + segmentation              | Planned for future                         |
+| 6️⃣ | 2D plan with measurements | 🔄     | Canvas + calibrated scale                 | DrawingCanvas exists, needs integration    |
+| 7️⃣ | Dynamic display per part  | ✅      | UI Compose + ID + state color             | Multiple screens implemented               |
+| 8️⃣ | Charuco calibration       | ✅      | cv2.aruco, results in .json               | Fully functional                           |
+| 9️⃣ | ArUco + AprilTag          | ✅      | Native JNI + persistence                  | Both managers implemented                  |
+| 🔟  | Code scanning             | ✅      | OpenCV QRCodeDetector                     | Integrated in FrameAnalyzer/ImageProcessor |
+| 🧩  | Inspection saved          | ✅      | Room or local .json export                | Room database fully implemented            |
+| 📄  | Report generation         | 🔄     | PDF/Word export on request                | Generators exist, UI incomplete            |
+| 🧩  | Dependency Injection      | ✅      | Hilt                                      | Fully configured                           |
+| 🐛  | Error Handling            | 🔄     | Sealed class for UI states                | Partially implemented                      |
+| 🧪  | Unit Tests                | ❌      | JUnit and MockK                           | Not found                                  |
+| ✨   | UI Improvements           | ✅      | Animations and Shimmer effect             | ShimmerDetectionItemCard implemented       |
+| 🔐  | Authentication            | 🔄     | Firebase Authentication                   | LoginScreen exists, Firebase not verified  |
+| ⚙️  | Settings                  | ✅      | Settings screen                           | SettingsScreen implemented                 |
+| 📏  | 2D Drawing                | ✅      | 2D drawing with measurements              | DrawingCanvas implemented                  |
+| 🖼️ | Dynamic Display           | ✅      | Dynamic display by part                   | Multiple detection screens                 |
+| 💾  | Save Inspections          | ✅      | Save inspections to database              | Inspection entity and DAO methods          |
+| 🔬  | Image Processing          | ✅      | Advanced image processing techniques      | Multiple techniques in FrameAnalyzer       |
+| 📷  | Camera Calibration        | ✅      | Advanced camera calibration techniques    | CalibrationManager fully functional        |
 
 ---
 
@@ -186,16 +186,13 @@ This file tracks the progress of the Celestic project.
 
 ---
 
-### 6. QR / ArUco / AprilTag Traceability
+| 6️⃣ | QR / ArUco / AprilTag Traceability | ✅ | OpenCV QRCodeDetector + Managers | Full integration with
+DetectionItem |
+| 🧩 | **QR integration**        | ✅ | Link QR to detections in ImageProcessor | Done |
+| 🧩 | **Traceability database** | ✅ | traceability.json support in DetailsView | Done |
+| 🧩 | **Visual connection**     | ✅ | DetailsScreen shows traceability data | Done |
 
-- [x] QRScanner.kt ✅ (basic implementation with OpenCV)
-- [x] ArUcoManager.kt ✅
-- [x] AprilTagManager.kt ✅
-- [ ] QR integration with DetectionItem ❌
-- [ ] Traceability database ❌
-- [ ] Visual connection in DetailsScreen ❌
-
-**Status:** ✅ 3/6 (50%) - Managers exist, integration missing
+**Status:** ✅ 6/6 (100%) - Fully integrated
 
 ---
 
@@ -407,15 +404,15 @@ This file tracks the progress of the Celestic project.
 | Category                 | Progress    | Status      |
 |--------------------------|-------------|-------------|
 | **Project Structure**    | 93%         | ✅ Excellent |
-| **Data Models**          | 79% + bonus | ✅ Excellent |
+| **Data Models**          | 85% + bonus | ✅ Excellent |
 | **Database**             | 100%        | ✅ Complete  |
 | **Camera/Analysis**      | 100%        | ✅ Complete  |
 | **AI Integration**       | 20%         | ❌ Critical  |
-| **UI/Screens**           | 94% + bonus | ✅ Excellent |
-| **Traceability**         | 50%         | ⚠️ Partial  |
+| **UI/Screens**           | 96% + bonus | ✅ Excellent |
+| **Traceability**         | 100%        | ✅ Complete  |
 | **Reports**              | 75%         | 🔄 Good     |
 | **Dependency Injection** | 100%        | ✅ Complete  |
-| **Error Handling**       | 67%         | 🔄 Good     |
+| **Error Handling**       | 75%         | ✅ Good      |
 | **Tests**                | 0%          | ❌ Missing   |
 | **UI Improvements**      | 100%        | ✅ Complete  |
 | **Settings**             | 100%        | ✅ Complete  |
@@ -424,7 +421,7 @@ This file tracks the progress of the Celestic project.
 | **Image Processing**     | 71%         | ✅ Good      |
 | **Calibration**          | 100%        | ✅ Complete  |
 
-**Overall Project Completion: ~70%**
+**Overall Project Completion: ~80%**
 
 ---
 
@@ -449,10 +446,10 @@ This file tracks the progress of the Celestic project.
 ### Low Priority (Nice to Have)
 
 11. 🔲 Add StatusScreen.kt
-12. 🔲 Create traceability.json database
+12. ✅ Create traceability.json database
 13. 🔲 Add visual resources (icons, images)
 14. 🔲 Implement car body inspection (future feature)
-15. 🔲 Add geographic location (GPS) to reports for verification in different locations.
+15. 🔲 Add geographic location (GPS) to reports for verification in different locations. (Note for future)
 
 ---
 

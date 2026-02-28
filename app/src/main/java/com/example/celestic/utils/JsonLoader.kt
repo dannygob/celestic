@@ -12,7 +12,7 @@ object JsonLoader {
     fun loadTraceabilityFromJson(context: Context): List<TraceabilityItem> {
         return try {
             val json =
-                context.assets.open("traceability.json").bufferedReader().use { it.readText() }
+                context.assets.open("config/traceability.json").bufferedReader().use { it.readText() }
             val type = object : TypeToken<List<TraceabilityItem>>() {}.type
             Gson().fromJson(json, type)
         } catch (e: Exception) {

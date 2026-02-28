@@ -11,7 +11,7 @@ import java.nio.channels.FileChannel
 
 class ImageClassifier(context: Context) {
 
-    private val modelFileName = "mobilenet_v2.tflite"
+    private val modelFileName = "models/mobilenet_v2.tflite"
     private val inputImageSize = 224
     private val numChannels = 3
     private val numClasses = 1001
@@ -25,24 +25,16 @@ class ImageClassifier(context: Context) {
 
     init {
         try {
-            val assetList = context.assets.list("")
-            if (assetList?.contains(modelFileName) == true) {
-                val assetFileDescriptor = context.assets.openFd(modelFileName)
-                val inputStream = FileInputStream(assetFileDescriptor.fileDescriptor)
-                val fileChannel = inputStream.channel
-                val startOffset = assetFileDescriptor.startOffset
-                val declaredLength = assetFileDescriptor.declaredLength
-                val modelBuffer =
-                    fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
-                interpreter = Interpreter(modelBuffer)
-            } else {
-                android.util.Log.w(
-                    "ImageClassifier",
-                    "Modelo $modelFileName no encontrado en assets. Usando modo simulación."
-                )
-            }
+            val assetFileDescriptor = context.assets.openFd(modelFileName)
+            val inputStream = FileInputStream(assetFileDescriptor.fileDescriptor)
+            val fileChannel = inputStream.channel
+            val startOffset = assetFileDescriptor.startOffset
+            val declaredLength = assetFileDescriptor.declaredLength
+            val modelBuffer =
+                fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
+            interpreter = Interpreter(modelBuffer)
         } catch (e: Exception) {
-            android.util.Log.e("ImageClassifier", "Error al inicializar modelo", e)
+            android.util.Log.e("ImageClassifier", "Error al inicializar modelo: $modelFileName", e)
         }
     }
 

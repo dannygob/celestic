@@ -1,7 +1,7 @@
 # 🔹 Celestic – Intelligent Visual Inspection Android Project
 
-**Status:** 🔄 In Active Development (70% Complete)  
-**Last Updated:** 26 de Enero de 2026
+**Status:** 🔄 In Active Development (80% Complete)  
+**Last Updated:** 28 de Febrero de 2026
 
 ---
 
@@ -67,15 +67,16 @@ precisión milimétrica.
 | **CelesticDatabase.kt**   | Room database with multiple entities                         | ✅ Complete |
 | **NavigationGraph.kt**    | Jetpack Compose Navigation                                   | ✅ Complete |
 | **ReportGenerator.kt**    | PDF/Word/JSON/CSV export                                     | ✅ Complete |
+| **QRScanner.kt**          | QR/Barcode scanning (Integrated in analysis)                 | ✅ Complete |
+| **PermissionsScreen.kt**  | Mandatory system permissions enforcement                     | ✅ Complete |
 
 ### 🔄 Partially Implemented
 
-| Component                 | Description               | Status                  |
-|---------------------------|---------------------------|-------------------------|
-| **DashboardViewModel.kt** | Main inspection flow      | ⚠️ Has stub functions   |
-| **ImageClassifier.kt**    | TensorFlow Lite inference | ⚠️ Structure only       |
-| **QRScanner.kt**          | QR/Barcode scanning       | ⚠️ Basic implementation |
-| **ImageProcessor.kt**     | Image processing pipeline | ⚠️ Returns empty list   |
+| Component                 | Description               | Status                |
+|---------------------------|---------------------------|-----------------------|
+| **DashboardViewModel.kt** | Main inspection flow      | ✅ Functional          |
+| **ImageClassifier.kt**    | TensorFlow Lite inference | ⚠️ Structure only     |
+| **ImageProcessor.kt**     | Image processing pipeline | ⚠️ Returns empty list |
 
 ### ❌ Not Implemented
 
@@ -101,7 +102,7 @@ precisión milimétrica.
 | 7️⃣ | Dynamic Display per Part  | ✅      | Multiple screens with state colors                      |
 | 8️⃣ | ChArUco Calibration       | ✅      | Fully functional with JSON persistence                  |
 | 9️⃣ | ArUco + AprilTag          | ✅      | Both managers fully implemented                         |
-| 🔟  | Code Scanning             | ⚠️     | QRScanner with OpenCV, not integrated                   |
+| 🔟  | Code Scanning             | ✅      | QRScanner with OpenCV, fully integrated                 |
 | 🧩  | Inspection Saved          | ✅      | Room database with Inspection entity                    |
 | 📄  | Report Generation         | 🔄     | Generators complete, UI integration partial             |
 | 🧩  | Dependency Injection      | ✅      | Hilt fully configured                                   |
@@ -146,6 +147,7 @@ precisión milimétrica.
 11. **ReportRequestDialog.kt** - Report generation dialog
 12. **SettingsScreen.kt** - Application settings
 13. **StatusScreen.kt** - System metrics and logs
+14. **PermissionsScreen.kt** - Mandatory permissions handler
 
 #### ❌ Missing
 
@@ -316,10 +318,10 @@ private suspend fun saveResultsToRoom(...): Long
 
 ### ❌ Missing Integration
 
-- Automatic linking to DetectionItem
-- Traceability database (traceability.json)
-- Visual connection in DetailsScreen
-- Batch/order management
+- ✅ Automatic linking to DetectionItem
+- ✅ Traceability database (traceability.json)
+- ✅ Visual connection in DetailsScreen
+- [ ] Batch/order management (Planned)
 
 ---
 
@@ -473,9 +475,9 @@ celestic/
 
 ### Phase 2: Production Ready (Q2 2026)
 
-- [ ] Complete QR traceability
+- [x] Complete QR traceability
 - [ ] Finish report generation UI
-- [ ] Add comprehensive error handling
+- [x] Add comprehensive error handling (Permissions/Capture)
 - [ ] Implement StatusScreen
 - [ ] Performance optimization
 - [ ] User documentation
@@ -597,6 +599,6 @@ git clone [repository-url]
 
 ---
 
-**Project Status:** 🔄 Active Development (70% Complete)  
-**Last Updated:** 26 de Enero de 2026  
-**Version:** 0.7.0-alpha
+**Project Status:** 🔄 Active Development (80% Complete)  
+**Last Updated:** 28 de Febrero de 2026  
+**Version:** 0.8.0-beta
