@@ -1,8 +1,7 @@
 package com.example.celestic.di
 
 import android.content.Context
-import com.example.celestic.manager.AprilTagManager
-import com.example.celestic.manager.ArUcoManager
+import com.example.celestic.database.CelesticDatabase
 import com.example.celestic.manager.ImageClassifier
 import dagger.Module
 import dagger.Provides
@@ -15,21 +14,20 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    @Provides
+    // ===== DATABASE =====
     @Singleton
+    @Provides
+    fun provideDatabase(@ApplicationContext context: Context): CelesticDatabase {
+        return CelesticDatabase.getDatabase(context)
+    }
+
+    // ===== IMAGE CLASSIFIER =====
+    @Singleton
+    @Provides
     fun provideImageClassifier(@ApplicationContext context: Context): ImageClassifier {
         return ImageClassifier(context)
     }
 
-    @Provides
-    @Singleton
-    fun provideArUcoManager(): ArUcoManager {
-        return ArUcoManager()
-    }
-
-    @Provides
-    @Singleton
-    fun provideAprilTagManager(): AprilTagManager {
-        return AprilTagManager()
-    }
+    // NO necesitamos provides para SharedDataRepository porque ya tiene @Inject
+    // Hilt lo maneja automáticamente
 }

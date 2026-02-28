@@ -6,11 +6,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
-/**
- * Representa una característica visual detectada en una imagen calibrada.
- */
-@Parcelize
 @Entity(tableName = "detected_features")
+@Parcelize
 data class DetectedFeature(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,

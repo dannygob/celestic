@@ -19,3 +19,4 @@ data class TraceabilityItem(
     val inspectionDate: String,
     val finalStatus: String
 ) : Parcelable
+
