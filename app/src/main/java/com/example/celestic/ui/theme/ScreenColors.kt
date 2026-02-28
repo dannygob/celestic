@@ -10,7 +10,8 @@ data class ScreenColors(
     val background: Color,
     val topBarBg: Color,
     val textColor: Color,
-    val accentColor: Color
+    val accentColor: Color,
+    val errorColor: Color = Color(0xFFEF5350)
 )
 
 @Composable
@@ -19,6 +20,7 @@ fun rememberScreenColors(isDarkMode: Boolean): ScreenColors {
         background = if (isDarkMode) Color(0xFF0A0E14) else Color(0xFFF2F2F2),
         topBarBg = if (isDarkMode) Color.Black else Color.White,
         textColor = if (isDarkMode) Color.White else Color.Black,
-        accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
+        accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC),
+        errorColor = if (isDarkMode) Color(0xFFEF5350) else Color(0xFFC62828)
     )
 }

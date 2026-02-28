@@ -54,7 +54,7 @@ fun DetailsScreen(
 
     // Observar estados del ViewModel
     val detectionItem by detailsViewModel.detectionItem.collectAsState()
-    val traceabilityResult = detailsViewModel.traceabilityItem.collectAsState().value
+    val traceabilityResult by detailsViewModel.traceabilityItem.collectAsState()
     val features = detailsViewModel.features.collectAsState().value ?: emptyList()
     val useInches = sharedViewModel.useInches.collectAsState().value
 

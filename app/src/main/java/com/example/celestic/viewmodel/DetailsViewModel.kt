@@ -50,11 +50,21 @@ class DetailsViewModel @Inject constructor(
 
     fun loadDetectionById(id: Long) {
         viewModelScope.launch {
+            _traceabilityItem.value = Result.Loading
+            _features.value = emptyList()
+            
             val item = repository.getDetectionById(id)
             _detectionItem.value = item
-            item?.let {
-                loadFeatures(it.id)
-                it.linkedQrCode?.let { code -> loadTraceability(code) }
+
+            if (item != null) {
+                loadFeatures(item.id)
+                if (!item.linkedQrCode.isNullOrEmpty()) {
+                    loadTraceability(item.linkedQrCode)
+                } else {
+                    _traceabilityItem.value = Result.Success(null)
+                }
+            } else {
+                _traceabilityItem.value = Result.Success(null)
             }
         }
     }

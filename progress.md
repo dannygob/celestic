@@ -452,6 +452,7 @@ This file tracks the progress of the Celestic project.
 12. 🔲 Create traceability.json database
 13. 🔲 Add visual resources (icons, images)
 14. 🔲 Implement car body inspection (future feature)
+15. 🔲 Add geographic location (GPS) to reports for verification in different locations.
 
 ---
 

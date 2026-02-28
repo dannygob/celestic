@@ -48,7 +48,8 @@ class FrameAnalyzer @Inject constructor(
         val holes: List<Hole>,
         val orientation: Orientation,
         val countersinks: List<Countersink>,
-        val scratches: List<Scratch>
+        val scratches: List<Scratch>,
+        val decodedQrCode: String? = null
     )
 
     private var prevGrayMat: Mat? = null
@@ -163,6 +164,18 @@ class FrameAnalyzer @Inject constructor(
             // Pero como van en AnalysisResult, el llamador debe liberarlos.
             // Para ser más seguros, devolvemos solo lo necesario en el DTO final.
 
+            // Detect QR Code
+            val qrDetector = org.opencv.objdetect.QRCodeDetector()
+            val points = Mat()
+            val decodedQr = try {
+                val data = qrDetector.detectAndDecode(mat, points)
+                if (data.isNotEmpty()) data else null
+            } catch (e: Exception) {
+                null
+            } finally {
+                points.release()
+            }
+
             return AnalysisResult(
                 filteredContours,
                 annotatedMat,
@@ -170,7 +183,8 @@ class FrameAnalyzer @Inject constructor(
                 simpleHoles,
                 orientation,
                 countersinks,
-                scratches
+                scratches,
+                decodedQr
             )
 
         } catch (e: Exception) {

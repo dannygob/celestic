@@ -1253,7 +1253,16 @@ modelo MobileNetV2.
 
 ---
 
-**Documento actualizado el:** 20 de Febrero de 2026  
+## 12. PENDIENTES Y REQUERIMIENTOS FUTUROS (USUARIO)
+
+- [ ] **Ubicación Geográfica (GPS) en el Reporte:** Se requiere añadir la localización donde se realiza la inspección
+  para verificaciones en distintos lugares. (Pendiente para después).
+
+---
+
+**Documento actualizado el:** 28 de Febrero de 2026  
 **Analista:** Antigravity (Advanced AI Coding Assistant)  
 **Proyecto:** Celestic - Sistema de Detección de Defectos  
-**Total de Archivos Analizados:** 23 archivos principales
+**Total de Archivos Analizados:** 25 archivos principales (últimas incorporaciones: QR y Permisos)
+
+[link to progress.md](file:///c:/Users/compu/AndroidStudioProjects/celestic/progress.md)

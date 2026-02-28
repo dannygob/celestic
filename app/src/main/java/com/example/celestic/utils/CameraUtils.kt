@@ -45,6 +45,18 @@ fun hasCameraPermission(context: Context): Boolean {
     ) == PackageManager.PERMISSION_GRANTED
 }
 
+fun hasRequiredPermissions(context: Context): Boolean {
+    val required = mutableListOf(Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION)
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+        required.add(Manifest.permission.BLUETOOTH_CONNECT)
+        required.add(Manifest.permission.BLUETOOTH_SCAN)
+    }
+
+    return required.all {
+        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+    }
+}
+
 fun getCameraProvider(context: Context): ListenableFuture<ProcessCameraProvider> {
     return ProcessCameraProvider.getInstance(context)
 }

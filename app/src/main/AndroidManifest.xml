@@ -14,10 +14,28 @@
         android:maxSdkVersion="32"
         tools:ignore="ScopedStorage" />
 
-    <!-- Habilitar la cámara como característica opcional -->
+    <!-- Permisos de Bluetooth -->
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
+
+    <!-- Permisos de WIFI -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <!-- Habilitar la cámara como característica obligatoria -->
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="false" />
+        android:required="true"/>
+    <uses-feature
+            android:name="android.hardware.bluetooth"
+            android:required="true"/>
+    <uses-feature
+            android:name="android.hardware.wifi"
+            android:required="true"/>
 
     <application
         android:allowBackup="true"
