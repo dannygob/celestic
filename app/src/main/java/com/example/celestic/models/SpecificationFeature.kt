@@ -22,7 +22,9 @@ import com.example.celestic.models.enums.Orientation
     ]
 )
 data class SpecificationFeature(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+
     val specificationId: Long,
     val face: Orientation,        // ANVERSO o REVERSO
     val type: DetectionType,      // HOLE, COUNTERSINK, etc.

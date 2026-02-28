@@ -3,13 +3,12 @@ package com.example.celestic.opencv
 import android.util.Log
 import com.example.celestic.manager.AprilTagManager
 import com.example.celestic.manager.ArUcoManager
+import com.example.celestic.models.FiducialMarker
 import com.example.celestic.models.enums.Orientation
 import com.example.celestic.viewmodel.MarkerType
-import org.opencv.calib3d.Calib3d
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.Objdetect
-import org.opencv.video.Video
 import javax.inject.Inject
 
 class FrameAnalyzer @Inject constructor(
@@ -70,7 +69,7 @@ class FrameAnalyzer @Inject constructor(
             val filteredContours = filterContours(contours, 100.0)
             val deformations = detectDeformations(filteredContours)
 
-            // Detect holes y asegurar liberación
+            // Detect holes
             Imgproc.HoughCircles(
                 grayMat,
                 holesMat,
@@ -97,17 +96,20 @@ class FrameAnalyzer @Inject constructor(
             Imgproc.Canny(grayMat, edges, 50.0, 150.0)
             val scratches = detectScratches(edges, filteredContours)
 
-            val tempMarkers = when (markerType) {
+            // ✅ CORREGIDO: Ahora usando FiducialMarker
+            val tempMarkers: List<FiducialMarker> = when (markerType) {
                 MarkerType.ARUCO -> arucoManager.detectMarkers(mat)
                 MarkerType.APRILTAG -> aprilTagManager.detectMarkers(mat)
+                null -> emptyList()
                 else -> emptyList()
             }
 
+            // Convertir FiducialMarker a Marker interno
             val markers = tempMarkers.map {
                 Marker(it.id, it.corners.clone())
             }
 
-            // Liberar los Mats temporales devueltos por los managers
+            // Liberar los Mats temporales
             tempMarkers.forEach { it.corners.release() }
 
             val orientation = detectOrientation(markers)
@@ -124,7 +126,7 @@ class FrameAnalyzer @Inject constructor(
 
             val annotatedMat = mat.clone()
 
-            // Dibujado...
+            // Dibujado
             Imgproc.drawContours(annotatedMat, filteredContours, -1, Scalar(0.0, 255.0, 0.0), 2)
             Imgproc.drawContours(annotatedMat, deformations, -1, Scalar(255.0, 0.0, 0.0), 2)
 
@@ -142,7 +144,7 @@ class FrameAnalyzer @Inject constructor(
                 Imgproc.line(annotatedMat, scratch.startPoint, scratch.endPoint, Scalar(255.0, 0.0, 255.0), 2)
             }
 
-            if (markers.isNotEmpty()){
+            if (markers.isNotEmpty()) {
                 val cornersList = markers.map { it.corners }
                 Objdetect.drawDetectedMarkers(annotatedMat, cornersList, Mat())
             }
@@ -278,7 +280,7 @@ class FrameAnalyzer @Inject constructor(
 
     fun applyCalibration(image: Mat, cameraMatrix: Mat, distortionCoeffs: Mat): Mat {
         val undistortedImage = Mat()
-        Calib3d.undistort(image, undistortedImage, cameraMatrix, distortionCoeffs)
+        org.opencv.calib3d.Calib3d.undistort(image, undistortedImage, cameraMatrix, distortionCoeffs)
         return undistortedImage
     }
 
@@ -332,7 +334,7 @@ class FrameAnalyzer @Inject constructor(
         val status = MatOfByte()
         val err = MatOfFloat()
         if (prevPts2f.total() > 0) {
-            Video.calcOpticalFlowPyrLK(prevFrame, nextFrame, prevPts2f, nextPts2f, status, err)
+            org.opencv.video.Video.calcOpticalFlowPyrLK(prevFrame, nextFrame, prevPts2f, nextPts2f, status, err)
         }
         // Cleanup local
         corners.release()
@@ -341,5 +343,4 @@ class FrameAnalyzer @Inject constructor(
         err.release()
         return nextPts2f
     }
-
 }

@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.celestic.data.dao.CelesticDao
 import com.example.celestic.database.converters.Converters
-import com.example.celestic.models.DetectionItem
+import com.example.celestic.models.*
 import com.example.celestic.models.calibration.CameraCalibrationData
 import com.example.celestic.models.calibration.DetectedFeature
 import com.example.celestic.models.report.ReportConfig
@@ -18,10 +18,10 @@ import com.example.celestic.models.report.ReportConfig
         DetectedFeature::class,
         CameraCalibrationData::class,
         ReportConfig::class,
-        com.example.celestic.models.Inspection::class,
-        com.example.celestic.models.Specification::class,
-        com.example.celestic.models.SpecificationFeature::class,
-        com.example.celestic.models.TraceabilityItem::class
+        Inspection::class,
+        Specification::class,
+        SpecificationFeature::class,
+        TraceabilityItem::class
     ],
     version = 5,
     exportSchema = false

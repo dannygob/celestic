@@ -157,3 +157,6 @@ ksp {
     arg("room.expandProjection", "true")
 }
 }
+dependencies {
+    implementation(libs.transportation.consumer)
+}

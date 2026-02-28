@@ -6,12 +6,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
-/**
- * Define la configuración de exportación de reportes en Celestic.
- * Permite persistir preferencias como formato, filtros y metadatos.
- */
-@Parcelize
 @Entity(tableName = "report_config")
+@Parcelize
 data class ReportConfig(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,

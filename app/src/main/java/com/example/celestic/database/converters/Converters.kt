@@ -16,24 +16,28 @@ class Converters {
     @TypeConverter
     fun toBoundingBox(value: String): BoundingBox = gson.fromJson(value, BoundingBox::class.java)
 
+    // ❌ PROBLEMA: Este TypeConverter no se usa actualmente (DetectedFeature ya no tiene Map)
+    // Pero lo mantenemos por si acaso
     @TypeConverter
-    fun fromMap(value: Map<String, Float>): String = gson.toJson(value)
+    fun fromStringFloatMap(value: Map<String, Float>): String = gson.toJson(value)
 
     @TypeConverter
-    fun toMap(value: String): Map<String, Float> {
+    fun toStringFloatMap(value: String): Map<String, Float> {
         val type = object : TypeToken<Map<String, Float>>() {}.type
-        return gson.fromJson(value, type)
+        return gson.fromJson(value, type) ?: emptyMap()
     }
 
     @TypeConverter
     fun fromDetectionStatus(status: DetectionStatus): String = status.name
 
     @TypeConverter
-    fun toDetectionStatus(value: String): DetectionStatus = DetectionStatus.valueOf(value)
+    fun toDetectionStatus(value: String): DetectionStatus =
+        DetectionStatus.valueOf(value)
 
     @TypeConverter
     fun fromDetectionType(type: DetectionType): String = type.name
 
     @TypeConverter
-    fun toDetectionType(value: String): DetectionType = DetectionType.valueOf(value)
+    fun toDetectionType(value: String): DetectionType =
+        DetectionType.valueOf(value)
 }

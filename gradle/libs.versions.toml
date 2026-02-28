@@ -1,6 +1,6 @@
 [versions]
 # Build & Kotlin
-agp = "8.7.3"
+agp = "8.12.0"
 kotlin = "2.1.0"
 ksp = "2.1.0-1.0.29"
 
@@ -37,6 +37,7 @@ mpAndroidChart = "v3.1.0"
 gson = "2.11.0"
 itextKernel = "8.0.5"
 itextLayout = "8.0.5"
+transportationConsumer = "4.0.0"
 
 
 [libraries]
@@ -88,6 +89,7 @@ mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", versio
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 itext-kernel = { group = "com.itextpdf", name = "kernel", version.ref = "itextKernel" }
 itext-layout = { group = "com.itextpdf", name = "layout", version.ref = "itextLayout" }
+transportation-consumer = { group = "com.google.android.libraries.mapsplatform.transportation", name = "transportation-consumer", version.ref = "transportationConsumer" }
 
 
 [plugins]
