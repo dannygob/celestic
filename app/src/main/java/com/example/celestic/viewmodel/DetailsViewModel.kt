@@ -26,6 +26,9 @@ class DetailsViewModel @Inject constructor(
     private val _features = MutableStateFlow<List<com.example.celestic.models.calibration.DetectedFeature>>(emptyList())
     val features: StateFlow<List<com.example.celestic.models.calibration.DetectedFeature>> = _features
 
+    private val _detectionItem = MutableStateFlow<com.example.celestic.models.DetectionItem?>(null)
+    val detectionItem: StateFlow<com.example.celestic.models.DetectionItem?> = _detectionItem
+
     fun loadTraceability(code: String) {
         viewModelScope.launch {
             try {
@@ -41,6 +44,17 @@ class DetailsViewModel @Inject constructor(
         viewModelScope.launch {
             repository.getFeaturesForDetection(detectionItemId).collect {
                 _features.value = it
+            }
+        }
+    }
+
+    fun loadDetectionById(id: Long) {
+        viewModelScope.launch {
+            val item = repository.getDetectionById(id)
+            _detectionItem.value = item
+            item?.let {
+                loadFeatures(it.id)
+                it.linkedQrCode?.let { code -> loadTraceability(code) }
             }
         }
     }

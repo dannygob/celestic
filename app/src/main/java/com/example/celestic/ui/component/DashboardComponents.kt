@@ -1,12 +1,7 @@
 package com.example.celestic.ui.component
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,21 +47,37 @@ fun DisabledButton(text: String) {
 
 fun ApprovedResultDialog(
     onNewInspection: () -> Unit,
-    onViewReport: () -> Unit
+    onViewReport: () -> Unit,
+    onGoToDetail: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = {},
-        title = { Text("Inspección aprobada") },
-        text = { Text("¿Qué deseas hacer ahora?") },
+        title = { Text("Inspección Finalizada") },
+        text = { Text("La pieza ha sido procesada. ¿Qué desea hacer?") },
         confirmButton = {
-            Button(onClick = onNewInspection) {
-                Text("Nueva inspección")
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Button(
+                    onClick = onNewInspection,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Nueva inspección")
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = onViewReport,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Ver informes")
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedButton(
+                    onClick = onGoToDetail,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Ir al detalle técnico")
+                }
             }
         },
-        dismissButton = {
-            Button(onClick = onViewReport) {
-                Text("Ver reporte")
-            }
-        }
+        dismissButton = {}
     )
 }

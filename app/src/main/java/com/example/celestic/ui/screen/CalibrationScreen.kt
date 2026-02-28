@@ -12,9 +12,7 @@ import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,7 +28,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.celestic.R
 import com.example.celestic.ui.component.CameraPreview
-import com.example.celestic.ui.component.triggerCameraCapture
 import com.example.celestic.ui.theme.CelesticTheme
 import com.example.celestic.ui.theme.rememberScreenColors
 import com.example.celestic.viewmodel.CalibrationState
@@ -53,40 +50,45 @@ fun CalibrationScreen(
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
 
-
+    val cameraController = remember { com.example.celestic.ui.component.CameraCaptureController() }
+    
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.background)
     ) {
-        Scaffold(
-            topBar = {
-                CalibrationTopBar(
-                    uiState = uiState,
-                    textColor = colors.textColor,
-                    topBarBg = colors.topBarBg,
-                    onBack = { navController.popBackStack() },
-                    onReset = { calibrationViewModel.reset() }
-                )
-            },
-            containerColor = colors.background
-        ) { paddingValues ->
-            if (isLandscape) {
-                LandscapeCalibrationContent(
-                    paddingValues = paddingValues,
-                    uiState = uiState,
-                    viewModel = calibrationViewModel,
-                    locale = locale,
-                    isDarkMode = isDarkMode
-                )
-            } else {
-                PortraitCalibrationContent(
-                    paddingValues = paddingValues,
-                    uiState = uiState,
-                    viewModel = calibrationViewModel,
-                    locale = locale,
-                    isDarkMode = isDarkMode
-                )
+        CompositionLocalProvider(com.example.celestic.ui.component.LocalCameraCaptureController provides cameraController) {
+            Scaffold(
+                topBar = {
+                    CalibrationTopBar(
+                        uiState = uiState,
+                        textColor = colors.textColor,
+                        topBarBg = colors.topBarBg,
+                        onBack = { navController.popBackStack() },
+                        onReset = { calibrationViewModel.reset() }
+                    )
+                },
+                containerColor = colors.background
+            ) { paddingValues ->
+                if (isLandscape) {
+                    LandscapeCalibrationContent(
+                        paddingValues = paddingValues,
+                        uiState = uiState,
+                        viewModel = calibrationViewModel,
+                        locale = locale,
+                        isDarkMode = isDarkMode,
+                        cameraController = cameraController
+                    )
+                } else {
+                    PortraitCalibrationContent(
+                        paddingValues = paddingValues,
+                        uiState = uiState,
+                        viewModel = calibrationViewModel,
+                        locale = locale,
+                        isDarkMode = isDarkMode,
+                        cameraController = cameraController
+                    )
+                }
             }
         }
     }
@@ -157,6 +159,7 @@ private fun LandscapeCalibrationContent(
     viewModel: CalibrationViewModel,
     locale: Locale,
     isDarkMode: Boolean,
+    cameraController: com.example.celestic.ui.component.CameraCaptureController,
     modifier: Modifier = Modifier
 ) {
     val accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
@@ -177,7 +180,10 @@ private fun LandscapeCalibrationContent(
                 .clip(RoundedCornerShape(24.dp))
                 .background(Color.Black)
         ) {
-            CameraPreview(onFrameCaptured = { viewModel.captureFrame(it) })
+            CameraPreview(
+                onFrameCaptured = { viewModel.captureFrame(it) },
+                controller = cameraController
+            )
             CaptureStatusOverlay(uiState.lastCaptureSuccess, Alignment.TopCenter)
         }
 
@@ -193,7 +199,7 @@ private fun LandscapeCalibrationContent(
             CalibrationActions(
                 uiState = uiState,
                 accentColor = accentColor,
-                onCapture = { triggerCameraCapture() },
+                onCapture = { cameraController.triggerCapture() },
                 onCalibrate = { viewModel.runCalibration() }
             )
 
@@ -216,6 +222,7 @@ private fun PortraitCalibrationContent(
     viewModel: CalibrationViewModel,
     locale: Locale,
     isDarkMode: Boolean,
+    cameraController: com.example.celestic.ui.component.CameraCaptureController,
     modifier: Modifier = Modifier
 ) {
     val accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
@@ -244,14 +251,17 @@ private fun PortraitCalibrationContent(
                 .clip(RoundedCornerShape(24.dp))
                 .background(Color.Black)
         ) {
-            CameraPreview(onFrameCaptured = { viewModel.captureFrame(it) })
+            CameraPreview(
+                onFrameCaptured = { viewModel.captureFrame(it) },
+                controller = cameraController
+            )
             CaptureStatusOverlay(uiState.lastCaptureSuccess, Alignment.TopCenter)
         }
 
         CalibrationActions(
             uiState = uiState,
             accentColor = accentColor,
-            onCapture = { triggerCameraCapture() },
+            onCapture = { cameraController.triggerCapture() },
             onCalibrate = { viewModel.runCalibration() },
             modifier = Modifier.padding(24.dp),
             isLandscape = false

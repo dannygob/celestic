@@ -7,17 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.celestic.ui.screen.CalibrationScreen
-import com.example.celestic.ui.screen.CameraScreen
-import com.example.celestic.ui.screen.DashboardScreen
-import com.example.celestic.ui.screen.DetailsScreen
-import com.example.celestic.ui.screen.DetectionListScreen
-import com.example.celestic.ui.screen.InspectionPreviewScreen
-import com.example.celestic.ui.screen.LoginScreen
-import com.example.celestic.ui.screen.ReportRequestDialog
-import com.example.celestic.ui.screen.ReportsScreen
-import com.example.celestic.ui.screen.SettingsScreen
-import com.example.celestic.ui.screen.StatusScreen
+import com.example.celestic.ui.screen.*
 import com.example.celestic.viewmodel.SharedViewModel
 
 @Composable
@@ -43,10 +33,20 @@ fun NavigationGraph(
 
         composable(
             NavigationRoutes.Details.route,
-            arguments = listOf(navArgument("detailType") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("detailType") { type = NavType.StringType },
+                navArgument("id") { type = NavType.StringType; nullable = true }
+            )
         ) { backStackEntry ->
             val detailType = backStackEntry.arguments?.getString("detailType") ?: "hole"
-            DetailsScreen(navController, detailType, sharedViewModel = sharedViewModel)
+            val id = backStackEntry.arguments?.getString("id")?.toLongOrNull()
+
+            DetailsScreen(
+                navController = navController,
+                detailType = detailType,
+                detectionId = id,
+                sharedViewModel = sharedViewModel
+            )
         }
 
         composable(NavigationRoutes.Calibration.route) {
@@ -74,6 +74,13 @@ fun NavigationGraph(
         }
         composable(NavigationRoutes.Status.route) {
             StatusScreen(navController, sharedViewModel = sharedViewModel)
+        }
+        composable(
+            NavigationRoutes.DetectionDetails.route,
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            DetectionDetailsScreen(navController, id)
         }
     }
 }

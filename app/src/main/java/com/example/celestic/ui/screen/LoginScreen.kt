@@ -40,10 +40,13 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
     val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
-    var email by remember { mutableStateOf("") }
+    val sharedPrefs = context.getSharedPreferences("celestic_prefs", android.content.Context.MODE_PRIVATE)
+
+    var email by remember { mutableStateOf(sharedPrefs.getString("saved_email", "") ?: "") }
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var rememberMe by remember { mutableStateOf(sharedPrefs.getBoolean("remember_me", false)) }
 
     val fillFieldsMsg = stringResource(R.string.fillAllFields)
     val authErrorMsg = stringResource(R.string.authError)
@@ -94,6 +97,8 @@ fun LoginScreen(
                 onPasswordChange = { password = it; errorMessage = null },
                 isLoading = isLoading,
                 errorMessage = errorMessage,
+                rememberMe = rememberMe,
+                onRememberMeChange = { rememberMe = it },
                 fillFieldsMsg = fillFieldsMsg,
                 authErrorMsg = authErrorMsg,
                 offlineModeMsg = offlineModeMsg,
@@ -105,7 +110,23 @@ fun LoginScreen(
                 context = context,
                 navController = navController,
                 onLoadingChange = { isLoading = it },
-                onErrorMessageChange = { errorMessage = it }
+                onErrorMessageChange = { errorMessage = it },
+                onSuccess = {
+                    if (rememberMe) {
+                        sharedPrefs.edit()
+                            .putString("saved_email", email)
+                            .putBoolean("remember_me", true)
+                            .apply()
+                    } else {
+                        sharedPrefs.edit()
+                            .remove("saved_email")
+                            .putBoolean("remember_me", false)
+                            .apply()
+                    }
+                    navController.navigate("dashboard") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
             )
 
             LoginFooter(textSecondary)
@@ -142,6 +163,8 @@ private fun LoginForm(
     onPasswordChange: (String) -> Unit,
     isLoading: Boolean,
     errorMessage: String?,
+    rememberMe: Boolean,
+    onRememberMeChange: (Boolean) -> Unit,
     fillFieldsMsg: String,
     authErrorMsg: String,
     offlineModeMsg: String,
@@ -153,7 +176,8 @@ private fun LoginForm(
     context: android.content.Context,
     navController: NavController,
     onLoadingChange: (Boolean) -> Unit,
-    onErrorMessageChange: (String?) -> Unit
+    onErrorMessageChange: (String?) -> Unit,
+    onSuccess: () -> Unit
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = cardBg),
@@ -221,7 +245,28 @@ private fun LoginForm(
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = rememberMe,
+                    onCheckedChange = onRememberMeChange,
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = accentColor,
+                        uncheckedColor = textSecondary.copy(alpha = 0.5f)
+                    )
+                )
+                Text(
+                    text = "Recordar usuario",
+                    color = textSecondary,
+                    fontSize = 14.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = {
@@ -232,9 +277,7 @@ private fun LoginForm(
 
                     if (email == "admin@celestic.com" && password == "celestic_dev") {
                         onLoadingChange(false)
-                        navController.navigate("dashboard") {
-                            popUpTo("login") { inclusive = true }
-                        }
+                        onSuccess()
                         return@Button
                     }
 
@@ -245,9 +288,7 @@ private fun LoginForm(
                             .addOnCompleteListener { task ->
                                 onLoadingChange(false)
                                 if (task.isSuccessful) {
-                                    navController.navigate("dashboard") {
-                                        popUpTo("login") { inclusive = true }
-                                    }
+                                    onSuccess()
                                 } else {
                                     onErrorMessageChange(
                                         task.exception?.localizedMessage ?: authErrorMsg
@@ -258,7 +299,7 @@ private fun LoginForm(
                         onLoadingChange(false)
                         onErrorMessageChange(offlineModeMsg)
                         if (email == "admin" && password == "admin") {
-                            navController.navigate("dashboard")
+                            onSuccess()
                         }
                     }
                 },

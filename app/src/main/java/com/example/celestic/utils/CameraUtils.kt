@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.camera.core.ImageProxy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
@@ -13,6 +14,8 @@ import org.opencv.android.Utils
 import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
+import java.io.File
+import java.io.FileOutputStream
 
 fun imageProxyToBitmap(image: ImageProxy): Bitmap {
     val plane = image.planes[0]
@@ -44,4 +47,19 @@ fun hasCameraPermission(context: Context): Boolean {
 
 fun getCameraProvider(context: Context): ListenableFuture<ProcessCameraProvider> {
     return ProcessCameraProvider.getInstance(context)
+}
+
+fun saveBitmapToFile(context: Context, bitmap: Bitmap, fileName: String): File? {
+    val dir = File(context.filesDir, "detection_images")
+    if (!dir.exists()) dir.mkdirs()
+    val file = File(dir, "$fileName.jpg")
+    return try {
+        FileOutputStream(file).use { out ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+        }
+        file
+    } catch (e: Exception) {
+        Log.e("CameraUtils", "Error saving bitmap $fileName", e)
+        null
+    }
 }

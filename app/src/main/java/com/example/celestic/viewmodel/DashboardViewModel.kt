@@ -1,105 +1,67 @@
 package com.example.celestic.viewmodel
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
-import androidx.core.graphics.createBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.celestic.data.repository.DetectionRepository
-import com.example.celestic.manager.AprilTagManager
-import com.example.celestic.manager.ArUcoManager
+import com.example.celestic.data.repository.SharedDataRepository
 import com.example.celestic.manager.CalibrationManager
-import com.example.celestic.manager.ImageClassifier
-import com.example.celestic.models.*
-import com.example.celestic.models.ClassificationResult
-import com.example.celestic.models.DashboardState
-import com.example.celestic.models.FaceDetectionResult
-import com.example.celestic.models.FrameAnalysisResult
+import com.example.celestic.models.DetectionItem
+import com.example.celestic.models.Specification
 import com.example.celestic.models.enums.DetectionStatus
 import com.example.celestic.models.enums.DetectionType
-import com.example.celestic.models.geometry.BoundingBox
 import com.example.celestic.opencv.FrameAnalyzer
-import com.example.celestic.ui.scanner.CelesticQRScanner
+import com.example.celestic.opencv.ImageProcessor
+import com.example.celestic.utils.saveBitmapToFile
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.opencv.android.Utils
 import org.opencv.core.Mat
-import org.opencv.core.MatOfPoint
-import org.opencv.imgproc.Imgproc
-import java.util.*
 import javax.inject.Inject
-import kotlin.math.pow
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val repository: DetectionRepository,
     private val calibrationManager: CalibrationManager,
-    private val arucoManager: ArUcoManager,
-    private val aprilTagManager: AprilTagManager,
-    private val qrScanner: CelesticQRScanner,
     private val frameAnalyzer: FrameAnalyzer,
-//    private val sharedViewModel: SharedViewModel,
-    private val imageClassifier: ImageClassifier,
-    private val specificationValidator: com.example.celestic.utils.SpecificationValidator
+    private val imageProcessor: ImageProcessor,
+    private val sharedData: SharedDataRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    private var sharedViewModel: SharedViewModel? = null
-
-    fun attachSharedViewModel(vm: SharedViewModel) {
-        sharedViewModel = vm
+    sealed class DashboardState {
+        object Idle : DashboardState()
+        object CameraReady : DashboardState()
+        object Processing : DashboardState()
+        data class Approved(val detectionId: Long) : DashboardState()
+        data class Rejected(val detectionId: Long) : DashboardState()
+        data class NavigateToDetails(val detectionId: Long) : DashboardState()
+        data class Error(val message: String) : DashboardState()
     }
-
-
 
     private val _state = MutableStateFlow<DashboardState>(DashboardState.Idle)
     val state: StateFlow<DashboardState> = _state
 
-    private var currentInspectionId: Long? = null
-
-    // Specification Cache
     private var currentSpecification: Specification? = null
-    private var loadedFeatures: List<SpecificationFeature> = emptyList()
-    private val featureMatcher = com.example.celestic.validation.FeatureMatcher()
+
+    // Access shared state directly
+    val markerType = sharedData.markerType
+    val currentInspectionId = sharedData.currentInspectionId
 
     init {
-        // Load latest specification or create a default one
-        viewModelScope.launch {
-            repository.getLatestSpecification().collect { spec ->
-                if (spec == null) {
-                    // If no specification exists, create a default one (Blueprint Base)
-                    // to avoid manual creation in a new screen for now.
-                    val defaultSpec = Specification(
-                        name = "Standard Blueprint",
-                        sheetType = "Generic",
-                        minWidthMm = 95.0, maxWidthMm = 105.0,
-                        minHeightMm = 45.0, maxHeightMm = 55.0,
-                        expectedHoleCount = 4,
-                        holeMinDiameterMm = 4.5, holeMaxDiameterMm = 5.5,
-                        holeTolerance = 0.5,
-                        holeNominalDiameterMm = 5.0,
-                        expectedCountersinkCount = 0,
-                        countersinkMinDiameterMm = 6.5, countersinkMaxDiameterMm = 8.5,
-                        maxAllowedScratches = 0,
-                        maxScratchLengthMm = 2.0,
-                        maxAllowedDeformations = 0,
-                        requireAlodineHalo = false,
-                        minAlodineUniformity = 0.0
-                    )
-                    repository.insertSpecification(defaultSpec)
-                } else {
-                    currentSpecification = spec
-                    loadFeatures(spec.id)
-                }
-            }
-        }
+        loadCurrentSpecification()
     }
 
-    private fun loadFeatures(specId: Long) {
+    private fun loadCurrentSpecification() {
         viewModelScope.launch {
-            repository.getAllFeaturesBySpecification(specId).collect {
-                loadedFeatures = it
+            repository.getLatestSpecification().collect { spec ->
+                currentSpecification = spec
+                spec?.id?.let { sharedData.setSelectedSpecification(it) }
             }
         }
     }
@@ -107,7 +69,8 @@ class DashboardViewModel @Inject constructor(
     fun startInspection() {
         viewModelScope.launch {
             try {
-                currentInspectionId = repository.startInspection()
+                val inspectionId = repository.startInspection()
+                sharedData.setCurrentInspection(inspectionId)
                 _state.value = DashboardState.CameraReady
             } catch (e: Exception) {
                 _state.value = DashboardState.Error("Error starting inspection: ${e.message}")
@@ -115,215 +78,165 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    fun startNewInspection() {
-        _state.value = DashboardState.CameraReady
-    }
-
-    fun resetState() {
-        _state.value = DashboardState.Idle
-    }
-
     fun onFrameCaptured(bitmap: Bitmap) {
         _state.value = DashboardState.Processing
+        sharedData.setProcessing(true)
 
         viewModelScope.launch {
-            val mainMat = Mat()
-            Utils.bitmapToMat(bitmap, mainMat) // Única conversión necesaria
+            val frameId = "insp_${System.currentTimeMillis()}"
+            // Save bitmap to file for later review in Details
+            saveBitmapToFile(context, bitmap, frameId)
+
+            val mat = Mat()
+            Utils.bitmapToMat(bitmap, mat)
 
             try {
-                // 1. Detección usando el Mat principal
-                val face = detectFaceWithMat(mainMat, bitmap.width, bitmap.height, bitmap)
+                val currentMarkerType = markerType.value
+                val detections = imageProcessor.processImage(mat, currentMarkerType)
 
-                // 2. Clasificación (IA)
-                val classification = classifyWithTensorFlowLite(
-                    roi = face.roiBitmap,
-                    faceLabel = face.faceLabel
-                )
-
-                // Liberar el bitmap del ROI si es una copia diferente del original
-                if (face.roiBitmap != bitmap) {
-                    face.roiBitmap.recycle()
+                // Validate against specification
+                val specification = currentSpecification
+                val validationResult = if (specification != null) {
+                    validateAgainstSpecification(detections, specification)
+                } else {
+                    createDefaultValidationResult(detections)
                 }
 
-                // 3. Análisis detallado
-                val analysis = analyzeWithMat(mainMat, bitmap)
+                // Save to database with current frameId
+                val detectionIds = saveDetectionsToDatabase(detections, validationResult, frameId)
 
-                // 4. Lógica de validación
-                var overallStatus = classification.status
-                var validationNotes = classification.type
+                // Update shared state
+                sharedData.setLastDetectionResults(detections)
 
-                if (analysis.hasDeformations) {
-                    overallStatus = DetectionStatus.NOT_ACCEPTED
-                    validationNotes += " | Deformations detected"
-                }
-
-                val detectionId = saveResultsToRoom(
-                    face = face,
-                    classification = classification,
-                    analysis = analysis
-                )
-
-                // Limpieza de Bitmaps temporales después de guardar
-                analysis.annotatedBitmap?.recycle()
-
-                when (overallStatus) {
-                    DetectionStatus.OK -> _state.value = DashboardState.Approved(detectionId)
-                    else -> _state.value = DashboardState.NavigateToDetails(detectionId)
+                // Update UI state
+                if (detections.isEmpty()) {
+                    // Si no hay detecciones, vamos a detalles con un estado de "inspección vacía"
+                    _state.value = DashboardState.Rejected(detectionIds.firstOrNull() ?: 0)
+                } else {
+                    updateStateBasedOnValidation(validationResult, detectionIds)
                 }
 
             } catch (e: Exception) {
                 Log.e("DashboardViewModel", "Error processing frame", e)
                 _state.value = DashboardState.Error(e.message ?: "Unknown error")
             } finally {
-                mainMat.release() // Limpieza final de la memoria nativa
-                bitmap.recycle() // Reciclar el bitmap original para liberar la memoria Heap
+                mat.release()
+                bitmap.recycle()
+                sharedData.setProcessing(false)
             }
         }
     }
 
-    private fun classifyWithTensorFlowLite(roi: Bitmap, faceLabel: String): ClassificationResult {
-        val predictions = imageClassifier.runInference(roi)
-        val featureType = imageClassifier.mapPredictionToFeatureType(predictions)
+    private fun validateAgainstSpecification(
+        detections: List<DetectionItem>,
+        specification: Specification
+    ): ValidationResult {
+        val violations = mutableListOf<String>()
+        var overallStatus = DetectionStatus.OK
 
-        // Mapeo simple de tipo a estado (puedes ajustarlo)
-        val status = if (featureType.contains("sin defecto")) {
-            DetectionStatus.OK
-        } else {
-            DetectionStatus.NOT_ACCEPTED
+        // Validate hole count
+        val holesCount = detections.count { it.type == DetectionType.HOLE }
+        if (holesCount != specification.expectedHoleCount) {
+            violations.add("Hole count mismatch: expected ${specification.expectedHoleCount}, found $holesCount")
+            overallStatus = DetectionStatus.NOT_ACCEPTED
         }
 
-        return ClassificationResult(
-            status = status,
-            type = featureType,
-            score = predictions.maxOrNull() ?: 0f,
-            probabilities = predictions
+        // Validate scratches
+        val scratchesCount = detections.count { it.type == DetectionType.SCRATCH }
+        if (scratchesCount > specification.maxAllowedScratches) {
+            violations.add("Too many scratches: allowed ${specification.maxAllowedScratches}, found $scratchesCount")
+            overallStatus = DetectionStatus.NOT_ACCEPTED
+        }
+
+        return ValidationResult(
+            isValid = violations.isEmpty(),
+            violations = violations,
+            overallStatus = overallStatus
         )
     }
 
+    private fun createDefaultValidationResult(detections: List<DetectionItem>): ValidationResult {
+        val hasCriticalDefects = detections.any { it.type == DetectionType.SCRATCH }
+        return ValidationResult(
+            isValid = !hasCriticalDefects,
+            violations = if (hasCriticalDefects) listOf("Critical defects detected") else emptyList(),
+            overallStatus = if (hasCriticalDefects) DetectionStatus.NOT_ACCEPTED else DetectionStatus.OK
+        )
+    }
 
-    private fun detectFaceWithMat(mat: Mat, width: Int, height: Int, originalBitmap: Bitmap): FaceDetectionResult {
-        val gray = Mat()
-        Imgproc.cvtColor(mat, gray, Imgproc.COLOR_RGB2GRAY)
-
-        val thresh = Mat()
-        Imgproc.threshold(gray, thresh, 100.0, 255.0, Imgproc.THRESH_BINARY_INV + Imgproc.THRESH_OTSU)
-
-        val contours = ArrayList<MatOfPoint>()
-        val hierarchy = Mat()
-        Imgproc.findContours(thresh, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
-
-        val maxContour = contours.maxByOrNull { Imgproc.contourArea(it) }
-        val rect = if (maxContour != null && Imgproc.contourArea(maxContour) > 1000) {
-            Imgproc.boundingRect(maxContour)
-        } else {
-            org.opencv.core.Rect(0, 0, width, height)
+    private suspend fun saveDetectionsToDatabase(
+        detections: List<DetectionItem>,
+        validationResult: ValidationResult,
+        frameId: String
+    ): List<Long> {
+        val inspectionId = currentInspectionId.value ?: repository.startInspection().also {
+            sharedData.setCurrentInspection(it)
         }
 
-        val safeX = rect.x.coerceIn(0, width - 1)
-        val safeY = rect.y.coerceIn(0, height - 1)
-        val safeWidth = rect.width.coerceAtMost(width - safeX).coerceAtLeast(1)
-        val safeHeight = rect.height.coerceAtMost(height - safeY).coerceAtLeast(1)
+        val detectionIds = mutableListOf<Long>()
 
-        val roi = Bitmap.createBitmap(originalBitmap, safeX, safeY, safeWidth, safeHeight)
-
-        // LIMPIEZA: Liberar todos los Mats de contornos
-        contours.forEach { it.release() }
-        gray.release()
-        thresh.release()
-        hierarchy.release()
-
-        return FaceDetectionResult(
-            roiBitmap = roi,
-            faceLabel = "Part detected",
-            confidence = 1.0f,
-            boundingBox = BoundingBox(
-                left = safeX.toFloat(), top = safeY.toFloat(),
-                right = (safeX + safeWidth).toFloat(), bottom = (safeY + safeHeight).toFloat()
+        if (detections.isEmpty()) {
+            // Insert a placeholder for empty inspection
+            val emptyDetection = DetectionItem(
+                inspectionId = inspectionId,
+                frameId = frameId,
+                type = DetectionType.UNKNOWN,
+                boundingBox = com.example.celestic.models.geometry.BoundingBox(0f, 0f, 0f, 0f),
+                confidence = 0f,
+                status = DetectionStatus.NOT_ACCEPTED,
+                timestamp = System.currentTimeMillis(),
+                notes = "No se detectó ningún elemento a inspeccionar."
             )
-        )
-    }
-
-    private fun analyzeWithMat(mat: Mat, originalBitmap: Bitmap): FrameAnalysisResult {
-        val markerType = sharedViewModel?.markerType?.value
-        val result = frameAnalyzer.analyze(mat, markerType)
-
-        var estimatedScale = 0.264
-        val referenceMarkerSizeMm = 50.0
-
-        if (result.markers.isNotEmpty()) {
-            val corners = result.markers[0].corners
-            if (corners.total() >= 4) {
-                val p1 = corners.get(0, 0)
-                val p2 = corners.get(0, 1)
-                val widthPx = kotlin.math.sqrt((p2[0] - p1[0]).pow(2.0) + (p2[1] - p1[1]).pow(2.0))
-                val estimatedZ = calibrationManager.estimateDistance(widthPx, referenceMarkerSizeMm)
-                estimatedScale = calibrationManager.getScaleFactor(estimatedZ)
+            val id = repository.insertDetection(emptyDetection)
+            detectionIds.add(id)
+        } else {
+            detections.forEach { detection ->
+                val validatedDetection = detection.copy(
+                    inspectionId = inspectionId,
+                    frameId = frameId,
+                    status = validationResult.overallStatus
+                )
+                val id = repository.insertDetection(validatedDetection)
+                detectionIds.add(id)
             }
         }
 
-        currentSpecification
-        HashSet<FrameAnalyzer.Hole>()
-        HashSet<FrameAnalyzer.Countersink>()
-        HashSet<FrameAnalyzer.Scratch>()
-
-        // (Lógica de validación simplificada para brevedad, mantenemos tu lógica interna)
-        // ... validación contra s ...
-
-        val hasDefects = result.contours.any { Imgproc.contourArea(it) > 500 }
-
-        val annotatedBmp = createBitmap(result.annotatedMat.cols(), result.annotatedMat.rows())
-        Utils.matToBitmap(result.annotatedMat, annotatedBmp)
-
-        // Limpieza de recursos de la respuesta del FrameAnalyzer
-        result.annotatedMat.release()
-        result.contours.forEach { it.release() }
-        result.markers.forEach { it.corners.release() }
-
-        return FrameAnalysisResult(
-            contoursCount = result.contours.size,
-            markersDetected = result.markers.size,
-            hasDeformations = hasDefects,
-            holesCount = result.holes.size,
-            countersinksCount = result.countersinks.size,
-            scratchesCount = result.scratches.size,
-            orientation = result.orientation,
-            annotatedBitmap = annotatedBmp
-        )
+        return detectionIds
     }
 
-    private suspend fun saveResultsToRoom(
-        face: FaceDetectionResult,
-        classification: ClassificationResult,
-        analysis: FrameAnalysisResult
-    ): Long {
-        val inspectionId = currentInspectionId ?: repository.startInspection().also { currentInspectionId = it }
-        val frameId = UUID.randomUUID().toString()
+    private fun updateStateBasedOnValidation(validationResult: ValidationResult, detectionIds: List<Long>) {
+        when (validationResult.overallStatus) {
+            DetectionStatus.OK -> {
+                _state.value = DashboardState.Approved(detectionIds.firstOrNull() ?: 0)
+            }
 
-        analysis.annotatedBitmap?.let { bmp ->
-            repository.saveImage(bmp, frameId)
+            DetectionStatus.WARNING -> {
+                _state.value = DashboardState.NavigateToDetails(detectionIds.firstOrNull() ?: 0)
+            }
+
+            DetectionStatus.NOT_ACCEPTED -> {
+                _state.value = DashboardState.Rejected(detectionIds.firstOrNull() ?: 0)
+            }
         }
-
-        val typeEnum = when {
-            classification.type.contains("Defect") -> DetectionType.DEFECT
-            classification.type.contains("Bend") -> DetectionType.BEND
-            else -> DetectionType.HOLE
-        }
-
-        val item = DetectionItem(
-            inspectionId = inspectionId,
-            frameId = frameId,
-            type = typeEnum,
-            boundingBox = face.boundingBox,
-            confidence = classification.score,
-            status = classification.status,
-            timestamp = System.currentTimeMillis(),
-            notes = classification.type
-        )
-
-        return repository.insertDetection(item)
     }
 
     suspend fun getDetectionById(id: Long): DetectionItem? {
         return repository.getDetectionById(id)
+    }
+
+    data class ValidationResult(
+        val isValid: Boolean,
+        val violations: List<String>,
+        val overallStatus: DetectionStatus
+    )
+
+    fun startNewInspection() {
+        sharedData.clearCurrentInspection()
+        _state.value = DashboardState.CameraReady
+    }
+
+    fun resetState() {
+        sharedData.clearCurrentInspection()
+        _state.value = DashboardState.Idle
     }
 }

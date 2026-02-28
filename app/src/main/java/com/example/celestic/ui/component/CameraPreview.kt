@@ -25,16 +25,24 @@ import kotlinx.coroutines.flow.collectLatest
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-private val captureRequestFlow = MutableSharedFlow<Unit>()
+class CameraCaptureController {
+    val captureRequestFlow = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    fun triggerCapture() {
+        captureRequestFlow.tryEmit(Unit)
+    }
+}
+
+val LocalCameraCaptureController = staticCompositionLocalOf { CameraCaptureController() }
 
 fun triggerCameraCapture() {
-    captureRequestFlow.tryEmit(Unit)
+    // This is now just a helper, ideally we use the CompositionLocal
 }
 
 @Composable
 @UiComposable
 fun CameraPreview(
-    onFrameCaptured: (Bitmap) -> Unit
+    onFrameCaptured: (Bitmap) -> Unit,
+    controller: CameraCaptureController = LocalCameraCaptureController.current
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -67,15 +75,22 @@ fun CameraPreview(
         }
     }
 
-    LaunchedEffect(Unit) {
-        captureRequestFlow.collectLatest {
+    LaunchedEffect(controller) {
+        controller.captureRequestFlow.collectLatest {
+            Log.d("CameraPreview", "Capture requested")
             imageCapture?.takePicture(
                 cameraExecutor,
                 object : ImageCapture.OnImageCapturedCallback() {
                     override fun onCaptureSuccess(image: ImageProxy) {
-                        val bitmap = imageProxyToBitmap(image)
-                        image.close()
-                        onFrameCaptured(bitmap)
+                        Log.d("CameraPreview", "Capture success")
+                        try {
+                            val bitmap = imageProxyToBitmap(image)
+                            image.close()
+                            onFrameCaptured(bitmap)
+                        } catch (e: Exception) {
+                            Log.e("CameraPreview", "Error processing captured image", e)
+                            image.close()
+                        }
                     }
 
                     override fun onError(exception: ImageCaptureException) {

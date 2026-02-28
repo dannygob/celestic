@@ -12,9 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
@@ -37,7 +35,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.celestic.R
 import com.example.celestic.ui.component.ApprovedResultDialog
 import com.example.celestic.ui.component.CameraPreview
-import com.example.celestic.ui.component.triggerCameraCapture
 import com.example.celestic.ui.theme.CelesticTheme
 import com.example.celestic.viewmodel.DashboardViewModel
 import com.example.celestic.viewmodel.DashboardViewModel.DashboardState
@@ -59,6 +56,8 @@ fun DashboardScreen(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+    val cameraController = remember { com.example.celestic.ui.component.CameraCaptureController() }
+    
     // Colores
     val accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
     val frameBorder = if (isDarkMode) Color(0xFF1B263B) else Color(0xFFD1D9E6)
@@ -73,39 +72,47 @@ fun DashboardScreen(
         }
     )
 
-    Scaffold(
-        topBar = {
-            DashboardTopBar(
+    CompositionLocalProvider(com.example.celestic.ui.component.LocalCameraCaptureController provides cameraController) {
+        Scaffold(
+            topBar = {
+                dashboardState is DashboardState.Idle || dashboardState is DashboardState.NavigateToDetails
+                dashboardState is DashboardState.Idle || dashboardState is DashboardState.NavigateToDetails
+                dashboardState is DashboardState.Idle || dashboardState is DashboardState.NavigateToDetails
+                DashboardTopBar(
+                    state = dashboardState,
+                    isLandscape = isLandscape,
+                    isDarkMode = isDarkMode,
+                    accentColor = accentColor,
+                    textPrimary = textPrimary,
+                    textSecondary = textSecondary,
+                    navController = navController,
+                    viewModel = viewModel
+                )
+            },
+            containerColor = Color.Transparent
+        ) { paddingValues ->
+            DashboardMainContent(
+                paddingValues = paddingValues,
                 state = dashboardState,
                 isLandscape = isLandscape,
                 isDarkMode = isDarkMode,
                 accentColor = accentColor,
                 textPrimary = textPrimary,
                 textSecondary = textSecondary,
+                frameBorder = frameBorder,
+                mainBackground = mainBackground,
+                viewModel = viewModel,
                 navController = navController,
-                viewModel = viewModel
+                cameraController = cameraController
             )
-        },
-        containerColor = Color.Transparent
-    ) { paddingValues ->
-        DashboardMainContent(
-            paddingValues = paddingValues,
+        }
+        DashboardModals(
             state = dashboardState,
-            isLandscape = isLandscape,
-            isDarkMode = isDarkMode,
-            accentColor = accentColor,
-            textPrimary = textPrimary,
-            textSecondary = textSecondary,
-            frameBorder = frameBorder,
-            mainBackground = mainBackground,
-            viewModel = viewModel
+            viewModel = viewModel,
+            navController = navController,
+            context = androidx.compose.ui.platform.LocalContext.current
         )
     }
-    DashboardModals(
-        state = dashboardState,
-        viewModel = viewModel,
-        navController = navController
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -154,48 +161,52 @@ private fun DashboardTopBar(
             },
             actions = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    NavIconBtn(
-                        Icons.Default.Build,
-                        stringResource(R.string.cal_abbr),
-                        isLandscape,
-                        isDarkMode
-                    ) { navController.navigate("calibration") }
+                    val showActions = state is DashboardState.Idle || state is DashboardState.NavigateToDetails
 
-                    NavIconBtn(
-                        Icons.Default.History,
-                        stringResource(R.string.hist_abbr),
-                        isLandscape,
-                        isDarkMode
-                    ) { navController.navigate("detection_list") }
+                    if (showActions) {
+                        NavIconBtn(
+                            Icons.Default.Build,
+                            stringResource(R.string.cal_abbr),
+                            isLandscape,
+                            isDarkMode
+                        ) { navController.navigate("calibration") }
 
-                    NavIconBtn(
-                        Icons.Default.Assessment,
-                        stringResource(R.string.rep_abbr),
-                        isLandscape,
-                        isDarkMode
-                    ) { navController.navigate("reports") }
+                        NavIconBtn(
+                            Icons.Default.History,
+                            stringResource(R.string.hist_abbr),
+                            isLandscape,
+                            isDarkMode
+                        ) { navController.navigate("detection_list") }
 
-                    IconButton(
-                        onClick = { navController.navigate("settings") },
-                        modifier = Modifier.size(if (isLandscape) 40.dp else 32.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.Settings,
-                            null,
-                            tint = textSecondary,
-                            modifier = Modifier.size(18.dp)
-                        )
+                        NavIconBtn(
+                            Icons.Default.Assessment,
+                            stringResource(R.string.rep_abbr),
+                            isLandscape,
+                            isDarkMode
+                        ) { navController.navigate("reports") }
+
+                        IconButton(
+                            onClick = { navController.navigate("settings") },
+                            modifier = Modifier.size(if (isLandscape) 40.dp else 32.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Settings,
+                                null,
+                                tint = textSecondary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(if (isLandscape) 8.dp else 4.dp))
                     }
-
-                    Spacer(modifier = Modifier.width(if (isLandscape) 8.dp else 4.dp))
 
                     Button(
                         onClick = {
-                            if (state == DashboardState.Idle) viewModel.startInspection()
+                            if (state is DashboardState.Idle || state is DashboardState.NavigateToDetails) viewModel.startInspection()
                             else viewModel.resetState()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (state == DashboardState.Idle)
+                            containerColor = if (state is DashboardState.Idle || state is DashboardState.NavigateToDetails)
                                 Color(0xFF00695C)
                             else Color(0xFFB71C1C)
                         ),
@@ -230,7 +241,9 @@ private fun DashboardMainContent(
     textSecondary: Color,
     frameBorder: Color,
     mainBackground: Brush,
-    viewModel: DashboardViewModel
+    viewModel: DashboardViewModel,
+    navController: NavController,
+    cameraController: com.example.celestic.ui.component.CameraCaptureController
 ) {
     Box(
         modifier = Modifier
@@ -256,11 +269,14 @@ private fun DashboardMainContent(
                 Crossfade(targetState = state, label = "dashboardContent") { currentState ->
                     when (currentState) {
                         DashboardState.Idle -> StandbyView(isLandscape, accentColor, textPrimary)
-                        DashboardState.CameraReady -> DashboardCameraView(isLandscape, viewModel)
+                        DashboardState.CameraReady -> DashboardCameraView(isLandscape, viewModel, cameraController)
                         DashboardState.Processing -> LoadingView(accentColor, textPrimary)
                         is DashboardState.Approved -> SuccessView(isLandscape)
+                        is DashboardState.Rejected -> ErrorView(isLandscape, viewModel)
                         is DashboardState.Error -> ErrorView(isLandscape, viewModel)
-                        is DashboardState.NavigateToDetails -> {}
+                        is DashboardState.NavigateToDetails -> {
+                            LoadingView(accentColor, textPrimary)
+                        }
                         else -> {}
                     }
                 }
@@ -340,13 +356,20 @@ fun StandbyView(isLandscape: Boolean, accentColor: Color, textPrimary: Color) {
 
 @Composable
 
-fun DashboardCameraView(isLandscape: Boolean, viewModel: DashboardViewModel) {
+fun DashboardCameraView(
+    isLandscape: Boolean,
+    viewModel: DashboardViewModel,
+    cameraController: com.example.celestic.ui.component.CameraCaptureController
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(2.dp)
     ) {
-        CameraPreview(onFrameCaptured = { bitmap -> viewModel.onFrameCaptured(bitmap) })
+        CameraPreview(
+            onFrameCaptured = { bitmap -> viewModel.onFrameCaptured(bitmap) },
+            controller = cameraController
+        )
         HUDOverlay(isLandscape)
 
         Box(
@@ -355,7 +378,7 @@ fun DashboardCameraView(isLandscape: Boolean, viewModel: DashboardViewModel) {
                 .padding(if (isLandscape) 16.dp else 12.dp),
             contentAlignment = Alignment.BottomStart
         ) {
-            Round3DInspectionButton(onClick = { triggerCameraCapture() })
+            Round3DInspectionButton(onClick = { cameraController.triggerCapture() })
         }
     }
 }
@@ -446,20 +469,33 @@ fun ErrorView(isLandscape: Boolean, viewModel: DashboardViewModel) {
 fun DashboardModals(
     state: DashboardState,
     viewModel: DashboardViewModel,
-    navController: NavController
+    navController: NavController,
+    context: android.content.Context
 ) {
     if (state is DashboardState.Approved) {
         val detectionId = state.detectionId
         ApprovedResultDialog(
             onNewInspection = { viewModel.startNewInspection() },
-            onViewReport = { navController.navigate("report/$detectionId") }
+            onViewReport = { navController.navigate("reports") },
+            onGoToDetail = {
+                navController.navigate("details/general?id=$detectionId")
+                viewModel.resetState()
+            }
         )
     }
 
     if (state is DashboardState.NavigateToDetails) {
         val detectionId = state.detectionId
         LaunchedEffect(detectionId) {
-            navController.navigate("details/$detectionId")
+            navController.navigate("details/general?id=$detectionId")
+            viewModel.resetState()
+        }
+    }
+
+    if (state is DashboardState.Rejected) {
+        val detectionId = state.detectionId
+        LaunchedEffect(detectionId) {
+            navController.navigate("details/general?id=$detectionId")
             viewModel.resetState()
         }
     }
