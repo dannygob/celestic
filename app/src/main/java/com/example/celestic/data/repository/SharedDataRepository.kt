@@ -1,7 +1,7 @@
 package com.example.celestic.data.repository
 
 import com.example.celestic.models.DetectionItem
-import com.google.android.libraries.mapsplatform.transportation.consumer.model.MarkerType
+import com.example.celestic.viewmodel.MarkerType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

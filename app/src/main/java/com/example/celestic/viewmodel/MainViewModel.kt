@@ -21,7 +21,8 @@ class MainViewModel @Inject constructor(
         _classificationResult.value = tipo
     }
 
-    val detections: StateFlow<com.example.celestic.utils.Result<List<DetectionItem>>> = repository.getAll()
+    val detections: StateFlow<com.example.celestic.utils.Result<List<DetectionItem>>> =
+        repository.getAllDetectionItems()
         .map<List<DetectionItem>, com.example.celestic.utils.Result<List<DetectionItem>>> {
             com.example.celestic.utils.Result.Success(it)
         }
