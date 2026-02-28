@@ -21,6 +21,11 @@ object AppModule {
         return CelesticDatabase.getDatabase(context)
     }
 
+    @Provides
+    fun provideCelesticDao(database: CelesticDatabase): com.example.celestic.data.dao.CelesticDao {
+        return database.celesticDao()
+    }
+
     // ===== IMAGE CLASSIFIER =====
     @Singleton
     @Provides

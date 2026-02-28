@@ -7,11 +7,13 @@ import org.opencv.core.MatOfInt
 import org.opencv.objdetect.ArucoDetector
 import org.opencv.objdetect.Objdetect
 
+import javax.inject.Inject
+
 /**
  * AprilTagManager gestiona la detección de etiquetas AprilTag físicas
  * y la generación de etiquetas virtuales para elementos detectados.
  */
-class AprilTagManager {
+class AprilTagManager @Inject constructor() {
 
     // OpenCV ArucoDetector configurado para AprilTag 36h11
     private val detector: ArucoDetector by lazy {

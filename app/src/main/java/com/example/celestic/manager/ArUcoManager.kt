@@ -6,11 +6,13 @@ import org.opencv.core.MatOfInt
 import org.opencv.objdetect.ArucoDetector
 import org.opencv.objdetect.Objdetect
 
+import javax.inject.Inject
+
 /**
  * ArUcoManager handles detection of ArUco markers using OpenCV.
  * It wraps the native detection logic and returns structured marker data.
  */
-class ArUcoManager {
+class ArUcoManager @Inject constructor() {
 
     /**
      * Detects ArUco markers in the given image and returns a list of FiducialMarker objects.

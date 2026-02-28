@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @javax.inject.Singleton
 class CalibrationManager @Inject constructor(
-    @field:ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context
 ) {
 
     var cameraMatrix: Mat? = null
