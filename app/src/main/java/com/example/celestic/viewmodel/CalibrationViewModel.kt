@@ -15,6 +15,7 @@ import javax.inject.Inject
 
 data class CalibrationState(
     val capturedFrames: Int = 0,
+    val maxFrames: Int = 15,
     val isCalibrating: Boolean = false,
     val rmsError: Double? = null,
     val lastCaptureSuccess: Boolean? = null,
@@ -28,13 +29,14 @@ class CalibrationViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(
         CalibrationState(
-            calibrationDate = calibrationManager.calibrationDate
+            calibrationDate = calibrationManager.calibrationDate,
+            maxFrames = calibrationManager.maxFrames
         )
     )
     val uiState: StateFlow<CalibrationState> = _uiState.asStateFlow()
 
     fun captureFrame(bitmap: Bitmap) {
-        viewModelScope.launch {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.Default) {
             val mat = Mat()
             Utils.bitmapToMat(bitmap, mat)
 
@@ -45,14 +47,14 @@ class CalibrationViewModel @Inject constructor(
             bitmap.recycle()
 
             _uiState.value = _uiState.value.copy(
-                capturedFrames = _uiState.value.capturedFrames + if (success) 1 else 0,
+                capturedFrames = calibrationManager.getCapturedFramesCount(),
                 lastCaptureSuccess = success
             )
         }
     }
 
     fun runCalibration() {
-        viewModelScope.launch {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.Default) {
             _uiState.value = _uiState.value.copy(isCalibrating = true)
 
             val rms = calibrationManager.runCalibration()
@@ -68,7 +70,8 @@ class CalibrationViewModel @Inject constructor(
     fun reset() {
         calibrationManager.resetData()
         _uiState.value = CalibrationState(
-            calibrationDate = calibrationManager.calibrationDate
+            calibrationDate = calibrationManager.calibrationDate,
+            maxFrames = calibrationManager.maxFrames
         )
     }
 }

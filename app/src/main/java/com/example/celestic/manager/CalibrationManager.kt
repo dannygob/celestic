@@ -5,14 +5,19 @@ import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONObject
 import org.opencv.calib3d.Calib3d
-import org.opencv.core.*
+import org.opencv.core.CvType
+import org.opencv.core.Mat
+import org.opencv.core.MatOfPoint2f
+import org.opencv.core.MatOfPoint3f
+import org.opencv.core.Size
 import org.opencv.objdetect.CharucoBoard
 import org.opencv.objdetect.CharucoDetector
 import org.opencv.objdetect.Objdetect
 import java.io.File
 import java.io.FileInputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @javax.inject.Singleton
@@ -97,6 +102,24 @@ class CalibrationManager @Inject constructor(
         return (realMarkerSizeMm * fx) / detectedMarkerWidthPx
     }
 
+    // Hardware Profile: Optimización de recursos evaluando RAM y procesadores
+    val isLowEndDevice: Boolean by lazy {
+        val cores = Runtime.getRuntime().availableProcessors()
+        val totalMemoryMB = Runtime.getRuntime().maxMemory() / (1024 * 1024)
+        val actManager =
+            context.getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
+        val memInfo = android.app.ActivityManager.MemoryInfo()
+        actManager.getMemoryInfo(memInfo)
+        val ramGB = memInfo.totalMem / (1024.0 * 1024.0 * 1024.0)
+
+        // Considerado de bajos recursos si tiene 4 núcleos o menos, menos de 3.5GB de RAM.
+        cores <= 4 || ramGB < 3.5 || totalMemoryMB < 256
+    }
+
+    val maxFrames: Int by lazy {
+        if (isLowEndDevice) 10 else 20
+    }
+
     // Lists to accumulate captures
     private val allCharucoCorners = mutableListOf<Mat>()
     private val allCharucoIds = mutableListOf<Mat>()
@@ -106,6 +129,8 @@ class CalibrationManager @Inject constructor(
     private val board by lazy { CharucoBoard(Size(5.0, 7.0), 0.04f, 0.02f, dictionary) }
     private val detector by lazy { CharucoDetector(board) }
 
+    fun getCapturedFramesCount(): Int = allCharucoCorners.size
+
     fun resetData() {
         allCharucoCorners.forEach { it.release() }
         allCharucoIds.forEach { it.release() }
@@ -114,23 +139,34 @@ class CalibrationManager @Inject constructor(
     }
 
     fun addCalibrationFrame(image: Mat): Boolean {
+        if (allCharucoCorners.size >= maxFrames) return false
+
+        // Convertir la imagen a escala de grises para procesar en 1 canal de color en lugar de 4.
+        // Mejora el rendimiento detectando características consumiendo menos CPU y memoria.
+        val gray = Mat()
+        org.opencv.imgproc.Imgproc.cvtColor(image, gray, org.opencv.imgproc.Imgproc.COLOR_RGBA2GRAY)
+
         val charucoCorners = Mat()
         val charucoIds = Mat()
         val markerCorners = ArrayList<Mat>()
         val markerIds = Mat()
 
         try {
-            detector.detectBoard(image, charucoCorners, charucoIds, markerCorners, markerIds)
+            detector.detectBoard(gray, charucoCorners, charucoIds, markerCorners, markerIds)
 
             return if (charucoCorners.total() > 4) {
                 allCharucoCorners.add(charucoCorners.clone())
                 allCharucoIds.add(charucoIds.clone())
-                imageSize = image.size()
+                imageSize = gray.size()
                 true
             } else {
                 false
             }
+        } catch (e: Exception) {
+            Log.e("CalibrationManager", "Error procesando el sub-frame de calibración", e)
+            return false
         } finally {
+            gray.release()
             charucoCorners.release()
             charucoIds.release()
             markerIds.release()

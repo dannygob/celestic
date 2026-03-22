@@ -32,10 +32,15 @@ class AprilTagManager @Inject constructor() {
      * Detecta etiquetas físicas AprilTag en una imagen.
      */
     fun detectMarkers(image: Mat): List<FiducialMarker> {
+        // Optimización: Procesar la imagen en blanco y negro reduce la carga de CPU
+        val gray = Mat()
+        org.opencv.imgproc.Imgproc.cvtColor(image, gray, org.opencv.imgproc.Imgproc.COLOR_RGBA2GRAY)
+
         val corners = ArrayList<Mat>()
         val ids = MatOfInt()
 
-        detector.detectMarkers(image, corners, ids)
+        detector.detectMarkers(gray, corners, ids)
+        gray.release()
 
         val markers = mutableListOf<FiducialMarker>()
         if (ids.total() > 0) {
