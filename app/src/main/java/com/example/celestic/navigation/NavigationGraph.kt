@@ -7,7 +7,15 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.celestic.ui.screen.*
+import com.example.celestic.ui.component.ReportRequestDialog
+import com.example.celestic.ui.screen.CalibrationScreen
+import com.example.celestic.ui.screen.DashboardScreen
+import com.example.celestic.ui.screen.DetailsScreen
+import com.example.celestic.ui.screen.DetectionListScreen
+import com.example.celestic.ui.screen.LoginScreen
+import com.example.celestic.ui.screen.ReportsScreen
+import com.example.celestic.ui.screen.SettingsScreen
+import com.example.celestic.ui.screen.StatusScreen
 import com.example.celestic.viewmodel.SharedViewModel
 
 @Composable
@@ -25,10 +33,6 @@ fun NavigationGraph(
         }
         composable(NavigationRoutes.Dashboard.route) {
             DashboardScreen(navController, sharedViewModel = sharedViewModel)
-        }
-
-        composable(NavigationRoutes.Camera.route) {
-            CameraScreen(navController)
         }
 
         composable(
@@ -60,27 +64,18 @@ fun NavigationGraph(
             )
         }
 
-        composable(NavigationRoutes.Preview.route) {
-            InspectionPreviewScreen(navController, sharedViewModel = sharedViewModel)
-        }
+
         composable("settings") {
             SettingsScreen(navController, sharedViewModel = sharedViewModel)
-        }
-        composable("detection_list") {
-            DetectionListScreen(navController, sharedViewModel = sharedViewModel)
         }
         composable(NavigationRoutes.Reports.route) {
             ReportsScreen(navController, sharedViewModel = sharedViewModel)
         }
+        composable("detection_list") {
+            DetectionListScreen(navController, sharedViewModel = sharedViewModel)
+        }
         composable(NavigationRoutes.Status.route) {
             StatusScreen(navController, sharedViewModel = sharedViewModel)
-        }
-        composable(
-            NavigationRoutes.DetectionDetails.route,
-            arguments = listOf(navArgument("id") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")
-            DetectionDetailsScreen(navController, id)
         }
     }
 }

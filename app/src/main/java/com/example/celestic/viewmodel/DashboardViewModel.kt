@@ -10,6 +10,7 @@ import com.example.celestic.data.repository.SharedDataRepository
 import com.example.celestic.manager.CalibrationManager
 import com.example.celestic.models.DetectionItem
 import com.example.celestic.models.Specification
+import com.example.celestic.models.SpecificationFeature
 import com.example.celestic.models.enums.DetectionStatus
 import com.example.celestic.models.enums.DetectionType
 import com.example.celestic.opencv.FrameAnalyzer
@@ -19,6 +20,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.opencv.android.Utils
 import org.opencv.core.Mat
@@ -92,12 +94,18 @@ class DashboardViewModel @Inject constructor(
 
             try {
                 val currentMarkerType = markerType.value
-                val detections = imageProcessor.processImage(mat, currentMarkerType)
+                val processResult = imageProcessor.processImage(mat, currentMarkerType)
+                val detections = processResult.detections
+                val orientation = processResult.orientation
 
                 // Validate against specification
                 val specification = currentSpecification
                 val validationResult = if (specification != null) {
-                    validateAgainstSpecification(detections, specification)
+                    val expectedFeatures = repository.getFeaturesBySpecificationAndFace(
+                        specification.id,
+                        orientation
+                    ).firstOrNull() ?: emptyList()
+                    validateAgainstSpecification(detections, specification, expectedFeatures)
                 } else {
                     createDefaultValidationResult(detections)
                 }
@@ -129,16 +137,35 @@ class DashboardViewModel @Inject constructor(
 
     private fun validateAgainstSpecification(
         detections: List<DetectionItem>,
-        specification: Specification
+        specification: Specification,
+        expectedFeatures: List<SpecificationFeature>
     ): ValidationResult {
         val violations = mutableListOf<String>()
         var overallStatus = DetectionStatus.OK
 
-        // Validate hole count
-        val holesCount = detections.count { it.type == DetectionType.HOLE }
-        if (holesCount != specification.expectedHoleCount) {
-            violations.add("Hole count mismatch: expected ${specification.expectedHoleCount}, found $holesCount")
-            overallStatus = DetectionStatus.NOT_ACCEPTED
+        if (expectedFeatures.isNotEmpty()) {
+            // Validate specific features for this face
+            val expectedHoles = expectedFeatures.count { it.type == DetectionType.HOLE }
+            val detectedHoles = detections.count { it.type == DetectionType.HOLE }
+            if (expectedHoles > 0 && detectedHoles != expectedHoles) {
+                violations.add("Hole count mismatch for this face: expected $expectedHoles, found $detectedHoles")
+                overallStatus = DetectionStatus.NOT_ACCEPTED
+            }
+
+            val expectedCountersinks =
+                expectedFeatures.count { it.type == DetectionType.COUNTERSINK }
+            val detectedCountersinks = detections.count { it.type == DetectionType.COUNTERSINK }
+            if (expectedCountersinks > 0 && detectedCountersinks != expectedCountersinks) {
+                violations.add("Countersink count mismatch for this face: expected $expectedCountersinks, found $detectedCountersinks")
+                overallStatus = DetectionStatus.NOT_ACCEPTED
+            }
+        } else {
+            // Fallback to general specification (both faces combined or general layout)
+            val holesCount = detections.count { it.type == DetectionType.HOLE }
+            if (holesCount != specification.expectedHoleCount) {
+                violations.add("Hole count mismatch: expected ${specification.expectedHoleCount}, found $holesCount")
+                overallStatus = DetectionStatus.NOT_ACCEPTED
+            }
         }
 
         // Validate scratches

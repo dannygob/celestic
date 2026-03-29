@@ -3,12 +3,6 @@ package com.example.celestic.models
 import android.graphics.Bitmap
 import com.example.celestic.models.enums.DetectionStatus
 
-data class FaceDetectionResult(
-    val roiBitmap: Bitmap,
-    val faceLabel: String,
-    val confidence: Float,
-    val boundingBox: com.example.celestic.models.geometry.BoundingBox
-)
 
 data class ClassificationResult(
     val status: DetectionStatus,

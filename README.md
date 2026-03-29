@@ -1,7 +1,7 @@
 # 🔹 Celestic – Intelligent Visual Inspection Android Project
 
-**Status:** 🔄 In Active Development (80% Complete)  
-**Last Updated:** 28 de Febrero de 2026
+**Status:** 🔄 In Active Development (85% Complete)  
+**Last Updated:** 28 de Marzo de 2026
 
 ---
 
@@ -30,7 +30,8 @@ precisión milimétrica.
 - 📐 Identification of technical characteristics in metal parts: 2D dimensions, holes, countersinks,
   alodine halos, etc.
 - 🚦 Intelligent filtering of invalid objects based on their type and context
-- 🚗 Future scaling to complex bodies and structures to detect imperfections (bumps, dents, etc.)
+- 🚗 Future scaling to complex bodies and structures (car bodies, hoods, doors) using
+  orientation/face dependency, adapting natively to Post-Production manufacturing!
 - 🧭 3D extrapolation of views using supervised rotation of the part (planned)
 - 📐 Precise camera calibration using ChArUco patterns
 - 🧿 Tracking using ArUco markers and optional AprilTag
@@ -72,17 +73,15 @@ precisión milimétrica.
 
 ### 🔄 Partially Implemented
 
-| Component                 | Description               | Status                |
-|---------------------------|---------------------------|-----------------------|
-| **DashboardViewModel.kt** | Main inspection flow      | ✅ Functional          |
-| **ImageClassifier.kt**    | TensorFlow Lite inference | ⚠️ Structure only     |
-| **ImageProcessor.kt**     | Image processing pipeline | ⚠️ Returns empty list |
+| Component                 | Description               | Status            |
+|---------------------------|---------------------------|-------------------|
+| **DashboardViewModel.kt** | Main inspection flow      | 🔄 Maturing       |
+| **ImageClassifier.kt**    | TensorFlow Lite inference | ⚠️ Structure only |
 
 ### ❌ Not Implemented
 
 | Component                | Description             | Status                  |
 |--------------------------|-------------------------|-------------------------|
-| **StatusScreen.kt**      | System metrics and logs | ❌ Mentioned but missing |
 | **AI Training Pipeline** | Python training scripts | ❌ Not in repository     |
 | **Unit Tests**           | JUnit + MockK tests     | ❌ Not found             |
 | **Firebase Auth**        | Authentication system   | ❓ Not verified          |
@@ -130,30 +129,24 @@ precisión milimétrica.
 
 ## 📱 Screens and UI Components
 
-### Screens (15 total)
+### Screens (10 total)
 
 #### ✅ Implemented
 
 1. **LoginScreen.kt** - User authentication
 2. **DashboardScreen.kt** - Main inspection dashboard
-3. **CameraScreen.kt** - Live camera capture
-4. **CameraView.kt** - Camera preview component
-5. **DetailsScreen.kt** - Inspection details
-6. **DetectionDetailsScreen.kt** - Detection-specific details
-7. **DetectionListScreen.kt** - List of all detections
-8. **CalibrationScreen.kt** - Camera calibration interface
-9. **InspectionPreviewScreen.kt** - Preview before saving
-10. **ReportsScreen.kt** - Report management
-11. **ReportRequestDialog.kt** - Report generation dialog
-12. **SettingsScreen.kt** - Application settings
-13. **StatusScreen.kt** - System metrics and logs
-14. **PermissionsScreen.kt** - Mandatory permissions handler
+3. **DetailsScreen.kt** - Inspection details
+4. **DetectionListScreen.kt** - List of all detections
+5. **CalibrationScreen.kt** - Camera calibration interface
+6. **ReportsScreen.kt** - Report management
+7. **SettingsScreen.kt** - Application settings
+8. **StatusScreen.kt** - System metrics and logs
 
 #### ❌ Missing
 
 (None)
 
-### UI Components (16 total)
+### UI Components (19 total)
 
 #### ✅ Implemented
 
@@ -166,6 +159,9 @@ precisión milimétrica.
 7. **DetectionItemCard.kt** - Detection card display
 8. **DrawingCanvas.kt** - 2D drawing canvas
 9. **ShimmerDetectionItemCard.kt** - Loading animation card
+10. **CameraView.kt** - Camera processing component
+11. **PermissionsScreen.kt** - Mandatory permissions component
+12. **ReportRequestDialog.kt** - Dialog modal component
 
 ---
 
@@ -599,6 +595,6 @@ git clone [repository-url]
 
 ---
 
-**Project Status:** 🔄 Active Development (80% Complete)  
-**Last Updated:** 28 de Febrero de 2026  
-**Version:** 0.8.0-beta
+**Project Status:** 🔄 Active Development (85% Complete)  
+**Last Updated:** 28 de Marzo de 2026  
+**Version:** 0.8.5-beta

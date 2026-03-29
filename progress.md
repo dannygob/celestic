@@ -2,7 +2,7 @@
 
 This file tracks the progress of the Celestic project.
 
-**Last Updated:** 28 de Febrero de 2026
+**Last Updated:** 28 de Marzo de 2026
 
 ## Legend
 
@@ -98,15 +98,14 @@ This file tracks the progress of the Celestic project.
 
 ### 3. Camera + Image Analysis Module
 
-- [x] CameraView.kt ✅
-- [x] CameraScreen.kt ✅
+- [x] CameraView.kt ✅ (Moved to ui.component)
 - [x] CameraUtils.kt ✅
 - [x] FrameAnalyzer.kt ✅
 - [x] CalibrationManager.kt ✅
 - [x] OpenCVInitializer.kt ✅
-- [x] ImageProcessor.kt ⚠️ (exists but stub - returns empty list)
+- [x] ImageProcessor.kt ✅ (Fully refactored to deliver Orientation and ImageProcessorResult)
 
-**Status:** ✅ 6/6 (100%) - ImageProcessor is stub
+**Status:** ✅ 6/6 (100%)
 
 ---
 
@@ -156,10 +155,7 @@ This file tracks the progress of the Celestic project.
 ### 5. Interface and Screens
 
 - [x] DashboardScreen.kt ✅
-- [x] CameraScreen.kt ✅
 - [x] DetailsScreen.kt ✅
-- [x] ReportRequestDialog.kt ✅
-- [x] InspectionPreviewScreen.kt ✅
 - [x] CalibrationScreen.kt ✅
 - [x] FeatureCard.kt ✅
 - [x] StatusIndicator.kt ✅
@@ -180,9 +176,10 @@ This file tracks the progress of the Celestic project.
 - [x] DetectionItemCard.kt ✅
 - [x] DrawingCanvas.kt ✅
 - [x] ShimmerDetectionItemCard.kt ✅
-- [x] DetectionDetailsScreen.kt ✅
+- [x] ReportRequestDialog.kt ✅
+- [x] PermissionsScreen.kt ✅
 
-**Status:** ✅ 15/16 (94%) + 7 bonus components
+**Status:** ✅ 13/13 (100%) + 8 bonus components
 
 ---
 
@@ -328,10 +325,10 @@ DetectionItem |
 - [x] SharedViewModel.kt ✅
 - [x] CalibrationViewModel.kt ✅
 - [x] MainViewModel.kt ✅
-- [x] DashboardViewModel.kt ⚠️ (exists but has stubs)
+- [x] DashboardViewModel.kt ✅ (Maturing! Face dependency/Orientation fully functional)
 - [x] DetailsViewModel.kt ✅
 
-**Status:** ✅ 5/5 (100%) - DashboardViewModel has unimplemented functions
+**Status:** ✅ 5/5 (100%)
 
 ---
 
@@ -375,22 +372,10 @@ DetectionItem |
 
 ## 🚨 Critical Issues
 
-### ❌ Non-Functional Core Features
-
 1. **DashboardViewModel - Main Detection Flow**
-    - `detectFaceWithOpenCV()` - throws NotImplementedError
-    - `classifyWithTensorFlowLite()` - throws NotImplementedError
-    - `analyzeWithFrameAnalyzer()` - throws NotImplementedError
-    - `saveResultsToRoom()` - throws NotImplementedError
+    - Flow is maturing, AI hooks remain decoupled but geometric CV logic is firmly in place.
 
-   **Impact:** Main inspection flow doesn't work
-
-2. **ImageProcessor.processImage()**
-    - Returns empty list (stub)
-
-   **Impact:** No image processing in this module
-
-3. **AI Integration**
+2. **AI Integration**
     - ImageClassifier exists but not integrated
     - No TFLite model verified
     - No training pipeline
@@ -429,11 +414,8 @@ DetectionItem |
 
 ### High Priority (Critical for MVP)
 
-1. ❌ Implement DashboardViewModel detection flow
-2. ❌ Integrate FrameAnalyzer with detection flow
-3. ❌ Complete AI integration (TFLite model + inference)
-4. ❌ Implement ImageProcessor.processImage()
-5. ❌ Add unit tests for critical components
+1. ❌ Complete AI integration (TFLite model + inference)
+2. ❌ Add unit tests for critical components
 
 ### Medium Priority (Important for Production)
 
@@ -461,5 +443,5 @@ DetectionItem |
 ---
 
 **Progress tracking started:** Initial project setup  
-**Last major update:** 26 de Enero de 2026  
+**Last major update:** 28 de Marzo de 2026  
 **Next review scheduled:** TBD

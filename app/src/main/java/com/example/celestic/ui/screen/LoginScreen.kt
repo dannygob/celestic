@@ -2,7 +2,16 @@ package com.example.celestic.ui.screen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -10,8 +19,27 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -44,9 +72,16 @@ fun LoginScreen(
 
     var email by remember { mutableStateOf(sharedPrefs.getString("saved_email", "") ?: "") }
     var password by remember { mutableStateOf("") }
+    var selectedShift by remember {
+        mutableStateOf(
+            sharedPrefs.getString("current_shift", "Mañana") ?: "Mañana"
+        )
+    }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var rememberMe by remember { mutableStateOf(sharedPrefs.getBoolean("remember_me", false)) }
+
+    val shifts = listOf("Mañana", "Tarde", "Noche")
 
     val fillFieldsMsg = stringResource(R.string.fillAllFields)
     val authErrorMsg = stringResource(R.string.authError)
@@ -95,6 +130,9 @@ fun LoginScreen(
                 onEmailChange = { email = it; errorMessage = null },
                 password = password,
                 onPasswordChange = { password = it; errorMessage = null },
+                selectedShift = selectedShift,
+                onShiftChange = { selectedShift = it },
+                shifts = shifts,
                 isLoading = isLoading,
                 errorMessage = errorMessage,
                 rememberMe = rememberMe,
@@ -112,17 +150,20 @@ fun LoginScreen(
                 onLoadingChange = { isLoading = it },
                 onErrorMessageChange = { errorMessage = it },
                 onSuccess = {
+                    val editor = sharedPrefs.edit()
+                    // Siempre guardamos quien está logueado actualmente para los reportes
+                    editor.putString("current_user", email)
+                    editor.putString("current_shift", selectedShift)
+                    
                     if (rememberMe) {
-                        sharedPrefs.edit()
-                            .putString("saved_email", email)
-                            .putBoolean("remember_me", true)
-                            .apply()
+                        editor.putString("saved_email", email)
+                        editor.putBoolean("remember_me", true)
                     } else {
-                        sharedPrefs.edit()
-                            .remove("saved_email")
-                            .putBoolean("remember_me", false)
-                            .apply()
+                        editor.remove("saved_email")
+                        editor.putBoolean("remember_me", false)
                     }
+                    editor.apply()
+                    
                     navController.navigate("dashboard") {
                         popUpTo("login") { inclusive = true }
                     }
@@ -161,6 +202,9 @@ private fun LoginForm(
     onEmailChange: (String) -> Unit,
     password: String,
     onPasswordChange: (String) -> Unit,
+    selectedShift: String,
+    onShiftChange: (String) -> Unit,
+    shifts: List<String>,
     isLoading: Boolean,
     errorMessage: String?,
     rememberMe: Boolean,
@@ -234,6 +278,51 @@ private fun LoginForm(
                 shape = RoundedCornerShape(16.dp),
                 singleLine = true
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Selector de Turno
+            var expanded by remember { mutableStateOf(false) }
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }
+            ) {
+                OutlinedTextField(
+                    readOnly = true,
+                    value = "Turno: $selectedShift",
+                    onValueChange = { },
+                    label = { Text("Turno Operativo", color = textSecondary) },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = accentColor,
+                        unfocusedBorderColor = textSecondary.copy(alpha = 0.3f),
+                        focusedTextColor = textPrimary,
+                        unfocusedTextColor = textPrimary,
+                        focusedLabelColor = accentColor
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
+                    shape = RoundedCornerShape(16.dp)
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.background(cardBg)
+                ) {
+                    shifts.forEach { selectionOption ->
+                        DropdownMenuItem(
+                            text = { Text(selectionOption, color = textPrimary) },
+                            onClick = {
+                                onShiftChange(selectionOption)
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
 
             errorMessage?.let {
                 Text(

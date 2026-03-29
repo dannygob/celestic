@@ -20,7 +20,17 @@ fun generatePdfFromDetections(context: Context, detections: List<DetectionItem>,
     val pdf = PdfDocument(writer)
     val document = Document(pdf)
 
-    document.add(Paragraph("Reporte de Detecciones - Lote: $loteId"))
+    val sharedPrefs = context.getSharedPreferences("celestic_prefs", Context.MODE_PRIVATE)
+    val operator = sharedPrefs.getString("current_user", "Operador Desconocido")
+    val shift = sharedPrefs.getString("current_shift", "Turno no asignado")
+    val date = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(java.util.Date())
+
+    document.add(Paragraph("Reporte de Detecciones - Lote: $loteId").setBold().setFontSize(18f))
+    document.add(Paragraph("Operador: $operator"))
+    document.add(Paragraph("Turno: $shift"))
+    document.add(Paragraph("Fecha Inspección: $date"))
+    document.add(Paragraph(" "))
+    
     detections.forEach {
         document.add(Paragraph("ID: ${it.id}"))
         document.add(Paragraph("Tipo: ${it.type}"))
@@ -36,6 +46,12 @@ fun generatePdfFromDetections(context: Context, detections: List<DetectionItem>,
 fun generateCsvFromDetections(context: Context, detections: List<DetectionItem>, loteId: String): File {
     val file = File(context.getExternalFilesDir(null), "ReporteCelestic_$loteId.csv")
     val writer = file.bufferedWriter()
+    val sharedPrefs = context.getSharedPreferences("celestic_prefs", Context.MODE_PRIVATE)
+    val operator = sharedPrefs.getString("current_user", "Operador Desconocido")
+    val shift = sharedPrefs.getString("current_shift", "Turno no asignado")
+    val date = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(java.util.Date())
+
+    writer.write("Lote: $loteId, Operador: $operator, Turno: $shift, Fecha: $date\n\n")
     writer.write("ID,Tipo,Confianza,Status,Ancho (mm),Alto (mm)\n")
     detections.forEach {
         val width = it.measurementMm
@@ -56,6 +72,16 @@ fun generateWordFromDetections(context: Context, detections: List<DetectionItem>
     titleRun.fontSize = 20
     titleRun.setText("Reporte de Detecciones - Lote: $loteId")
 
+    val sharedPrefs = context.getSharedPreferences("celestic_prefs", Context.MODE_PRIVATE)
+    val operator = sharedPrefs.getString("current_user", "Operador Desconocido")
+    val shift = sharedPrefs.getString("current_shift", "Turno no asignado")
+    val date = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(java.util.Date())
+
+    val meta = document.createParagraph()
+    val metaRun = meta.createRun()
+    metaRun.setText("Operador: $operator | Turno: $shift | Fecha: $date")
+    metaRun.addBreak()
+
     detections.forEach {
         val paragraph = document.createParagraph()
         val run = paragraph.createRun()
@@ -73,8 +99,17 @@ fun generateExcelFromDetections(context: Context, detections: List<DetectionItem
     val workbook = XSSFWorkbook()
     val sheet = workbook.createSheet("Detecciones")
 
+    val sharedPrefs = context.getSharedPreferences("celestic_prefs", Context.MODE_PRIVATE)
+    val operator = sharedPrefs.getString("current_user", "Operador Desconocido")
+    val shift = sharedPrefs.getString("current_shift", "Turno no asignado")
+    val date = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(java.util.Date())
+
+    val metaRow = sheet.createRow(0)
+    metaRow.createCell(0)
+        .setCellValue("Lote: $loteId | Operador: $operator | Turno: $shift | Fecha: $date")
+    
     // Header
-    val headerRow = sheet.createRow(0)
+    val headerRow = sheet.createRow(2)
     val headerStyle = workbook.createCellStyle()
     headerStyle.fillForegroundColor = IndexedColors.GREY_25_PERCENT.index
     headerStyle.fillPattern = FillPatternType.SOLID_FOREGROUND
@@ -91,7 +126,7 @@ fun generateExcelFromDetections(context: Context, detections: List<DetectionItem
 
     // Data
     detections.forEachIndexed { index, item ->
-        val row = sheet.createRow(index + 1)
+        val row = sheet.createRow(index + 3)
         row.createCell(0).setCellValue(item.id.toDouble())
         row.createCell(1).setCellValue(item.type.toString())
         row.createCell(2).setCellValue(item.confidence.toDouble())

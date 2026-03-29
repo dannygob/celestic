@@ -16,7 +16,7 @@ class ImageProcessor @Inject constructor(
     private val calibrationManager: CalibrationManager
 ) {
 
-    fun processImage(mat: Mat, markerType: MarkerType?): List<DetectionItem> {
+    fun processImage(mat: Mat, markerType: MarkerType?): ImageProcessorResult {
         val result = frameAnalyzer.analyze(mat, markerType)
         val linkedCode = result.decodedQrCode ?: result.markers.firstOrNull()?.id?.toString()
 
@@ -91,6 +91,6 @@ class ImageProcessor @Inject constructor(
             )
         }
 
-        return detectionItems
+        return ImageProcessorResult(result.orientation, detectionItems)
     }
 }
