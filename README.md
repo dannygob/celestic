@@ -75,7 +75,7 @@ precisión milimétrica.
 
 | Component                 | Description               | Status            |
 |---------------------------|---------------------------|-------------------|
-| **DashboardViewModel.kt** | Main inspection flow      | 🔄 Maturing       |
+| **DashboardViewModel.kt** | Main inspection flow      | ✅ Complete        |
 | **ImageClassifier.kt**    | TensorFlow Lite inference | ⚠️ Structure only |
 
 ### ❌ Not Implemented
@@ -90,31 +90,31 @@ precisión milimétrica.
 
 ## 📊 Implementation Status by Feature
 
-| No. | Feature                   | Status | Description                                             |
-|-----|---------------------------|--------|---------------------------------------------------------|
-| 1️⃣ | Live Image Analysis       | 🔄     | CameraX + OpenCV - Structure ready, integration pending |
-| 2️⃣ | Object Classifier         | ⚠️     | ImageClassifier exists but not integrated               |
-| 3️⃣ | Edge Detection            | ✅      | Canny, Sobel, findContours - Fully functional           |
-| 4️⃣ | Technical Classification  | ⚠️     | AI structure ready, training pipeline missing           |
-| 5️⃣ | Car Body Inspection       | 🔲     | Planned for future                                      |
-| 6️⃣ | 2D Plan with Measurements | 🔄     | DrawingCanvas exists, needs integration                 |
-| 7️⃣ | Dynamic Display per Part  | ✅      | Multiple screens with state colors                      |
-| 8️⃣ | ChArUco Calibration       | ✅      | Fully functional with JSON persistence                  |
-| 9️⃣ | ArUco + AprilTag          | ✅      | Both managers fully implemented                         |
-| 🔟  | Code Scanning             | ✅      | QRScanner with OpenCV, fully integrated                 |
-| 🧩  | Inspection Saved          | ✅      | Room database with Inspection entity                    |
-| 📄  | Report Generation         | 🔄     | Generators complete, UI integration partial             |
-| 🧩  | Dependency Injection      | ✅      | Hilt fully configured                                   |
-| 🐛  | Error Handling            | 🔄     | Sealed classes implemented, needs expansion             |
-| 🧪  | Unit Tests                | ❌      | Not implemented                                         |
-| ✨   | UI Improvements           | ✅      | Animations, Shimmer effects, themes                     |
-| 🔐  | Authentication            | 🔄     | LoginScreen exists, Firebase not verified               |
-| ⚙️  | Settings                  | ✅      | Complete settings screen                                |
-| 📏  | 2D Drawing                | ✅      | DrawingCanvas, BlueprintView, MeasurementOverlay        |
-| 🖼️ | Dynamic Display           | ✅      | Multiple detection screens                              |
-| 💾  | Save Inspections          | ✅      | Full database support                                   |
-| 🔬  | Image Processing          | ✅      | 5/7 techniques implemented                              |
-| 📷  | Camera Calibration        | ✅      | Advanced calibration with ChArUco                       |
+| No. | Feature                   | Status | Description                                      |
+|-----|---------------------------|--------|--------------------------------------------------|
+| 1️⃣ | Live Image Analysis       | ✅      | CameraX + OpenCV fully integrated                |
+| 2️⃣ | Object Classifier         | ⚠️     | ImageClassifier exists but not integrated        |
+| 3️⃣ | Edge Detection            | ✅      | Canny, Sobel, findContours - Fully functional    |
+| 4️⃣ | Technical Classification  | ⚠️     | AI structure ready, training pipeline missing    |
+| 5️⃣ | Car Body Inspection       | 🔲     | Planned for future                               |
+| 6️⃣ | 2D Plan with Measurements | 🔄     | DrawingCanvas exists, needs integration          |
+| 7️⃣ | Dynamic Display per Part  | ✅      | Multiple screens with state colors               |
+| 8️⃣ | ChArUco Calibration       | ✅      | Fully functional with JSON persistence           |
+| 9️⃣ | ArUco + AprilTag          | ✅      | Both managers fully implemented                  |
+| 🔟  | Code Scanning             | ✅      | QRScanner with OpenCV, fully integrated          |
+| 🧩  | Inspection Saved          | ✅      | Room database with Inspection entity             |
+| 📄  | Report Generation         | 🔄     | Generators complete, UI integration partial      |
+| 🧩  | Dependency Injection      | ✅      | Hilt fully configured                            |
+| 🐛  | Error Handling            | 🔄     | Sealed classes implemented, needs expansion      |
+| 🧪  | Unit Tests                | ❌      | Not implemented                                  |
+| ✨   | UI Improvements           | ✅      | Animations, Shimmer effects, themes              |
+| 🔐  | Authentication            | ✅      | Fully functional with Firebase                   |
+| ⚙️  | Settings                  | ✅      | Complete settings screen                         |
+| 📏  | 2D Drawing                | ✅      | DrawingCanvas, BlueprintView, MeasurementOverlay |
+| 🖼️ | Dynamic Display           | ✅      | Multiple detection screens                       |
+| 💾  | Save Inspections          | ✅      | Full database support                            |
+| 🔬  | Image Processing          | ✅      | 5/7 techniques implemented                       |
+| 📷  | Camera Calibration        | ✅      | Advanced calibration with ChArUco                |
 
 **Legend:**
 
@@ -263,18 +263,8 @@ precisión milimétrica.
 - Labeled dataset
 - Model optimization for mobile
 
-#### 🔄 Integration Points (Stubs)
-
-The following functions in **DashboardViewModel** throw `NotImplementedError`:
-
-```kotlin
-private fun detectFaceWithOpenCV(bitmap: Bitmap): FaceDetectionResult
-private fun classifyWithTensorFlowLite(roi: Bitmap, faceLabel: String): ClassificationResult
-private fun analyzeWithFrameAnalyzer(bitmap: Bitmap): FrameAnalysisResult
-private suspend fun saveResultsToRoom(...): Long
-```
-
-**Impact:** Main inspection flow is not functional yet.
+#### 🔄 Integration Pending\n\nThe AI logic needs to be integrated into `ImageProcessor` and
+`DashboardViewModel`.
 
 ---
 
@@ -419,42 +409,22 @@ celestic/
 
 ### Critical Issues
 
-1. **Main Detection Flow Not Functional**
-    - DashboardViewModel has 4 stub functions
-    - Detection → Analysis → Save pipeline incomplete
-    - **Priority:** HIGH
-
-2. **AI Integration Incomplete**
+1. **AI Integration Incomplete**
     - ImageClassifier not connected to main flow
-    - TFLite model not verified
-    - Training pipeline missing
+   - TFLite model mobilenet_v2.tflite is purely structural
+   - Deep Learning training pipeline missing
     - **Priority:** HIGH
-
-3. **ImageProcessor Empty**
-    - `processImage()` returns empty list
-    - **Priority:** MEDIUM
 
 ### Non-Critical Issues
 
-4. **QR Traceability Not Integrated**
-    - QRScanner exists but standalone
-    - No database linkage
-    - **Priority:** MEDIUM
-
-5. **Report UI Incomplete**
-    - Generators work but UI needs completion
-    - Format selection not implemented
+2. **Report UI Export paths**
+    - Format selection dialog exists, but saving needs to redirect to persistent external storage (
+      /storage/emulated/0/Celestic/Reports/).
     - **Priority:** LOW
 
-6. **No Unit Tests**
+3. **No Unit Tests**
     - Zero test coverage
     - **Priority:** MEDIUM
-
-7. **StatusScreen Missing**
-    - Mentioned in documentation but doesn't exist
-    - **Priority:** LOW
-
----
 
 ## 🎯 Roadmap
 
@@ -465,7 +435,7 @@ celestic/
 - [x] Camera calibration
 - [x] Basic OpenCV analysis
 - [x] Marker detection
-- [ ] Complete main detection flow ⬅️ **IN PROGRESS**
+- [x] Complete main detection flow
 - [ ] AI integration
 - [ ] Unit tests
 
