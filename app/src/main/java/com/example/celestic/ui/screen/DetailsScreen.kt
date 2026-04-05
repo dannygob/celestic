@@ -358,7 +358,7 @@ fun DetailsScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            "Seleccione el formato industrial:",
+                            stringResource(R.string.selectReportFormat),
                             color = colors.textColor,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium
@@ -429,7 +429,10 @@ fun DetailsScreen(
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = colors.accentColor)
                         ) {
-                            Text("DESCARGAR INFORME", fontWeight = FontWeight.Bold)
+                            Text(
+                                stringResource(R.string.downloadReport),
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }
@@ -449,7 +452,7 @@ fun DetailsScreen(
                 ) {
                     Icon(Icons.Default.ReportProblem, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("REPORTAR ANOMALÍA EN INSPECCIÓN")
+                    Text(stringResource(R.string.reportAnomaly))
                 }
                 Spacer(modifier = Modifier.height(40.dp))
             }

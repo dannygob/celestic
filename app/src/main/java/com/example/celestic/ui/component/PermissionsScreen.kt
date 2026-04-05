@@ -29,10 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.celestic.R
 import com.example.celestic.ui.theme.rememberScreenColors
 
 @Composable
@@ -65,7 +67,7 @@ fun PermissionsScreen(onGrantPermissions: () -> Unit) {
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "Permisos Necesarios",
+            text = stringResource(R.string.permissionsRequired),
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = colors.textColor
@@ -74,7 +76,7 @@ fun PermissionsScreen(onGrantPermissions: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Para que Celestic funcione correctamente, necesitamos acceso a los siguientes servicios del sistema.",
+            text = stringResource(R.string.permissionsDesc),
             fontSize = 16.sp,
             color = Color.Gray,
             textAlign = TextAlign.Center,
@@ -108,13 +110,13 @@ fun PermissionsScreen(onGrantPermissions: () -> Unit) {
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = colors.accentColor)
         ) {
-            Text("CONCEDER PERMISOS", fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.grantPermissions), fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Celestic no funcionará si los permisos no son otorgados.",
+            text = stringResource(R.string.permissionsWarning),
             fontSize = 12.sp,
             color = colors.errorColor,
             textAlign = TextAlign.Center
