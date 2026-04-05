@@ -1,6 +1,8 @@
 [versions]
 # Build & Kotlin
 agp = "8.12.0"
+desugar_jdk_libs = "2.1.5"
+firebaseBom = "34.11.0"
 kotlin = "2.1.0"
 ksp = "2.1.0-1.0.29"
 
@@ -38,6 +40,7 @@ gson = "2.11.0"
 itextKernel = "8.0.5"
 itextLayout = "8.0.5"
 transportationConsumer = "4.0.0"
+firebaseAuthKtx = "24.0.1"
 
 
 [libraries]
@@ -45,6 +48,9 @@ transportationConsumer = "4.0.0"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 # Compose
@@ -81,7 +87,7 @@ litert-support = { group = "com.google.ai.edge.litert", name = "litert-support",
 opencv = { group = "org.opencv", name = "opencv", version.ref = "opencv" }
 
 # Firebase
-firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuth" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 
 # Documentos & Gráficas
 poi-ooxml = { group = "org.apache.poi", name = "poi-ooxml", version.ref = "poi" }
