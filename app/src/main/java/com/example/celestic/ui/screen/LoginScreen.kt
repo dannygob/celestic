@@ -179,14 +179,14 @@ fun LoginScreen(
 private fun LoginHeader(isLandscape: Boolean, textPrimary: Color, textSecondary: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = "CELESTIC",
+            text = stringResource(R.string.appName),
             fontSize = if (isLandscape) 40.sp else 32.sp,
             color = textPrimary,
             fontWeight = FontWeight.Black,
             letterSpacing = 6.sp
         )
         Text(
-            text = "PRECISION VISION SYSTEM",
+            text = stringResource(R.string.precisionVisionSystem),
             fontSize = 12.sp,
             color = textSecondary,
             fontWeight = FontWeight.Medium,
@@ -291,7 +291,12 @@ private fun LoginForm(
                     readOnly = true,
                     value = "Turno: $selectedShift",
                     onValueChange = { },
-                    label = { Text("Turno Operativo", color = textSecondary) },
+                    label = {
+                        Text(
+                            stringResource(R.string.operativeShift),
+                            color = textSecondary
+                        )
+                    },
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                     },
@@ -349,7 +354,7 @@ private fun LoginForm(
                     )
                 )
                 Text(
-                    text = "Recordar usuario",
+                    text = stringResource(R.string.rememberUser),
                     color = textSecondary,
                     fontSize = 14.sp
                 )
@@ -424,7 +429,7 @@ private fun LoginForm(
 @Composable
 private fun LoginFooter(textSecondary: Color) {
     Text(
-        text = "v2.0 Industrial Edition",
+        text = stringResource(R.string.industrialEdition),
         fontSize = 10.sp,
         color = textSecondary.copy(alpha = 0.5f),
         modifier = Modifier.padding(top = 16.dp)

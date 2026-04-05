@@ -167,4 +167,24 @@
     <string name="softwareInfo">SOFTWARE INFO</string>
     <string name="configuration">CONFIGURATION</string>
 
+    <!-- Additional UI Extracted Strings -->
+    <string name="operativeShift">Operative Shift</string>
+    <string name="precisionVisionSystem">PRECISION VISION SYSTEM</string>
+    <string name="rememberUser">Remember user</string>
+    <string name="industrialEdition">v2.0 Industrial Edition</string>
+    <string name="inspectionFinished">Inspection Finished</string>
+    <string name="partProcessed">The part has been processed. What would you like to do?</string>
+    <string name="newInspection">New inspection</string>
+    <string name="viewReports">View reports</string>
+    <string name="goToTechnicalDetails">Go to technical detail</string>
+    <string name="permissionsRequired">Permissions Required</string>
+    <string name="permissionsDesc">For Celestic to function correctly, we need access to the following system services.</string>
+    <string name="permissionsWarning">Celestic will not function if permissions are not granted.</string>
+    <string name="grantPermissions">GRANT PERMISSIONS</string>
+    <string name="downloadReport">DOWNLOAD REPORT</string>
+    <string name="reportAnomaly">REPORT INSPECTION ANOMALY</string>
+    <string name="noRecords">No records found.</string>
+    <string name="selectReportFormat">Select Report Format</string>
+    <string name="cancel">Cancel</string>
+
 </resources>
