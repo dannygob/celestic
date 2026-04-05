@@ -5,11 +5,12 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.example.celestic"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.celestic"
@@ -22,6 +23,12 @@ android {
 
         vectorDrawables {
             useSupportLibrary = true
+        }
+
+        // Add ABI filters to reduce the number of native libraries in debug builds
+        ndk {
+            abiFilters.add("arm64-v8a")
+            abiFilters.add("x86_64")
         }
     }
 
@@ -36,8 +43,9 @@ android {
         }
         debug {
             isMinifyEnabled = false
-            applicationIdSuffix = ".debug"
+            applicationIdSuffix = ""
             versionNameSuffix = "-DEBUG"
+            // Ensure we don't hit memory limits during dexing
         }
     }
 
@@ -76,9 +84,11 @@ android {
                 "META-INF/notice.txt",
                 "META-INF/ASL2.0",
                 "META-INF/INDEX.LIST",
-                "META-INF/*.kotlin_module"
+                "META-INF/*.kotlin_module",
+                "META-INF/NOTICE.md",
+                "META-INF/LICENSE.md"
             )
-
+        }
     }
 }
 
@@ -86,8 +96,9 @@ dependencies {
     // Core & Lifecycle
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.firebase.auth)
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
@@ -137,14 +148,18 @@ dependencies {
     implementation(libs.poi.ooxml) {
         exclude(group = "org.apache.xmlgraphics", module = "batik-all")
         exclude(group = "com.github.virtuald", module = "curvesapi")
+        exclude(group = "org.apache.commons", module = "commons-collections4")
     }
 
     // Firebase
-    implementation(libs.firebase.auth.ktx)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 
     // Debug
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.transportation.consumer)
 }
 
 kotlin {
@@ -155,8 +170,4 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
     arg("room.expandProjection", "true")
-}
-}
-dependencies {
-    implementation(libs.transportation.consumer)
 }
