@@ -37,6 +37,12 @@ import com.example.celestic.R
 import com.example.celestic.utils.OpenCVInitializer
 import com.example.celestic.utils.imageProxyToBitmap
 import com.example.celestic.viewmodel.MainViewModel
+import org.opencv.android.Utils
+import org.opencv.core.Core
+import org.opencv.core.CvType
+import org.opencv.core.Mat
+import org.opencv.core.MatOfDouble
+import org.opencv.imgproc.Imgproc
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -160,6 +166,9 @@ private fun startCamera(
         // ANÁLISIS DE IMAGEN
         val classifier = viewModel.imageClassifier
 
+        // Throttling: Límite de FPS para evitar sobrecalentamiento y OOM
+        var lastAnalyzedTimestamp = 0L
+
         val imageAnalysis = ImageAnalysis.Builder()
             .setResolutionSelector(
                 ResolutionSelector.Builder()
@@ -175,12 +184,55 @@ private fun startCamera(
             .build()
             .apply {
                 setAnalyzer(cameraExecutor) { imageProxy ->
+                    val currentTime = System.currentTimeMillis()
+                    // Analizar máximo 3 imágenes por segundo (cada 333 ms)
+                    if (currentTime - lastAnalyzedTimestamp < 333L) {
+                        imageProxy.close()
+                        return@setAnalyzer
+                    }
+                    lastAnalyzedTimestamp = currentTime
 
                     try {
                         // Convertir imagen a Bitmap
                         val bitmap = imageProxyToBitmap(imageProxy)
 
-                        // Clasificador (USO DE INSTANCIA REUTILIZADA)
+                        // --- PRE-FILTRO DE CALIDAD OPENCV (BLUR & LUZ) ---
+                        val mat = Mat()
+                        Utils.bitmapToMat(bitmap, mat)
+                        val gray = Mat()
+                        Imgproc.cvtColor(mat, gray, Imgproc.COLOR_BGR2GRAY)
+
+                        // 1. Control de Brillo (Muy oscuro o muy brillante)
+                        val meanScalar = Core.mean(gray)
+                        val brightness = meanScalar.`val`[0]
+                        if (brightness < 30.0) {
+                            viewModel.setTipoClasificacion("LUZ INSUFICIENTE")
+                            mat.release(); gray.release(); bitmap.recycle(); imageProxy.close()
+                            return@setAnalyzer
+                        } else if (brightness > 235.0) {
+                            viewModel.setTipoClasificacion("EXCESO LUZ / REFLEJO")
+                            mat.release(); gray.release(); bitmap.recycle(); imageProxy.close()
+                            return@setAnalyzer
+                        }
+
+                        // 2. Control de Borrosidad (Laplacian Variance)
+                        val laplacian = Mat()
+                        Imgproc.Laplacian(gray, laplacian, CvType.CV_64F)
+                        val mean = MatOfDouble()
+                        val stddev = MatOfDouble()
+                        Core.meanStdDev(laplacian, mean, stddev)
+                        val variance = stddev.toArray()[0] * stddev.toArray()[0]
+
+                        mat.release(); gray.release(); laplacian.release(); mean.release(); stddev.release()
+
+                        if (variance < 60.0) { // Umbral de borrosidad empírico
+                            viewModel.setTipoClasificacion("ENFOCANDO...")
+                            bitmap.recycle(); imageProxy.close()
+                            return@setAnalyzer
+                        }
+                        // --- FIN PRE-FILTRO ---
+
+                        // Clasificador (Solo si la imagen pasó las pruebas de calidad)
                         val predictions = classifier.runInference(bitmap)
                         val tipo = classifier.mapPredictionToFeatureType(predictions)
 

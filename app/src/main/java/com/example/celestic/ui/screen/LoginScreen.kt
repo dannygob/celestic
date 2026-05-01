@@ -31,6 +31,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -66,8 +67,19 @@ fun LoginScreen(
     navController: NavController,
     sharedViewModel: SharedViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
+    LoginScreenContent(
+        navController = navController,
+        isDarkMode = isDarkMode
+    )
+}
+
+@Composable
+fun LoginScreenContent(
+    navController: NavController,
+    isDarkMode: Boolean
+) {
+    val context = LocalContext.current
     val sharedPrefs = context.getSharedPreferences("celestic_prefs", android.content.Context.MODE_PRIVATE)
 
     var email by remember { mutableStateOf(sharedPrefs.getString("saved_email", "") ?: "") }
@@ -104,15 +116,12 @@ fun LoginScreen(
     )
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    if (isLandscape) 64.dp else 24.dp
-
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundGradient)
     ) {
-        val isLandscape = false
         val horizontalPadding = if (isLandscape) 64.dp else 24.dp
 
         Column(
@@ -145,8 +154,6 @@ fun LoginScreen(
                 textPrimary = textPrimary,
                 textSecondary = textSecondary,
                 cardBg = cardBg,
-                context = context,
-                navController = navController,
                 onLoadingChange = { isLoading = it },
                 onErrorMessageChange = { errorMessage = it },
                 onSuccess = {
@@ -217,8 +224,6 @@ private fun LoginForm(
     textPrimary: Color,
     textSecondary: Color,
     cardBg: Color,
-    context: android.content.Context,
-    navController: NavController,
     onLoadingChange: (Boolean) -> Unit,
     onErrorMessageChange: (String?) -> Unit,
     onSuccess: () -> Unit
@@ -309,7 +314,7 @@ private fun LoginForm(
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor(),
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable, true),
                     shape = RoundedCornerShape(16.dp)
                 )
                 ExposedDropdownMenu(
@@ -440,7 +445,7 @@ private fun LoginFooter(textSecondary: Color) {
 @Composable
 fun LoginScreenPreviewEn() {
     CelesticTheme {
-        LoginScreen(rememberNavController())
+        LoginScreenContent(rememberNavController(), isDarkMode = false)
     }
 }
 
@@ -448,7 +453,7 @@ fun LoginScreenPreviewEn() {
 @Composable
 fun LoginScreenPreviewEs() {
     CelesticTheme {
-        LoginScreen(rememberNavController())
+        LoginScreenContent(rememberNavController(), isDarkMode = false)
     }
 }
 
@@ -456,7 +461,7 @@ fun LoginScreenPreviewEs() {
 @Composable
 fun LoginScreenPreviewZh() {
     CelesticTheme {
-        LoginScreen(rememberNavController())
+        LoginScreenContent(rememberNavController(), isDarkMode = false)
     }
 }
 
@@ -464,6 +469,6 @@ fun LoginScreenPreviewZh() {
 @Composable
 fun LoginScreenPreviewAr() {
     CelesticTheme {
-        LoginScreen(rememberNavController())
+        LoginScreenContent(rememberNavController(), isDarkMode = false)
     }
 }
