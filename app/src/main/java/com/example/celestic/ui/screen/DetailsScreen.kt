@@ -191,13 +191,15 @@ fun DetailsScreen(
                             Spacer(modifier = Modifier.width(16.dp))
                             Column {
                                 Text(
-                                    text = if (item.status == DetectionStatus.OK) "INSPECCIÓN APROBADA" else "INSPECCIÓN RECHAZADA",
+                                    text = if (item.status == DetectionStatus.OK) stringResource(R.string.inspectionApprovedStatus) else stringResource(
+                                        R.string.inspectionRejectedStatus
+                                    ),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp,
                                     color = colors.textColor
                                 )
                                 Text(
-                                    text = "Batch ID: ${item.frameId}",
+                                    text = stringResource(R.string.batchIdLabel, item.frameId),
                                     fontSize = 12.sp,
                                     color = Color.Gray
                                 )
@@ -220,7 +222,10 @@ fun DetailsScreen(
                         ) {
                             Icon(Icons.Default.CheckCircle, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("FORZAR APROBACIÓN (FALSO POSITIVO)", fontWeight = FontWeight.Bold)
+                            Text(
+                                stringResource(R.string.forceApproval),
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }

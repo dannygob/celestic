@@ -168,4 +168,12 @@
     <string name="reportsModule">MÓDULO DE INFORMES</string>
     <string name="reportsSelectRange">Seleccione un rango de fechas para generar estadísticas.</string>
     <string name="generatePdfReport">GENERAR INFORME PDF</string>
+
+    <!-- Recently Added -->
+    <string name="shareReport">COMPARTIR INFORME</string>
+    <string name="forceApproval">FORZAR APROBACIÓN (FALSO POSITIVO)</string>
+    <string name="inspectionApprovedStatus">INSPECCIÓN APROBADA</string>
+    <string name="inspectionRejectedStatus">INSPECCIÓN RECHAZADA</string>
+    <string name="batchIdLabel">Batch ID: %1$s</string>
+
 </resources>
