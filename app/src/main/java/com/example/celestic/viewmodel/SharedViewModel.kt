@@ -29,4 +29,8 @@ class SharedViewModel @Inject constructor(
     fun setDarkMode(dark: Boolean) {
         sharedData.setDarkMode(dark)
     }
+
+    fun updateLocation(lat: Double, lon: Double) {
+        sharedData.setLocation(lat, lon)
+    }
 }

@@ -6,5 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "inspections")
 data class Inspection(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
-    val timestamp: Long
+    val timestamp: Long,
+    val latitude: Double? = null,
+    val longitude: Double? = null
 )

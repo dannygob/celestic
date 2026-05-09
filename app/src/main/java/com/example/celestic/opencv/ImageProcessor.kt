@@ -1,6 +1,7 @@
 package com.example.celestic.opencv
 
 import com.example.celestic.manager.CalibrationManager
+import com.example.celestic.manager.TraceabilityManager
 import com.example.celestic.models.DetectionItem
 import com.example.celestic.models.enums.DetectionStatus
 import com.example.celestic.models.enums.DetectionType
@@ -13,12 +14,14 @@ import javax.inject.Singleton
 @Singleton
 class ImageProcessor @Inject constructor(
     private val frameAnalyzer: FrameAnalyzer,
-    private val calibrationManager: CalibrationManager
+    private val calibrationManager: CalibrationManager,
+    private val traceabilityManager: TraceabilityManager
 ) {
 
     fun processImage(mat: Mat, markerType: MarkerType?): ImageProcessorResult {
         val result = frameAnalyzer.analyze(mat, markerType)
         val linkedCode = result.decodedQrCode ?: result.markers.firstOrNull()?.id?.toString()
+        val traceabilityInfo = linkedCode?.let { traceabilityManager.lookup(it) }
 
         val detectionItems = mutableListOf<DetectionItem>()
 
@@ -40,7 +43,8 @@ class ImageProcessor @Inject constructor(
                     status = if (hole.hasAlodine) DetectionStatus.WARNING else DetectionStatus.OK,
                     timestamp = System.currentTimeMillis(),
                     linkedQrCode = linkedCode,
-                    notes = if (hole.hasAlodine) "Hole with alodine halo" else "Normal hole"
+                    notes = (if (hole.hasAlodine) "Hole with alodine halo" else "Normal hole") +
+                            (traceabilityInfo?.let { " | Part: ${it.partName}" } ?: "")
                 )
             )
         }
@@ -63,7 +67,8 @@ class ImageProcessor @Inject constructor(
                     status = DetectionStatus.OK,
                     timestamp = System.currentTimeMillis(),
                     linkedQrCode = linkedCode,
-                    notes = "Countersink detected"
+                    notes = "Countersink detected" + (traceabilityInfo?.let { " | Part: ${it.partName}" }
+                        ?: "")
                 )
             )
         }
@@ -86,7 +91,8 @@ class ImageProcessor @Inject constructor(
                     status = DetectionStatus.WARNING,
                     timestamp = System.currentTimeMillis(),
                     linkedQrCode = linkedCode,
-                    notes = "Scratch length: ${"%.2f".format(scratch.length)} pixels"
+                    notes = "Scratch length: ${"%.2f".format(scratch.length)} pixels" +
+                            (traceabilityInfo?.let { " | Part: ${it.partName}" } ?: "")
                 )
             )
         }

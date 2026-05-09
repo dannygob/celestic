@@ -71,7 +71,10 @@ class DashboardViewModel @Inject constructor(
     fun startInspection() {
         viewModelScope.launch {
             try {
-                val inspectionId = repository.startInspection()
+                val inspectionId = repository.startInspection(
+                    latitude = sharedData.latitude.value,
+                    longitude = sharedData.longitude.value
+                )
                 sharedData.setCurrentInspection(inspectionId)
                 _state.value = DashboardState.CameraReady
             } catch (e: Exception) {
@@ -196,7 +199,10 @@ class DashboardViewModel @Inject constructor(
         validationResult: ValidationResult,
         frameId: String
     ): List<Long> {
-        val inspectionId = currentInspectionId.value ?: repository.startInspection().also {
+        val inspectionId = currentInspectionId.value ?: repository.startInspection(
+            latitude = sharedData.latitude.value,
+            longitude = sharedData.longitude.value
+        ).also {
             sharedData.setCurrentInspection(it)
         }
 

@@ -32,6 +32,12 @@ class SharedDataRepository @Inject constructor() {
     private val _isProcessing = MutableStateFlow(false)
     val isProcessing: StateFlow<Boolean> = _isProcessing.asStateFlow()
 
+    private val _latitude = MutableStateFlow<Double?>(null)
+    val latitude: StateFlow<Double?> = _latitude.asStateFlow()
+
+    private val _longitude = MutableStateFlow<Double?>(null)
+    val longitude: StateFlow<Double?> = _longitude.asStateFlow()
+
     // Results state
     private val _lastDetectionResults = MutableStateFlow<List<DetectionItem>?>(null)
     val lastDetectionResults: StateFlow<List<DetectionItem>?> = _lastDetectionResults.asStateFlow()
@@ -69,6 +75,11 @@ class SharedDataRepository @Inject constructor() {
         _lastDetectionResults.value = results
     }
 
+    fun setLocation(lat: Double?, lon: Double?) {
+        _latitude.value = lat
+        _longitude.value = lon
+    }
+
     fun clearCurrentInspection() {
         _currentInspectionId.value = null
         _lastDetectionResults.value = null
@@ -83,7 +94,9 @@ class SharedDataRepository @Inject constructor() {
             useInches = _useInches.value,
             isDarkMode = _isDarkMode.value,
             isProcessing = _isProcessing.value,
-            lastDetectionResults = _lastDetectionResults.value
+            lastDetectionResults = _lastDetectionResults.value,
+            latitude = _latitude.value,
+            longitude = _longitude.value
         )
     }
 }
@@ -95,5 +108,7 @@ data class SharedAppState(
     val useInches: Boolean,
     val isDarkMode: Boolean,
     val isProcessing: Boolean,
-    val lastDetectionResults: List<DetectionItem>?
+    val lastDetectionResults: List<DetectionItem>?,
+    val latitude: Double?,
+    val longitude: Double?
 )

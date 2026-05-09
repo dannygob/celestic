@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.celestic.navigation.NavigationGraph
 import com.example.celestic.ui.component.PermissionsScreen
 import com.example.celestic.ui.theme.CelesticTheme
+import com.example.celestic.utils.LocationUtils
 import com.example.celestic.utils.OpenCVInitializer
 import com.example.celestic.utils.hasRequiredPermissions
 import com.example.celestic.viewmodel.SharedViewModel
@@ -54,6 +56,13 @@ class MainActivity : ComponentActivity() {
                         .systemBarsPadding()
                 ) {
                     if (permissionsGranted) {
+                        LaunchedEffect(Unit) {
+                            LocationUtils.getCurrentLocation(context) { location ->
+                                location?.let {
+                                    sharedViewModel.updateLocation(it.latitude, it.longitude)
+                                }
+                            }
+                        }
                         val navController = rememberNavController()
                         NavigationGraph(
                             navController = navController,

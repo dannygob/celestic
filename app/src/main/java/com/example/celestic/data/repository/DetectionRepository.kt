@@ -62,8 +62,12 @@ class DetectionRepository @Inject constructor(
         dao.getFeaturesForDetection(detectionItemId)
 
     // ===== INSPECTIONS =====
-    suspend fun startInspection(): Long {
-        val inspection = Inspection(timestamp = System.currentTimeMillis())
+    suspend fun startInspection(latitude: Double? = null, longitude: Double? = null): Long {
+        val inspection = Inspection(
+            timestamp = System.currentTimeMillis(),
+            latitude = latitude,
+            longitude = longitude
+        )
         return dao.insertInspection(inspection)
     }
 
