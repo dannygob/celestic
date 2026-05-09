@@ -419,8 +419,49 @@ fun DetailsScreen(
                                 }
 
                                 if (file != null && file.exists()) {
-                                    Toast.makeText(context, "Informe guardado en: ${file.name}", Toast.LENGTH_LONG)
-                                        .show()
+                                    try {
+                                        val uri = androidx.core.content.FileProvider.getUriForFile(
+                                            context,
+                                            "${context.packageName}.provider",
+                                            file
+                                        )
+                                        val intent =
+                                            android.content.Intent(android.content.Intent.ACTION_SEND)
+                                                .apply {
+                                                    type = when (selectedReportFormat) {
+                                                        "PDF" -> "application/pdf"
+                                                        "Word" -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                        "Excel" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                                        "CSV" -> "text/csv"
+                                                        else -> "*/*"
+                                                    }
+                                                    putExtra(
+                                                        android.content.Intent.EXTRA_STREAM,
+                                                        uri
+                                                    )
+                                                    putExtra(
+                                                        android.content.Intent.EXTRA_SUBJECT,
+                                                        "Reporte de Inspección Industrial - Lote: $loteId"
+                                                    )
+                                                    putExtra(
+                                                        android.content.Intent.EXTRA_TEXT,
+                                                        "Adjunto reporte generado por Celestic.\n\nFormato: $selectedReportFormat"
+                                                    )
+                                                    addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                                }
+                                        context.startActivity(
+                                            android.content.Intent.createChooser(
+                                                intent,
+                                                "Compartir Informe Celestic"
+                                            )
+                                        )
+                                    } catch (e: Exception) {
+                                        Toast.makeText(
+                                            context,
+                                            "Error al preparar archivo: ${e.localizedMessage}",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 } else {
                                     Toast.makeText(context, "Error al generar informe", Toast.LENGTH_SHORT).show()
                                 }
@@ -429,9 +470,16 @@ fun DetailsScreen(
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = colors.accentColor)
                         ) {
+                            Icon(
+                                Icons.Default.Description,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                stringResource(R.string.downloadReport),
-                                fontWeight = FontWeight.Bold
+                                "COMPARTIR INFORME",
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
                             )
                         }
                     }
