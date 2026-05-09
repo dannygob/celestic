@@ -97,6 +97,16 @@ class ImageProcessor @Inject constructor(
             )
         }
 
-        return ImageProcessorResult(result.orientation, detectionItems)
+        // Barrido Horizontal (De Izquierda a Derecha) para asignar Etiquetas
+        val sweepSortedDetections = detectionItems.sortedBy { it.boundingBox.left }
+            .mapIndexed { index, item ->
+                val tagNumber = index + 1
+                item.copy(
+                    frameId = "ETIQUETA-$tagNumber",
+                    notes = "[Elemento #$tagNumber] ${item.notes}"
+                )
+            }
+
+        return ImageProcessorResult(result.orientation, sweepSortedDetections)
     }
 }
