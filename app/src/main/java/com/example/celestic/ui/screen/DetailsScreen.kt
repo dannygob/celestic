@@ -204,6 +204,25 @@ fun DetailsScreen(
                             }
                         }
                     }
+
+                    if (item.status != DetectionStatus.OK) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedButton(
+                            onClick = { detailsViewModel.overrideStatusToOk() },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, Color(0xFF2E7D32)),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = Color(
+                                    0xFF2E7D32
+                                )
+                            )
+                        ) {
+                            Icon(Icons.Default.CheckCircle, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("FORZAR APROBACIÓN (FALSO POSITIVO)", fontWeight = FontWeight.Bold)
+                        }
+                    }
                 }
             }
             // Sección de Visualización Técnica

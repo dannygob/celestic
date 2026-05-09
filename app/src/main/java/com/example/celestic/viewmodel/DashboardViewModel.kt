@@ -127,6 +127,19 @@ class DashboardViewModel @Inject constructor(
                     updateStateBasedOnValidation(validationResult, detectionIds)
                 }
 
+                // Limpieza de memoria: Solo guardamos imágenes de las piezas que fallaron.
+                // Si la pieza fue APROBADA (OK), borramos la foto pesada y dejamos solo los datos en la base de datos (blueprint).
+                if (validationResult.overallStatus == DetectionStatus.OK) {
+                    try {
+                        val file = java.io.File(context.filesDir, "detection_images/$frameId.jpg")
+                        if (file.exists()) {
+                            file.delete()
+                        }
+                    } catch (e: Exception) {
+                        Log.e("DashboardViewModel", "Error al borrar imagen pesada aprobada", e)
+                    }
+                }
+
             } catch (e: Exception) {
                 Log.e("DashboardViewModel", "Error processing frame", e)
                 _state.value = DashboardState.Error(e.message ?: "Unknown error")

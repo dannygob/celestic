@@ -67,5 +67,29 @@ class DetailsViewModel @Inject constructor(
                 _traceabilityItem.value = Result.Success(null)
             }
         }
+
+        fun overrideStatusToOk() {
+            val currentItem = _detectionItem.value ?: return
+            viewModelScope.launch {
+                val updatedItem = currentItem.copy(
+                    status = com.example.celestic.models.enums.DetectionStatus.OK,
+                    notes = "${currentItem.notes} | (OVERRIDE MANUAL: APROBADO)"
+                )
+                repository.insertDetection(updatedItem)
+                _detectionItem.value = updatedItem
+
+                // Auto-limpieza: Si forzamos la aprobación, borramos la imagen pesada
+                try {
+                    val file = java.io.File(
+                        context.filesDir,
+                        "detection_images/${currentItem.frameId}.jpg"
+                    )
+                    if (file.exists()) {
+                        file.delete()
+                    }
+                } catch (e: Exception) {
+                    // Ignore silent fail
+            }
+        }
     }
 }
