@@ -95,9 +95,9 @@ fun LoginScreenContent(
 
     val shifts = listOf("Mañana", "Tarde", "Noche")
 
-    val fillFieldsMsg = stringResource(R.string.fillAllFields)
-    val authErrorMsg = stringResource(R.string.authError)
-    val offlineModeMsg = stringResource(R.string.offlineMode)
+    val fillFieldsMsg = stringResource(R.string.fill_all_fields)
+    val authErrorMsg = stringResource(R.string.auth_error)
+    val offlineModeMsg = stringResource(R.string.offline_mode)
 
     // Colores dinámicos
     val textPrimary = if (isDarkMode) Color.White else Color.Black
@@ -186,14 +186,14 @@ fun LoginScreenContent(
 private fun LoginHeader(isLandscape: Boolean, textPrimary: Color, textSecondary: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = stringResource(R.string.appName),
+            text = stringResource(R.string.app_name),
             fontSize = if (isLandscape) 40.sp else 32.sp,
             color = textPrimary,
             fontWeight = FontWeight.Black,
             letterSpacing = 6.sp
         )
         Text(
-            text = stringResource(R.string.precisionVisionSystem),
+            text = stringResource(R.string.precision_vision_system),
             fontSize = 12.sp,
             color = textSecondary,
             fontWeight = FontWeight.Medium,
@@ -298,7 +298,7 @@ private fun LoginForm(
                     onValueChange = { },
                     label = {
                         Text(
-                            stringResource(R.string.operativeShift),
+                            stringResource(R.string.operative_shift),
                             color = textSecondary
                         )
                     },
@@ -359,7 +359,7 @@ private fun LoginForm(
                     )
                 )
                 Text(
-                    text = stringResource(R.string.rememberUser),
+                    text = stringResource(R.string.remember_user),
                     color = textSecondary,
                     fontSize = 14.sp
                 )
@@ -434,7 +434,7 @@ private fun LoginForm(
 @Composable
 private fun LoginFooter(textSecondary: Color) {
     Text(
-        text = stringResource(R.string.industrialEdition),
+        text = stringResource(R.string.industrial_edition),
         fontSize = 10.sp,
         color = textSecondary.copy(alpha = 0.5f),
         modifier = Modifier.padding(top = 16.dp)

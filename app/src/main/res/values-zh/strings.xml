@@ -1,125 +1,158 @@
 <resources>
     <!-- App Info -->
-    <string name="appName">Celestic</string>
+    <string name="app_name">Celestic</string>
 
     <!-- Common Actions -->
-    <string name="Back">返回</string>
-    <string name="OK">确定</string>
-    <string name="Login">登录</string>
-    <string name="Retry">重试</string>
-    <string name="Capture">捕获</string>
+    <string name="back">返回</string>
+    <string name="ok">确定</string>
+    <string name="login">登录</string>
+    <string name="retry">重试</string>
+    <string name="capture">捕获</string>
+    <string name="cancel">取消</string>
+    <string name="save">保存</string>
+    <string name="reset">重置</string>
+    <string name="start">开始</string>
+    <string name="stop">停止</string>
 
     <!-- Auth -->
-    <string name="Email">电子邮件</string>
-    <string name="Password">密码</string>
-
+    <string name="email">电子邮件</string>
+    <string name="password">密码</string>
+    <string name="fill_all_fields">请填写所有字段</string>
+    <string name="auth_error">身份验证错误</string>
+    <string name="offline_mode">离线模式 / Firebase 未初始化</string>
+    <string name="remember_user">记住用户</string>
 
     <!-- Permissions -->
     <string name="camera_permission_denied">未授予相机权限。</string>
-
+    <string name="permissions_required">需要权限</string>
+    <string name="permissions_desc">为了让 Celestic 正常运行，我们需要访问以下系统服务。</string>
+    <string name="permissions_warning">如果未授予权限，Celestic 将无法运行。</string>
+    <string name="grant_permissions">授予权限</string>
 
     <!-- Technical Errors -->
-    <string name="errorOpenCvInit">OpenCV 初始化失败</string>
-    <string name="errorInference">推理错误</string>
-    <string name="errorCameraInit">相机初始化错误</string>
-    <string name="errorInspection">检查错误</string>
+    <string name="error_opencv_init">OpenCV 初始化失败</string>
+    <string name="error_inference">推理错误</string>
+    <string name="error_camera_init">相机初始化错误</string>
+    <string name="error_inspection">检查错误</string>
+    <string name="error_initializing_model">模型初始化错误</string>
 
     <!-- Details Screens -->
-    <string name="detailsHole">孔详情</string>
-    <string name="detailsAlodine">阿洛丁详情</string>
-    <string name="detailsCountersink">埋头孔详情</string>
+    <string name="details_hole">孔详情</string>
+    <string name="details_alodine">阿洛丁详情</string>
+    <string name="details_countersink">埋头孔详情</string>
+    <string name="detailed_analysis">详细分析</string>
 
     <!-- Welcome / General -->
-    <string name="welcomeMessage">欢迎使用 Celestic 检测器</string>
+    <string name="welcome_message">欢迎使用 Celestic 检测器</string>
     <string name="loading">加载中...</string>
-    <string name="languageSettingHint">语言在系统设置中更改。</string>
-
+    <string name="language_setting_hint">语言在系统设置中更改。</string>
+    <string name="system_version">Celestic 高精度视觉系统 v2.0</string>
+    <string name="industrial_edition">v2.0 工业版</string>
+    <string name="precision_vision_system">高精度视觉系统</string>
 
     <!-- Inspection Flow -->
-    <string name="inspectionStart">开始检查</string>
-    <string name="inspectionProcessing">正在处理检查...</string>
-    <string name="Analyzing">正在分析...</string>
-    <string name="inspectionApproved">检查通过</string>
-    <string name="inspectionRedirecting">正在重定向到详情...</string>
+    <string name="inspection_start">开始检查</string>
+    <string name="inspection_processing">正在处理检查...</string>
+    <string name="analyzing">正在分析...</string>
+    <string name="inspection_approved">检查通过</string>
+    <string name="inspection_redirecting">正在重定向到详情...</string>
+    <string name="inspection_finished">检查完成</string>
+    <string name="inspection_failed">检查失败</string>
+    <string name="inspection_approved_status">检查已通过</string>
+    <string name="inspection_rejected_status">检查已拒绝</string>
 
     <!-- Component Scan -->
-    <string name="scanComponent">扫描组件</string>
+    <string name="scan_component">扫描组件</string>
 
     <!-- Issue Reporting -->
-    <string name="reportIssue">报告问题</string>
+    <string name="report_issue">报告问题</string>
+    <string name="report_issue_sent">问题报告已发送</string>
 
     <!-- Status Labels -->
-    <string name="statusPassed">零件已批准</string>
-    <string name="statusWarning">建议审查</string>
-    <string name="statusFailed">严重故障</string>
-
-    <!-- Calibration -->
-    <string name="calibrationOpen">打开校准</string>
-    <string name="calibrationSection">校准</string>
-    <string name="calibrationOpening">正在打开校准...</string>
-
-    <!-- Reports -->
-    <string name="reportGenerate">生成报告</string>
-    <string name="reportGenerateConfirm">您要生成检查报告吗？</string>
-    <string name="reportRequesting">正在请求报告...</string>
-    <string name="reportSection">报告</string>
-
-
-    <!-- Dashboard -->
-    <string name="dashboardTitle">Celestic 仪表板</string>
-    <string name="dashboardOpenDetails">正在打开详情...</string>
-    <string name="viewHistory">查看历史记录</string>
-
-
-    <!-- Analysis Modes -->
-    <string name="analysisModes">分析模式</string>
-
-    <string name="modeBodywork">车身</string>
-    <string name="modeBodyworkActivated">车身模式已激活</string>
-
-    <string name="modePrecision">精密</string>
-    <string name="modePrecisionActivated">精密模式已激活</string>
-
-    <string name="modeMetals">金属</string>
-    <string name="modeMetalsActivated">金属模式已激活</string>
-    <string name="celesticMode">Celestic</string>
-    <string name="CalibrationOpen">校准已打开</string>
-    <string name="opencv_init_error">OpenCV 初始化错误</string>
-    <string name="capture">捕获</string>
-    <string name="analyzing">正在分析</string>
-    <string name="retry">重试</string>
-    <string name="email">电子邮件</string>
-    <string name="password">密码</string>
-    <string name="login">登录</string>
-    <string name="ok">确定</string>
-    <string name="back">返回</string>
-
-    <!-- Dashboard & Details -->
-    <string name="systemVersion">Celestic 高精度视觉系统 v2.0</string>
+    <string name="status_passed">零件已批准</string>
+    <string name="status_warning">建议审查</string>
+    <string name="status_failed">严重故障</string>
+    <string name="status_label">状态: %1$s</string>
+    <string name="final_status">最终状态</string>
     <string name="standby">待机</string>
     <string name="success">成功</string>
-    <string name="inspectionFailed">检查失败</string>
-    <string name="resetSystem">重置系统</string>
-    <string name="returnToDashboard">返回仪表板</string>
-    <string name="statusLabel">状态: %1$s</string>
-    <string name="start">开始</string>
-    <string name="stop">停止</string>
+
+    <!-- Calibration -->
+    <string name="calibration_title">校准</string>
+    <string name="calibration_open">打开校准</string>
+    <string name="calibration_section">校准</string>
+    <string name="calibration_opening">正在打开校准...</string>
+    <string name="last_calibration">上次校准: %1$s</string>
+    <string name="pattern_detected">检测到图案</string>
+    <string name="pattern_not_visible">图案不可见</string>
+    <string name="captures">捕获次数</string>
+    <string name="rms_error">RMS 误差</string>
+    <string name="calibrate">校准</string>
+    <string name="calibration_instructions">将图案移动到不同角度。</string>
     <string name="cal_abbr">校准</string>
-    <string name="hist_abbr">历史</string>
+
+    <!-- Reports -->
+    <string name="reports_title">报告</string>
+    <string name="reports_module">报告模块</string>
+    <string name="reports_select_range">选择日期范围以生成统计信息。</string>
+    <string name="generate_pdf_report">生成 PDF 报告</string>
+    <string name="report_generate">生成报告</string>
+    <string name="report_generate_confirm">您要生成检查报告吗？</string>
+    <string name="report_requesting">正在请求报告...</string>
+    <string name="report_section">报告</string>
     <string name="rep_abbr">报告</string>
-    <string name="blueprint_desc">蓝图图像</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">Celestic 仪表板</string>
+    <string name="dashboard_open_details">正在打开详情...</string>
+    <string name="view_history">查看历史记录</string>
+    <string name="hist_abbr">历史</string>
+
+    <!-- Analysis Modes -->
+    <string name="analysis_modes">分析模式</string>
+    <string name="mode_bodywork">车身</string>
+    <string name="mode_bodywork_activated">车身模式已激活</string>
+    <string name="mode_precision">精密</string>
+    <string name="mode_precision_activated">精密模式已激活</string>
+    <string name="mode_metals">金属</string>
+    <string name="mode_metals_activated">金属模式已激活</string>
+    <string name="celestic_mode">Celestic</string>
+
+    <!-- Traceability & Batch -->
+    <string name="batch_label">批次: %1$s</string>
+    <string name="batch_id_label">批次 ID: %1$s</string>
+    <string name="assign_batch">分配批次</string>
+    <string name="enter_batch_prompt">输入此检查的批次或送货单号:</string>
+    <string name="batch_number">批次编号</string>
+    <string name="batch_abbr">批次: %1$s</string>
+    <string name="operative_shift">班次</string>
+    <string name="unknown_operator">未知操作员</string>
+    <string name="unassigned_shift">未分配班次</string>
+    <string name="general_batch">通用</string>
 
     <!-- Settings -->
-    <string name="settingsTitle">设置</string>
-    <string name="returnDesc">返回</string>
-    <string name="unitsPreferences">单位与偏好</string>
-    <string name="imperialSystem">英制系统（英寸）</string>
-    <string name="imperialSystemDesc">在毫米和英寸之间切换</string>
-    <string name="aprilTagDetection">AprilTag 检测</string>
-    <string name="aprilTagDetectionDesc">使用 AprilTag 代替 ArUco</string>
+    <string name="settings_title">设置</string>
+    <string name="return_desc">返回</string>
+    <string name="units_preferences">单位与偏好</string>
+    <string name="imperial_system">英制系统（英寸）</string>
+    <string name="imperial_system_desc">在毫米和英寸之间切换</string>
+    <string name="apriltag_detection">AprilTag 检测</string>
+    <string name="apriltag_detection_desc">使用 AprilTag 代替 ArUco</string>
     <string name="appearance">外观</string>
-    <string name="darkMode">深色模式</string>
-    <string name="darkModeDesc">强制使用高对比度界面</string>
-    <string name="hardwareOptics">硬件与光学</string>
-    <string name="opticsAutoAdjust">光学规格根据检测到的硬件配置自动调整，以优化测量精度。</string>
+    <string name="dark_mode">深色模式</string>
+    <string name="dark_mode_desc">强制使用高对比度界面</string>
+    <string name="hardware_optics">硬件与光学</string>
+    <string name="optics_auto_adjust">光学规格根据检测到的硬件配置自动调整，以优化测量精度。</string>
+
+    <!-- System Info -->
+    <string name="system_status">系统状态</string>
+    <string name="hardware_info">硬件信息</string>
+    <string name="software_info">软件信息</string>
+    <string name="configuration">配置</string>
+
+    <!-- Golden Sample -->
+    <string name="plan_abbr">计划</string>
+    <string name="blueprint_desc">蓝图图像</string>
+    <string name="camera_view_placeholder">camerapreviewPlaceHolder</string>
+
 </resources>

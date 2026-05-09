@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.celestic.R
 import com.example.celestic.ui.component.DetectionItemCard
 import com.example.celestic.ui.component.ShimmerDetectionItemCard
 import com.example.celestic.ui.theme.CelesticTheme
@@ -53,7 +55,7 @@ fun DetectionListScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "HISTORIAL DE INSPECCIONES",
+                        stringResource(R.string.view_history).uppercase(),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 2.sp,
@@ -64,7 +66,7 @@ fun DetectionListScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Regresar",
+                            contentDescription = stringResource(R.string.return_desc),
                             tint = colors.textColor
                         )
                     }
@@ -100,7 +102,7 @@ fun DetectionListScreen(
                                 modifier = Modifier.fillParentMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("No se encontraron registros.", color = Color.Gray)
+                                Text(stringResource(R.string.no_records), color = Color.Gray)
                             }
                         }
                     } else {
@@ -128,7 +130,7 @@ fun DetectionListScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                "Error al cargar el historial.",
+                                stringResource(R.string.error_inspection),
                                 color = Color.Red.copy(alpha = 0.7f)
                             )
                         }

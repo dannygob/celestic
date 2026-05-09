@@ -1,6 +1,16 @@
 package com.example.celestic.ui.screen
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -10,7 +20,15 @@ import androidx.compose.material.icons.filled.Dns
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material.icons.filled.SettingsSuggest
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,7 +61,7 @@ fun StatusScreen(
             TopAppBar(
                 title = {
                     Text(
-                        stringResource(R.string.systemStatus),
+                        stringResource(R.string.system_status),
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -75,7 +93,7 @@ fun StatusScreen(
             StatusHeader(isDarkMode)
 
             StatusSection(
-                title = stringResource(R.string.hardwareInfo),
+                title = stringResource(R.string.hardware_info),
                 icon = Icons.Default.Memory,
                 surfaceColor = surfaceColor,
                 textColor = colors.textColor
@@ -93,7 +111,7 @@ fun StatusScreen(
             }
 
             StatusSection(
-                title = stringResource(R.string.softwareInfo),
+                title = stringResource(R.string.software_info),
                 icon = Icons.Default.Dns,
                 surfaceColor = surfaceColor,
                 textColor = colors.textColor

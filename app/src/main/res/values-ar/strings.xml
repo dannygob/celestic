@@ -1,125 +1,163 @@
 <resources>
     <!-- App Info -->
-    <string name="appName">سليستيك</string>
+    <string name="app_name">سليستيك</string>
 
     <!-- Common Actions -->
-    <string name="Back">رجوع</string>
-    <string name="OK">موافق</string>
-    <string name="Login">تسجيل الدخول</string>
-    <string name="Retry">إعادة المحاولة</string>
-    <string name="Capture">التقاط</string>
+    <string name="back">رجوع</string>
+    <string name="ok">موافق</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="capture">التقاط</string>
+    <string name="cancel">إلغاء</string>
+    <string name="save">حفظ</string>
+    <string name="reset">إعادة ضبط</string>
+    <string name="start">ابدأ</string>
+    <string name="stop">إيقاف</string>
 
     <!-- Auth -->
-    <string name="Email">البريد الإلكتروني</string>
-    <string name="Password">كلمة المرور</string>
-
+    <string name="email">البريد الإلكتروني</string>
+    <string name="password">كلمة المرور</string>
+    <string name="fill_all_fields">يرجى ملء جميع الحقول</string>
+    <string name="auth_error">خطأ في المصادقة</string>
+    <string name="offline_mode">وضع عدم الاتصال / لم يتم تهيئة Firebase</string>
+    <string name="remember_user">تذكر المستخدم</string>
 
     <!-- Permissions -->
     <string name="camera_permission_denied">لم يتم منح إذن الكاميرا.</string>
-
+    <string name="permissions_required">الأذونات المطلوبة</string>
+    <string name="permissions_desc">لكي يعمل Celestic بشكل صحيح، نحتاج إلى الوصول إلى خدمات النظام التالية.</string>
+    <string name="permissions_warning">لن يعمل Celestic إذا لم يتم منح الأذونات.</string>
+    <string name="grant_permissions">منح الأذونات</string>
 
     <!-- Technical Errors -->
-    <string name="errorOpenCvInit">فشل تهيئة OpenCV</string>
-    <string name="errorInference">خطأ في الاستدلال</string>
-    <string name="errorCameraInit">خطأ في تهيئة الكاميرا</string>
-    <string name="errorInspection">خطأ في الفحص</string>
+    <string name="error_opencv_init">فشل تهيئة OpenCV</string>
+    <string name="error_inference">خطأ في الاستدلال</string>
+    <string name="error_camera_init">خطأ في تهيئة الكاميرا</string>
+    <string name="error_inspection">خطأ في الفحص</string>
+    <string name="error_initializing_model">خطأ في تهيئة النموذج</string>
 
     <!-- Details Screens -->
-    <string name="detailsHole">تفاصيل الثقب</string>
-    <string name="detailsAlodine">تفاصيل ألودين</string>
-    <string name="detailsCountersink">تفاصيل الغاطس</string>
+    <string name="details_hole">تفاصيل الثقب</string>
+    <string name="details_alodine">تفاصيل ألودين</string>
+    <string name="details_countersink">تفاصيل الغاطس</string>
+    <string name="detailed_analysis">تحليل مفصل</string>
 
     <!-- Welcome / General -->
-    <string name="welcomeMessage">مرحباً بك في كاشف سليستيك</string>
+    <string name="welcome_message">مرحباً بك في كاشف سليستيك</string>
     <string name="loading">جاري التحميل...</string>
-    <string name="languageSettingHint">يتم تغيير اللغة في إعدادات النظام.</string>
-
+    <string name="language_setting_hint">يتم تغيير اللغة في إعدادات النظام.</string>
+    <string name="system_version">نظام رؤية سليستيك عالي الدقة v2.0</string>
+    <string name="industrial_edition">v2.0 النسخة الصناعية</string>
+    <string name="precision_vision_system">نظام الرؤية الدقيقة</string>
 
     <!-- Inspection Flow -->
-    <string name="inspectionStart">بدء الفحص</string>
-    <string name="inspectionProcessing">جاري معالجة الفحص...</string>
-    <string name="Analyzing">جاري التحليل...</string>
-    <string name="inspectionApproved">تمت الموافقة على الفحص</string>
-    <string name="inspectionRedirecting">جاري التوجيه إلى التفاصيل...</string>
+    <string name="inspection_start">بدء الفحص</string>
+    <string name="inspection_processing">جاري معالجة الفحص...</string>
+    <string name="analyzing">جاري التحليل...</string>
+    <string name="inspection_approved">تمت الموافقة على الفحص</string>
+    <string name="inspection_redirecting">جاري التوجيه إلى التفاصيل...</string>
+    <string name="inspection_finished">انتهى الفحص</string>
+    <string name="inspection_failed">فشل الفحص</string>
+    <string name="inspection_approved_status">تمت الموافقة على الفحص</string>
+    <string name="inspection_rejected_status">تم رفض الفحص</string>
 
     <!-- Component Scan -->
-    <string name="scanComponent">مسح المكون</string>
+    <string name="scan_component">مسح المكون</string>
 
     <!-- Issue Reporting -->
-    <string name="reportIssue">الإبلاغ عن مشكلة</string>
+    <string name="report_issue">الإبلاغ عن مشكلة</string>
+    <string name="report_issue_sent">تم إرسال بلاغ المشكلة</string>
 
     <!-- Status Labels -->
-    <string name="statusPassed">تمت الموافقة على القطعة</string>
-    <string name="statusWarning">يوصى بالمراجعة</string>
-    <string name="statusFailed">فشل حرج</string>
-
-    <!-- Calibration -->
-    <string name="calibrationOpen">فتح المعايرة</string>
-    <string name="calibrationSection">المعايرة</string>
-    <string name="calibrationOpening">جاري فتح المعايرة...</string>
-
-    <!-- Reports -->
-    <string name="reportGenerate">إصدار تقرير</string>
-    <string name="reportGenerateConfirm">هل تريد إصدار تقرير الفحص؟</string>
-    <string name="reportRequesting">جاري طلب التقرير...</string>
-    <string name="reportSection">التقارير</string>
-
-
-    <!-- Dashboard -->
-    <string name="dashboardTitle">لوحة تحكم سليستيك</string>
-    <string name="dashboardOpenDetails">جاري فتح التفاصيل...</string>
-    <string name="viewHistory">عرض السجل</string>
-
-
-    <!-- Analysis Modes -->
-    <string name="analysisModes">أوضاع التحليل</string>
-
-    <string name="modeBodywork">هيكل السيارة</string>
-    <string name="modeBodyworkActivated">تم تفعيل وضع هيكل السيارة</string>
-
-    <string name="modePrecision">دقة</string>
-    <string name="modePrecisionActivated">تم تفعيل وضع الدقة</string>
-
-    <string name="modeMetals">معادن</string>
-    <string name="modeMetalsActivated">تم تفعيل وضع المعادن</string>
-    <string name="celesticMode">سليستيك</string>
-    <string name="CalibrationOpen">المعايرة مفتوحة</string>
-    <string name="opencv_init_error">خطأ في تهيئة OpenCV</string>
-    <string name="capture">التقاط</string>
-    <string name="analyzing">جاري التحليل</string>
-    <string name="retry">إعادة المحاولة</string>
-    <string name="email">البريد الإلكتروني</string>
-    <string name="password">كلمة المرور</string>
-    <string name="login">تسجيل الدخول</string>
-    <string name="ok">موافق</string>
-    <string name="back">رجوع</string>
-
-    <!-- Dashboard & Details -->
-    <string name="systemVersion">نظام رؤية سليستيك عالي الدقة v2.0</string>
+    <string name="status_passed">تمت الموافقة على القطعة</string>
+    <string name="status_warning">يوصى بالمراجعة</string>
+    <string name="status_failed">فشل حرج</string>
+    <string name="status_label">الحالة: %1$s</string>
+    <string name="final_status">الحالة النهائية</string>
     <string name="standby">انتظار</string>
     <string name="success">نجاح</string>
-    <string name="inspectionFailed">فشل الفحص</string>
-    <string name="resetSystem">إعادة ضبط النظام</string>
-    <string name="returnToDashboard">العودة إلى لوحة التحكم</string>
-    <string name="statusLabel">الحالة: %1$s</string>
-    <string name="start">ابدأ</string>
-    <string name="stop">إيقاف</string>
+
+    <!-- Calibration -->
+    <string name="calibration_title">المعايرة</string>
+    <string name="calibration_open">فتح المعايرة</string>
+    <string name="calibration_section">المعايرة</string>
+    <string name="calibration_opening">جاري فتح المعايرة...</string>
+    <string name="last_calibration">آخر معايرة: %1$s</string>
+    <string name="pattern_detected">تم اكتشاف النمط</string>
+    <string name="pattern_not_visible">النمط غير مرئي</string>
+    <string name="captures">اللقطات</string>
+    <string name="rms_error">خطأ RMS</string>
+    <string name="calibrate">معايرة</string>
+    <string name="calibration_instructions">حرك النمط إلى زوايا مختلفة.</string>
     <string name="cal_abbr">معايرة</string>
-    <string name="hist_abbr">سجل</string>
+
+    <!-- Reports -->
+    <string name="reports_title">التقارير</string>
+    <string name="reports_module">وحدة التقارير</string>
+    <string name="reports_select_range">حدد نطاقاً زمنياً لإنشاء الإحصائيات.</string>
+    <string name="generate_pdf_report">إنشاء تقرير PDF</string>
+    <string name="report_generate">إصدار تقرير</string>
+    <string name="report_generate_confirm">هل تريد إصدار تقرير الفحص؟</string>
+    <string name="report_requesting">جاري طلب التقرير...</string>
+    <string name="report_section">التقارير</string>
     <string name="rep_abbr">تقارير</string>
-    <string name="blueprint_desc">صورة المخطط</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">لوحة تحكم سليستيك</string>
+    <string name="dashboard_open_details">جاري فتح التفاصيل...</string>
+    <string name="view_history">عرض السجل</string>
+    <string name="hist_abbr">سجل</string>
+
+    <!-- Analysis Modes -->
+    <string name="analysis_modes">أوضاع التحليل</string>
+    <string name="mode_bodywork">هيكل السيارة</string>
+    <string name="mode_bodywork_activated">تم تفعيل وضع هيكل السيارة</string>
+    <string name="mode_precision">دقة</string>
+    <string name="mode_precision_activated">تم تفعيل وضع الدقة</string>
+    <string name="mode_metals">معادن</string>
+    <string name="mode_metals_activated">تم تفعيل وضع المعادن</string>
+    <string name="celestic_mode">سليستيك</string>
+
+    <!-- Traceability & Batch -->
+    <string name="batch_label">الدفعة: %1$s</string>
+    <string name="batch_id_label">معرف الدفعة: %1$s</string>
+    <string name="assign_batch">تعيين الدفعة</string>
+    <string name="enter_batch_prompt">أدخل رقم الدفعة أو الإرسالية لهذا الفحص:</string>
+    <string name="batch_number">رقم الدفعة</string>
+    <string name="batch_abbr">دفعة: %1$s</string>
+    <string name="operative_shift">الوردية التشغيلية</string>
+    <string name="unknown_operator">مشغل غير معروف</string>
+    <string name="unassigned_shift">وردية غير معينة</string>
+    <string name="general_batch">عام</string>
 
     <!-- Settings -->
-    <string name="settingsTitle">الإعدادات</string>
-    <string name="returnDesc">رجوع</string>
-    <string name="unitsPreferences">الوحدات والتفضيلات</string>
-    <string name="imperialSystem">النظام الإمبراطوري (بوصة)</string>
-    <string name="imperialSystemDesc">التبديل بين المليمتر والبوصة</string>
-    <string name="aprilTagDetection">كشف AprilTag</string>
-    <string name="aprilTagDetectionDesc">استخدام AprilTag بدلاً من ArUco</string>
+    <string name="settings_title">الإعدادات</string>
+    <string name="return_desc">رجوع</string>
+    <string name="units_preferences">الوحدات والتفضيلات</string>
+    <string name="imperial_system">النظام الإمبراطوري (بوصة)</string>
+    <string name="imperial_system_desc">التبديل بين المليمتر والبوصة</string>
+    <string name="apriltag_detection">كشف AprilTag</string>
+    <string name="apriltag_detection_desc">استخدام AprilTag بدلاً من ArUco</string>
     <string name="appearance">المظهر</string>
-    <string name="darkMode">الوضع الداكن</string>
-    <string name="darkModeDesc">فرض واجهة عالية التباين</string>
-    <string name="hardwareOptics">الأجهزة والبصريات</string>
-    <string name="opticsAutoAdjust">يتم ضبط المواصفات البصرية تلقائيًا بناءً على ملف تعريف الأجهزة المكتشف لتحسين دقة القياس.</string>
+    <string name="dark_mode">الوضع الداكن</string>
+    <string name="dark_mode_desc">فرض واجهة عالية التباين</string>
+    <string name="hardware_optics">الأجهزة والبصريات</string>
+    <string name="optics_auto_adjust">يتم ضبط المواصفات البصرية تلقائيًا بناءً على ملف تعريف الأجهزة المكتشف لتحسين دقة القياس.</string>
+
+    <!-- System Info -->
+    <string name="system_status">حالة النظام</string>
+    <string name="hardware_info">معلومات الأجهزة</string>
+    <string name="software_info">معلومات البرامج</string>
+    <string name="configuration">التكوين</string>
+
+    <!-- Golden Sample -->
+    <string name="plan_abbr">مخطط</string>
+    <string name="blueprint_desc">صورة المخطط</string>
+    <string name="camera_view_placeholder">camerapreviewPlaceHolder</string>
+
+    <!-- Camera Status -->
+    <string name="low_light">إضاءة منخفضة</string>
+    <string name="too_much_light">إضاءة زائدة / انعكاس</string>
+    <string name="focusing">جاري التركيز...</string>
+
 </resources>

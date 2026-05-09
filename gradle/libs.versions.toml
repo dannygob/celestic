@@ -42,6 +42,7 @@ itextLayout = "8.0.5"
 transportationConsumer = "4.0.0"
 firebaseAuthKtx = "24.0.1"
 playServicesLocation = "21.3.0"
+lifecycleViewmodelKtx = "2.10.0"
 
 
 [libraries]
@@ -98,6 +99,7 @@ itext-kernel = { group = "com.itextpdf", name = "kernel", version.ref = "itextKe
 itext-layout = { group = "com.itextpdf", name = "layout", version.ref = "itextLayout" }
 transportation-consumer = { group = "com.google.android.libraries.mapsplatform.transportation", name = "transportation-consumer", version.ref = "transportationConsumer" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 
 
 [plugins]

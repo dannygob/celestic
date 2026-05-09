@@ -64,7 +64,10 @@ fun CameraView(
 
     // Strings
     val permissionDeniedMsg = stringResource(R.string.camera_permission_denied)
-    val opencvErrorMsg = stringResource(R.string.opencv_init_error)
+    val opencvErrorMsg = stringResource(R.string.error_opencv_init)
+    val lowLightMsg = stringResource(R.string.low_light)
+    val tooMuchLightMsg = stringResource(R.string.too_much_light)
+    val focusingMsg = stringResource(R.string.focusing)
 
 
     // 1. Verificar permisos de cámara
@@ -103,7 +106,10 @@ fun CameraView(
     Box(modifier = modifier.fillMaxSize()) {
         CameraPreviewContainer(
             viewModel = viewModel,
-            cameraExecutor = cameraExecutor
+            cameraExecutor = cameraExecutor,
+            lowLightMsg = lowLightMsg,
+            tooMuchLightMsg = tooMuchLightMsg,
+            focusingMsg = focusingMsg
         )
     }
 }
@@ -114,6 +120,9 @@ fun CameraView(
 private fun CameraPreviewContainer(
     viewModel: MainViewModel,
     cameraExecutor: ExecutorService,
+    lowLightMsg: String,
+    tooMuchLightMsg: String,
+    focusingMsg: String,
     modifier: Modifier = Modifier
 ) {
     LocalContext.current
@@ -136,7 +145,10 @@ private fun CameraPreviewContainer(
                     context = ctx,
                     previewView = previewView,
                     cameraExecutor = cameraExecutor,
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    lowLightMsg = lowLightMsg,
+                    tooMuchLightMsg = tooMuchLightMsg,
+                    focusingMsg = focusingMsg
                 )
             }
         },
@@ -151,6 +163,9 @@ private fun startCamera(
     previewView: PreviewView,
     cameraExecutor: ExecutorService,
     viewModel: MainViewModel,
+    lowLightMsg: String,
+    tooMuchLightMsg: String,
+    focusingMsg: String
 ) {
     val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
 
@@ -206,11 +221,11 @@ private fun startCamera(
                         val meanScalar = Core.mean(gray)
                         val brightness = meanScalar.`val`[0]
                         if (brightness < 30.0) {
-                            viewModel.setTipoClasificacion("LUZ INSUFICIENTE")
+                            viewModel.setTipoClasificacion(lowLightMsg)
                             mat.release(); gray.release(); bitmap.recycle(); imageProxy.close()
                             return@setAnalyzer
                         } else if (brightness > 235.0) {
-                            viewModel.setTipoClasificacion("EXCESO LUZ / REFLEJO")
+                            viewModel.setTipoClasificacion(tooMuchLightMsg)
                             mat.release(); gray.release(); bitmap.recycle(); imageProxy.close()
                             return@setAnalyzer
                         }
@@ -226,7 +241,7 @@ private fun startCamera(
                         mat.release(); gray.release(); laplacian.release(); mean.release(); stddev.release()
 
                         if (variance < 60.0) { // Umbral de borrosidad empírico
-                            viewModel.setTipoClasificacion("ENFOCANDO...")
+                            viewModel.setTipoClasificacion(focusingMsg)
                             bitmap.recycle(); imageProxy.close()
                             return@setAnalyzer
                         }
@@ -264,7 +279,7 @@ private fun startCamera(
                 imageAnalysis
             )
         } catch (e: Exception) {
-            Log.e("CameraView", context.getString(R.string.errorCameraInit), e)
+            Log.e("CameraView", context.getString(R.string.error_camera_init), e)
         }
 
     }, ContextCompat.getMainExecutor(context))

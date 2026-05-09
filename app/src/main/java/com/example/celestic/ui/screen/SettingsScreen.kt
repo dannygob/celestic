@@ -1,7 +1,17 @@
 package com.example.celestic.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -11,7 +21,17 @@ import androidx.compose.material.icons.filled.DeveloperBoard
 import androidx.compose.material.icons.filled.DisplaySettings
 import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material.icons.filled.Tag
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,7 +70,7 @@ fun SettingsScreen(
             TopAppBar(
                 title = {
                     Text(
-                        stringResource(R.string.settingsTitle),
+                        stringResource(R.string.settings_title),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 2.sp,
@@ -61,7 +81,7 @@ fun SettingsScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.returnDesc),
+                            contentDescription = stringResource(R.string.return_desc),
                             tint = colors.textColor
                         )
                     }
@@ -83,7 +103,7 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                stringResource(R.string.unitsPreferences),
+                stringResource(R.string.units_preferences),
                 color = colors.accentColor,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
@@ -91,8 +111,8 @@ fun SettingsScreen(
             )
 
             SettingsItem(
-                title = stringResource(R.string.imperialSystem),
-                subtitle = stringResource(R.string.imperialSystemDesc),
+                title = stringResource(R.string.imperial_system),
+                subtitle = stringResource(R.string.imperial_system_desc),
                 icon = Icons.Default.Straighten,
                 checked = useInches,
                 isDarkMode = isDarkMode,
@@ -100,8 +120,8 @@ fun SettingsScreen(
             )
 
             SettingsItem(
-                title = stringResource(R.string.aprilTagDetection),
-                subtitle = stringResource(R.string.aprilTagDetectionDesc),
+                title = stringResource(R.string.apriltag_detection),
+                subtitle = stringResource(R.string.apriltag_detection_desc),
                 icon = Icons.Default.Tag,
                 checked = markerType == MarkerType.APRILTAG,
                 isDarkMode = isDarkMode,
@@ -121,8 +141,8 @@ fun SettingsScreen(
             )
 
             SettingsItem(
-                title = stringResource(R.string.darkMode),
-                subtitle = stringResource(R.string.darkModeDesc),
+                title = stringResource(R.string.dark_mode),
+                subtitle = stringResource(R.string.dark_mode_desc),
                 icon = Icons.Default.DisplaySettings,
                 checked = isDarkMode,
                 isDarkMode = isDarkMode,
@@ -132,7 +152,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                stringResource(R.string.hardwareOptics),
+                stringResource(R.string.hardware_optics),
                 color = colors.accentColor,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
@@ -174,7 +194,7 @@ fun SettingsScreen(
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        stringResource(R.string.opticsAutoAdjust),
+                        stringResource(R.string.optics_auto_adjust),
                         color = Color.Gray.copy(alpha = 0.8f),
                         fontSize = 11.sp,
                         lineHeight = 14.sp

@@ -96,6 +96,7 @@ dependencies {
     // Core & Lifecycle
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.firebase.auth)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)

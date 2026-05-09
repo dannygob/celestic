@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.ModelTraining
 import androidx.compose.material.icons.filled.PrecisionManufacturing
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -46,7 +47,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
@@ -178,15 +181,15 @@ private fun DashboardTopBar(
     if (showAlbaranDialog) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { showAlbaranDialog = false },
-            title = { Text(stringResource(R.string.assignAlbaran), fontWeight = FontWeight.Bold) },
+            title = { Text(stringResource(R.string.assign_batch), fontWeight = FontWeight.Bold) },
             text = {
-                androidx.compose.foundation.layout.Column {
-                    Text(stringResource(R.string.enterAlbaranPrompt), fontSize = 14.sp)
+                Column {
+                    Text(stringResource(R.string.enter_batch_prompt), fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     androidx.compose.material3.OutlinedTextField(
                         value = albaranText,
                         onValueChange = { albaranText = it },
-                        label = { Text(stringResource(R.string.albaranNumber)) },
+                        label = { Text(stringResource(R.string.batch_number)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -199,7 +202,7 @@ private fun DashboardTopBar(
                         android.content.Context.MODE_PRIVATE
                     )
                     val finalAlbaran =
-                        albaranText.ifBlank { context.getString(R.string.generalAlbaran) }
+                        albaranText.ifBlank { context.getString(R.string.general_batch) }
                     prefs.edit().putString("current_albaran", finalAlbaran).apply()
                     currentAlbaran = finalAlbaran
                     showAlbaranDialog = false
@@ -208,7 +211,7 @@ private fun DashboardTopBar(
                 }
             },
             dismissButton = {
-                androidx.compose.material3.TextButton(onClick = { showAlbaranDialog = false }) {
+                TextButton(onClick = { showAlbaranDialog = false }) {
                     Text(stringResource(R.string.cancel))
                 }
             }
@@ -239,7 +242,7 @@ private fun DashboardTopBar(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        stringResource(R.string.appName).uppercase(),
+                        stringResource(R.string.app_name).uppercase(),
                         fontSize = if (isLandscape) 16.sp else 13.sp,
                         fontWeight = FontWeight.Black,
                         letterSpacing = if (isLandscape) 2.sp else 1.sp,
@@ -261,7 +264,7 @@ private fun DashboardTopBar(
 
                         NavIconBtn(
                             Icons.Default.ModelTraining,
-                            stringResource(R.string.planoAbbr),
+                            stringResource(R.string.plan_abbr),
                             isLandscape,
                             isDarkMode
                         ) { navController.navigate("golden_sample") }
@@ -280,7 +283,7 @@ private fun DashboardTopBar(
                             isDarkMode
                         ) { navController.navigate("reports") }
 
-                        androidx.compose.material3.TextButton(
+                        TextButton(
                             onClick = {
                                 albaranText = currentAlbaran
                                 showAlbaranDialog = true
@@ -289,7 +292,7 @@ private fun DashboardTopBar(
                             contentPadding = PaddingValues(horizontal = 8.dp)
                         ) {
                             Text(
-                                stringResource(R.string.albAbbr, currentAlbaran),
+                                stringResource(R.string.batch_abbr, currentAlbaran),
                                 color = textPrimary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = if (isLandscape) 12.sp else 10.sp
@@ -399,7 +402,7 @@ private fun DashboardMainContent(
 
             if (!isLandscape) {
                 Text(
-                    stringResource(R.string.systemVersion),
+                    stringResource(R.string.system_version),
                     color = textSecondary.copy(alpha = 0.4f),
                     fontSize = 9.sp,
                     modifier = Modifier
@@ -508,7 +511,7 @@ fun LoadingView(accentColor: Color, textPrimary: Color) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                stringResource(R.string.Analyzing),
+                stringResource(R.string.analyzing),
                 color = textPrimary,
                 fontSize = 11.sp,
                 letterSpacing = 2.sp,
@@ -562,7 +565,7 @@ fun ErrorView(isLandscape: Boolean, viewModel: DashboardViewModel) {
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            stringResource(R.string.inspectionFailed),
+            stringResource(R.string.inspection_failed),
             color = Color.Red,
             fontSize = if (isLandscape) 18.sp else 14.sp,
             fontWeight = FontWeight.Bold
@@ -573,7 +576,7 @@ fun ErrorView(isLandscape: Boolean, viewModel: DashboardViewModel) {
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text(stringResource(R.string.resetSystem), fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.reset_system), fontWeight = FontWeight.Bold)
         }
     }
 }

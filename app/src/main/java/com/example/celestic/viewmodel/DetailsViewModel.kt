@@ -93,3 +93,4 @@ class DetailsViewModel @Inject constructor(
         }
     }
 }
+}

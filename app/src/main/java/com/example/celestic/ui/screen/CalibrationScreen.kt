@@ -138,7 +138,7 @@ private fun CalibrationTopBar(
         title = {
             Column {
                 Text(
-                    stringResource(R.string.calibrationTitle),
+                    stringResource(R.string.calibration_title),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 2.sp,
@@ -146,7 +146,7 @@ private fun CalibrationTopBar(
                 )
                 uiState.calibrationDate?.let { date ->
                     Text(
-                        stringResource(R.string.lastCalibration, date),
+                        stringResource(R.string.last_calibration, date),
                         fontSize = 10.sp,
                         color = Color.Gray
                     )
@@ -157,7 +157,7 @@ private fun CalibrationTopBar(
             IconButton(onClick = onBack) {
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.returnDesc),
+                    contentDescription = stringResource(R.string.return_desc),
                     tint = textColor
                 )
             }
@@ -231,7 +231,7 @@ private fun LandscapeCalibrationContent(
             )
 
             Text(
-                stringResource(R.string.calibrationInstructions),
+                stringResource(R.string.calibration_instructions),
                 color = Color.Gray,
                 fontSize = 11.sp,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -295,7 +295,7 @@ private fun PortraitCalibrationContent(
         )
 
         Text(
-            stringResource(R.string.calibrationInstructions),
+            stringResource(R.string.calibration_instructions),
             color = Color.Gray,
             fontSize = 11.sp,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -339,7 +339,7 @@ private fun CalibrationStatsCard(
             uiState.rmsError?.let { rms ->
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        stringResource(R.string.rmsError),
+                        stringResource(R.string.rms_error),
                         color = Color.Gray,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold
@@ -400,7 +400,7 @@ private fun CalibrationButtons(
     ) {
         Icon(Icons.Default.Camera, contentDescription = null)
         Spacer(modifier = Modifier.width(8.dp))
-        Text(stringResource(R.string.Capture), fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.capture), fontWeight = FontWeight.Bold)
     }
 
     // El Spacer depende de si es Columna o Fila, pero podemos usar un Box o manejarlo fuera.
@@ -456,8 +456,8 @@ private fun CaptureStatusOverlay(
                     .padding(horizontal = 12.dp, vertical = 6.dp)
             ) {
                 Text(
-                    if (isSuccess) stringResource(R.string.patternDetected)
-                    else stringResource(R.string.patternNotVisible),
+                    if (isSuccess) stringResource(R.string.pattern_detected)
+                    else stringResource(R.string.pattern_not_visible),
                     color = Color.White,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold

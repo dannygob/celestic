@@ -17,20 +17,32 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Clasificador de defectos usando TensorFlow Lite
- * Clasifica cada ROI detectada en: OK, Defectuoso, Leve, Severo, etc.
+ * DefectClassifier performs defect classification on detected ROIs using TensorFlow Lite.
+ *
+ * Responsibilities:
+ * - Load a TFLite model (with optional GPU acceleration)
+ * - Preprocess ROI bitmaps
+ * - Run inference and obtain class probabilities
+ * - Map raw model outputs to defect categories
+ * - Filter predictions based on the detection type (hole, countersink, scratch, etc.)
  */
 @Singleton
 class DefectClassifier @Inject constructor(
     @field:ApplicationContext private val context: Context
 ) {
+
     private var interpreter: Interpreter? = null
     private var gpuDelegate: GpuDelegate? = null
 
-    private val inputSize = 224 // MobileNetV3 input
-    private val numChannels = 3
+    private val inputSize = 224   // MobileNetV3 input resolution
+    private val numChannels = 3   // RGB
 
-    // Clases de defectos
+    /**
+     * Enumeration of all supported defect classes.
+     * Each class has:
+     * - an ID (matching the model output index)
+     * - a label used internally
+     */
     enum class DefectClass(val id: Int, val label: String) {
         HOLE_OK(0, "agujero_ok"),
         HOLE_DEFECTIVE(1, "agujero_defectuoso"),
@@ -46,37 +58,44 @@ class DefectClassifier @Inject constructor(
         ALODINE_IRREGULAR(11, "alodine_irregular")
     }
 
+    /**
+     * Loads the TFLite model and configures the interpreter.
+     * Attempts to enable GPU acceleration if supported.
+     */
     private fun loadModel() {
         try {
-            // Configurar opciones del intérprete
             val options = Interpreter.Options()
 
-            // Intentar usar GPU delegate si está disponible
+            // Try enabling GPU delegate
             val compatList = CompatibilityList()
             if (compatList.isDelegateSupportedOnThisDevice) {
                 try {
                     val delegate = GpuDelegate()
                     gpuDelegate = delegate
                     options.addDelegate(delegate)
-                    Log.d(TAG, "GPU delegate habilitado")
+                    Log.d(TAG, "GPU delegate enabled")
                 } catch (e: Exception) {
-                    Log.w(TAG, "GPU no disponible, usando CPU", e)
+                    Log.w(TAG, "GPU unavailable, falling back to CPU", e)
                 }
             }
 
-            // Configurar número de threads
+            // Configure CPU threads
             options.setNumThreads(4)
 
-            // Cargar modelo
+            // Load model file
             val modelBuffer = loadModelFile()
             interpreter = Interpreter(modelBuffer, options)
 
-            Log.d(TAG, "Modelo TFLite cargado exitosamente")
+            Log.d(TAG, "TFLite model loaded successfully")
+
         } catch (e: Exception) {
-            Log.e(TAG, "Error al cargar modelo TFLite", e)
+            Log.e(TAG, "Error loading TFLite model", e)
         }
     }
 
+    /**
+     * Input buffer used to store normalized image data.
+     */
     private val inputBuffer: ByteBuffer by lazy {
         ByteBuffer.allocateDirect(4 * inputSize * inputSize * numChannels).apply {
             order(ByteOrder.nativeOrder())
@@ -84,45 +103,54 @@ class DefectClassifier @Inject constructor(
     }
 
     /**
-     * Clasifica una imagen (ROI) según el tipo de detección
+     * Classifies a bitmap ROI according to the detection type.
+     *
+     * Steps:
+     * 1. Load model if needed
+     * 2. Preprocess bitmap
+     * 3. Run inference
+     * 4. Extract highest‑confidence class
+     * 5. Filter class based on detection type
      */
     fun classify(
         bitmap: Bitmap,
         detectionType: DNNDetector.DetectionClass
     ): ClassificationResult {
+
         if (interpreter == null) {
-            Log.w(TAG, "Modelo no cargado, intentando cargar...")
+            Log.w(TAG, "Model not loaded, attempting to load...")
             loadModel()
+
             if (interpreter == null) {
                 return ClassificationResult(
                     defectClass = DefectClass.HOLE_OK,
                     confidence = 0f,
-                    error = "Modelo no cargado"
+                    error = "Model not loaded"
                 )
             }
         }
 
-        try {
-            // 1. Preprocesar imagen
+        return try {
+            // Preprocess image
             preprocessImage(bitmap)
 
-            // 2. Preparar output
+            // Prepare output buffer
             val outputArray = Array(1) { FloatArray(DefectClass.entries.size) }
 
-            // 3. Ejecutar inferencia
+            // Run inference
             val startTime = System.currentTimeMillis()
             interpreter?.run(inputBuffer, outputArray)
             val inferenceTime = System.currentTimeMillis() - startTime
 
-            // 4. Post-procesamiento
+            // Extract probabilities
             val probabilities = outputArray[0]
             val maxIndex = probabilities.indices.maxByOrNull { probabilities[it] } ?: 0
             val maxConfidence = probabilities[maxIndex]
 
-            // 5. Filtrar por tipo de detección
+            // Filter class based on detection type
             val relevantClass = filterByDetectionType(maxIndex, detectionType)
 
-            return ClassificationResult(
+            ClassificationResult(
                 defectClass = relevantClass,
                 confidence = maxConfidence,
                 probabilities = probabilities.toList(),
@@ -130,8 +158,8 @@ class DefectClassifier @Inject constructor(
             )
 
         } catch (e: Exception) {
-            Log.e(TAG, "Error en clasificación", e)
-            return ClassificationResult(
+            Log.e(TAG, "Classification error", e)
+            ClassificationResult(
                 defectClass = DefectClass.HOLE_OK,
                 confidence = 0f,
                 error = e.message
@@ -140,82 +168,68 @@ class DefectClassifier @Inject constructor(
     }
 
     /**
-     * Preprocesa la imagen para el modelo
+     * Preprocesses the bitmap into a normalized ByteBuffer compatible with the model.
      */
     private fun preprocessImage(bitmap: Bitmap) {
         MLUtils.fillBufferFromBitmap(bitmap, inputSize, inputBuffer, useImageNetNorm = true)
     }
 
-
     /**
-     * Filtra el resultado de clasificación según el tipo de detección
+     * Maps the raw model output class ID to a valid defect class,
+     * constrained by the detection type (hole, countersink, scratch, etc.).
      */
     private fun filterByDetectionType(
         classId: Int,
         detectionType: DNNDetector.DetectionClass
     ): DefectClass {
-        // Mapear resultado según el tipo de detección
+
         return when (detectionType) {
-            DNNDetector.DetectionClass.HOLE -> {
-                when (classId) {
-                    0, 1 -> DefectClass.entries[classId]
-                    else -> DefectClass.HOLE_OK
-                }
-            }
 
-            DNNDetector.DetectionClass.COUNTERSINK -> {
-                when (classId) {
-                    2, 3 -> DefectClass.entries[classId]
-                    else -> DefectClass.COUNTERSINK_OK
-                }
-            }
+            DNNDetector.DetectionClass.HOLE ->
+                if (classId in 0..1) DefectClass.entries[classId] else DefectClass.HOLE_OK
 
-            DNNDetector.DetectionClass.SCRATCH -> {
-                when (classId) {
-                    4, 5, 6 -> DefectClass.entries[classId]
-                    else -> DefectClass.SCRATCH_NONE
-                }
-            }
+            DNNDetector.DetectionClass.COUNTERSINK ->
+                if (classId in 2..3) DefectClass.entries[classId] else DefectClass.COUNTERSINK_OK
 
-            DNNDetector.DetectionClass.DEFORMATION -> {
-                when (classId) {
-                    7, 8 -> DefectClass.entries[classId]
-                    else -> DefectClass.DEFORMATION_OK
-                }
-            }
+            DNNDetector.DetectionClass.SCRATCH ->
+                if (classId in 4..6) DefectClass.entries[classId] else DefectClass.SCRATCH_NONE
 
-            DNNDetector.DetectionClass.ALODINE_HALO -> {
-                when (classId) {
-                    9, 10, 11 -> DefectClass.entries[classId]
-                    else -> DefectClass.ALODINE_OK
-                }
-            }
+            DNNDetector.DetectionClass.DEFORMATION ->
+                if (classId in 7..8) DefectClass.entries[classId] else DefectClass.DEFORMATION_OK
 
-            else -> DefectClass.entries.getOrNull(classId) ?: DefectClass.HOLE_OK
+            DNNDetector.DetectionClass.ALODINE_HALO ->
+                if (classId in 9..11) DefectClass.entries[classId] else DefectClass.ALODINE_OK
+
+            else ->
+                DefectClass.entries.getOrNull(classId) ?: DefectClass.HOLE_OK
         }
     }
 
     /**
-     * Carga el archivo del modelo desde assets
+     * Loads the TFLite model file from assets and memory‑maps it.
      */
     private fun loadModelFile(): MappedByteBuffer {
         val fileDescriptor = context.assets.openFd(MODEL_PATH)
         val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
         val fileChannel = inputStream.channel
-        val startOffset = fileDescriptor.startOffset
-        val declaredLength = fileDescriptor.declaredLength
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
+        return fileChannel.map(
+            FileChannel.MapMode.READ_ONLY,
+            fileDescriptor.startOffset,
+            fileDescriptor.declaredLength
+        )
     }
 
     /**
-     * Libera recursos del clasificador
+     * Releases interpreter and GPU delegate resources.
      */
     fun release() {
         interpreter?.close()
         interpreter = null
+
         gpuDelegate?.close()
         gpuDelegate = null
-        Log.d(TAG, "Recursos del clasificador liberados")
+
+        Log.d(TAG, "Classifier resources released")
     }
 
     companion object {
@@ -225,7 +239,7 @@ class DefectClassifier @Inject constructor(
 }
 
 /**
- * Resultado de clasificación
+ * Classification result returned by the classifier.
  */
 data class ClassificationResult(
     val defectClass: DefectClassifier.DefectClass,

@@ -20,32 +20,56 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
+/**
+ * Manages camera calibration using OpenCV's ChArUco board detection.
+ *
+ * Responsibilities:
+ * - Load and save calibration data (camera matrix + distortion coefficients)
+ * - Collect calibration frames using ChArUco markers
+ * - Run full camera calibration
+ * - Estimate scale factors and distances using calibration results
+ * - Detect low‑end devices and adjust processing limits
+ */
 @javax.inject.Singleton
 class CalibrationManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
 
+    /** Intrinsic camera matrix (3x3) loaded from calibration or computed during calibration. */
     var cameraMatrix: Mat? = null
+
+    /** Lens distortion coefficients (k1, k2, p1, p2, k3). */
     var distortionCoeffs: Mat? = null
+
+    /** Resolution used during calibration (width, height). */
     var resolution: Pair<Int, Int>? = null
+
+    /** Timestamp of the last calibration. */
     var calibrationDate: String? = null
 
+    /** File where calibration data is stored in JSON format. */
     private val calibrationFile = File(context.filesDir, "config/calibration.json")
 
     init {
         loadCalibration()
     }
 
+    /**
+     * Loads calibration data from disk if available.
+     * @return true if calibration was successfully loaded.
+     */
     private fun loadCalibration(): Boolean {
         return try {
             if (!calibrationFile.exists()) return false
+
             val json = JSONObject(FileInputStream(calibrationFile).bufferedReader().use { it.readText() })
 
-            // Parse cameraMatrix (expect an OpenCV String dump or an array)
+            // Parse camera matrix
             val matrixData = json.getString("cameraMatrix")
             cameraMatrix?.release()
             cameraMatrix = stringToMat(matrixData, 3, 3)
 
+            // Parse distortion coefficients
             val distData = json.getString("distortionCoeffs")
             distortionCoeffs?.release()
             distortionCoeffs = stringToMat(distData, 1, 5)
@@ -58,6 +82,9 @@ class CalibrationManager @Inject constructor(
         }
     }
 
+    /**
+     * Converts a serialized matrix string (OpenCV dump format) into a Mat object.
+     */
     private fun stringToMat(data: String, rows: Int, cols: Int): Mat {
         val mat = Mat(rows, cols, CvType.CV_64F)
         val cleanData = data.replace("[", "").replace("]", "").replace(";", "").trim()
@@ -68,59 +95,55 @@ class CalibrationManager @Inject constructor(
     }
 
     /**
-     * Calculates the scale factor (mm per pixel) based on calibration and distance to the object.
-     * If no calibration exists, returns 1.0 (pixel = pixel).
-     * @param distanceMm Approximate distance from camera to object in mm.
-     * @return Scale factor (mm/pixel)
+     * Computes the scale factor (mm per pixel) based on calibration and distance.
+     * If calibration is missing, returns a fallback approximation.
      */
     fun getScaleFactor(distanceMm: Double): Double {
-        val mat = cameraMatrix
-            ?: return 0.264 // Default approx: 1 px ~= 0.264 mm (96 DPI) as fallback if totally unknown
+        val mat = cameraMatrix ?: return 0.264 // Fallback: ~96 DPI
 
-        // fx: focal distance in pixels (x-axis)
         val fx = mat.get(0, 0)[0]
-
-        // Relationship: x_mm / z_mm = u_px / fx_px
-        // x_mm/u_px = z_mm / fx_px
-        // scale (mm/px) = Z / fx
-
         val scale = distanceMm / fx
+
         return if (scale.isNaN() || scale.isInfinite() || scale == 0.0) 0.264 else scale
     }
 
     /**
-     * Calculates estimated distance (Z) to a known marker.
-     * @param detectedMarkerWidthPx Width of detected marker in image (pixels)
-     * @param realMarkerSizeMm Real size of the marker (mm)
-     * @return distance Z in mm
+     * Estimates the distance from the camera to a marker using pinhole projection.
+     *
+     * Z = (real_size_mm * focal_length_px) / detected_size_px
      */
     fun estimateDistance(detectedMarkerWidthPx: Double, realMarkerSizeMm: Double): Double {
-        val mat = cameraMatrix ?: return 1000.0 // Default 1m
+        val mat = cameraMatrix ?: return 1000.0 // Default 1 meter
         val fx = mat.get(0, 0)[0]
-
-        // Z = (real_size * fx) / pixel_size
         return (realMarkerSizeMm * fx) / detectedMarkerWidthPx
     }
 
-    // Hardware Profile: Optimización de recursos evaluando RAM y procesadores
+    // ===== HARDWARE PROFILING =====
+
+    /**
+     * Detects whether the device is low‑end based on CPU cores and RAM.
+     * Used to reduce calibration frame count on weaker devices.
+     */
     val isLowEndDevice: Boolean by lazy {
         val cores = Runtime.getRuntime().availableProcessors()
         val totalMemoryMB = Runtime.getRuntime().maxMemory() / (1024 * 1024)
+
         val actManager =
             context.getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
         val memInfo = android.app.ActivityManager.MemoryInfo()
         actManager.getMemoryInfo(memInfo)
         val ramGB = memInfo.totalMem / (1024.0 * 1024.0 * 1024.0)
 
-        // Considerado de bajos recursos si tiene 4 núcleos o menos, menos de 3.5GB de RAM.
         cores <= 4 || ramGB < 3.5 || totalMemoryMB < 256
     }
 
+    /** Maximum number of calibration frames allowed based on device performance. */
     val maxFrames: Int by lazy {
         if (isLowEndDevice) 10 else 20
     }
 
-    // Lists to accumulate captures
+    // ===== CHARUCO CALIBRATION DATA =====
+
     private val allCharucoCorners = mutableListOf<Mat>()
     private val allCharucoIds = mutableListOf<Mat>()
     private var imageSize: Size? = null
@@ -129,8 +152,10 @@ class CalibrationManager @Inject constructor(
     private val board by lazy { CharucoBoard(Size(5.0, 7.0), 0.04f, 0.02f, dictionary) }
     private val detector by lazy { CharucoDetector(board) }
 
+    /** Returns how many calibration frames have been captured. */
     fun getCapturedFramesCount(): Int = allCharucoCorners.size
 
+    /** Clears all stored calibration frames. */
     fun resetData() {
         allCharucoCorners.forEach { it.release() }
         allCharucoIds.forEach { it.release() }
@@ -138,11 +163,13 @@ class CalibrationManager @Inject constructor(
         allCharucoIds.clear()
     }
 
+    /**
+     * Adds a calibration frame by detecting ChArUco corners.
+     * Returns true if the frame contains enough valid corners.
+     */
     fun addCalibrationFrame(image: Mat): Boolean {
         if (allCharucoCorners.size >= maxFrames) return false
 
-        // Convertir la imagen a escala de grises para procesar en 1 canal de color en lugar de 4.
-        // Mejora el rendimiento detectando características consumiendo menos CPU y memoria.
         val gray = Mat()
         org.opencv.imgproc.Imgproc.cvtColor(image, gray, org.opencv.imgproc.Imgproc.COLOR_RGBA2GRAY)
 
@@ -159,12 +186,12 @@ class CalibrationManager @Inject constructor(
                 allCharucoIds.add(charucoIds.clone())
                 imageSize = gray.size()
                 true
-            } else {
-                false
-            }
+            } else false
+
         } catch (e: Exception) {
-            Log.e("CalibrationManager", "Error procesando el sub-frame de calibración", e)
+            Log.e("CalibrationManager", "Error processing calibration frame", e)
             return false
+
         } finally {
             gray.release()
             charucoCorners.release()
@@ -174,6 +201,10 @@ class CalibrationManager @Inject constructor(
         }
     }
 
+    /**
+     * Runs full camera calibration using all collected ChArUco frames.
+     * @return RMS reprojection error, or negative value on failure.
+     */
     fun runCalibration(): Double {
         val size = imageSize ?: return -1.0
 
@@ -199,6 +230,7 @@ class CalibrationManager @Inject constructor(
                             objPoints.release()
                             imgPoints.release()
                         }
+
                     } catch (e: Exception) {
                         Log.e("CalibrationManager", "Error matching points frame $i", e)
                         objPoints.release()
@@ -214,32 +246,39 @@ class CalibrationManager @Inject constructor(
             val rvecs = ArrayList<Mat>()
             val tvecs = ArrayList<Mat>()
 
-            val rms =
-                Calib3d.calibrateCamera(allObjectPoints, allImagePoints, size, cameraMat, distCoeffs, rvecs, tvecs)
+            val rms = Calib3d.calibrateCamera(
+                allObjectPoints, allImagePoints, size,
+                cameraMat, distCoeffs, rvecs, tvecs
+            )
 
             if (rms > 0) {
                 this.cameraMatrix?.release()
                 this.cameraMatrix = cameraMat
+
                 this.distortionCoeffs?.release()
                 this.distortionCoeffs = distCoeffs
+
                 saveCalibrationToJson(cameraMat, distCoeffs, Pair(size.width.toInt(), size.height.toInt()))
             }
 
-            // Cleanup rotation and translation vectors as they are huge and not saved
             rvecs.forEach { it.release() }
             tvecs.forEach { it.release() }
 
             return rms
+
         } catch (e: Exception) {
             Log.e("CalibrationManager", "Fatal error in calibrateCamera", e)
             return -3.0
+
         } finally {
             allObjectPoints.forEach { it.release() }
             allImagePoints.forEach { it.release() }
         }
     }
 
-
+    /**
+     * Saves calibration results to a JSON file for persistent storage.
+     */
     fun saveCalibrationToJson(cameraMatrix: Mat, distortionCoeffs: Mat, resolution: Pair<Int, Int>) {
         val json = JSONObject()
         json.put("cameraMatrix", cameraMatrix.dump())
@@ -248,6 +287,7 @@ class CalibrationManager @Inject constructor(
             "calibrationDate",
             SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
         )
+
         calibrationFile.parentFile?.mkdirs()
         calibrationFile.writeText(json.toString())
     }

@@ -1,204 +1,203 @@
 <resources>
     <!-- App Info -->
-    <string name="appName">Celestic</string>
+    <string name="app_name">Celestic</string>
 
     <!-- Common Actions -->
-    <string name="Back">Volver</string>
-    <string name="OK">Aceptar</string>
-    <string name="Login">Iniciar Sesión</string>
-    <string name="Retry">Reintentar</string>
-    <string name="Capture">Capturar</string>
+    <string name="back">Volver</string>
+    <string name="ok">Aceptar</string>
+    <string name="login">Iniciar Sesión</string>
+    <string name="retry">Reintentar</string>
+    <string name="capture">Capturar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="save">Guardar</string>
+    <string name="reset">Reiniciar</string>
+    <string name="start">INICIAR</string>
+    <string name="stop">PARAR</string>
 
     <!-- Auth -->
-    <string name="Email">Correo electrónico</string>
-    <string name="Password">Contraseña</string>
-
+    <string name="email">Correo electrónico</string>
+    <string name="password">Contraseña</string>
+    <string name="fill_all_fields">Por favor, rellene todos los campos</string>
+    <string name="auth_error">Error de autenticación</string>
+    <string name="offline_mode">Modo Offline / Firebase no inicializado</string>
+    <string name="remember_user">Recordar usuario</string>
 
     <!-- Permissions -->
     <string name="camera_permission_denied">Permiso de cámara denegado.</string>
-
+    <string name="permissions_required">Permisos Requeridos</string>
+    <string name="permissions_desc">Para que Celestic funcione correctamente, necesitamos acceso a los siguientes servicios del sistema.</string>
+    <string name="permissions_warning">Celestic no funcionará si no se conceden los permisos.</string>
+    <string name="grant_permissions">CONCEDER PERMISOS</string>
 
     <!-- Technical Errors -->
-    <string name="errorOpenCvInit">Error al inicializar OpenCV</string>
-    <string name="errorInference">Error de inferencia</string>
-    <string name="errorCameraInit">Error de inicialización de cámara</string>
-    <string name="errorInspection">Error de inspección</string>
+    <string name="error_opencv_init">Error al inicializar OpenCV</string>
+    <string name="error_inference">Error de inferencia</string>
+    <string name="error_camera_init">Error de inicialización de cámara</string>
+    <string name="error_inspection">Error de inspección</string>
+    <string name="error_initializing_model">Error al inicializar modelo</string>
 
     <!-- Details Screens -->
-    <string name="detailsHole">Detalles del Agujero</string>
-    <string name="detailsAlodine">Detalles de Alodine</string>
-    <string name="detailsCountersink">Detalles del Avellanado</string>
+    <string name="details_hole">Detalles del Agujero</string>
+    <string name="details_alodine">Detalles de Alodine</string>
+    <string name="details_countersink">Detalles del Avellanado</string>
+    <string name="detailed_analysis">Análisis Detallado</string>
 
     <!-- Welcome / General -->
-    <string name="welcomeMessage">Bienvenido a Celestic Detector</string>
+    <string name="welcome_message">Bienvenido a Celestic Detector</string>
     <string name="loading">Cargando...</string>
-    <string name="languageSettingHint">El idioma se cambia en los ajustes del sistema.</string>
-
+    <string name="language_setting_hint">El idioma se cambia en los ajustes del sistema.</string>
+    <string name="system_version">Sistema de Visión Celestic v2.0</string>
+    <string name="industrial_edition">v2.0 Edición Industrial</string>
+    <string name="precision_vision_system">SISTEMA DE VISIÓN DE PRECISIÓN</string>
 
     <!-- Inspection Flow -->
-    <string name="inspectionStart">Iniciar inspección</string>
-    <string name="inspectionProcessing">Procesando inspección...</string>
-    <string name="Analyzing">Analizando...</string>
-    <string name="inspectionApproved">Inspección aprobada</string>
-    <string name="inspectionRedirecting">Redirigiendo a detalles...</string>
+    <string name="inspection_start">Iniciar inspección</string>
+    <string name="inspection_processing">Procesando inspección...</string>
+    <string name="analyzing">Analizando...</string>
+    <string name="inspection_approved">Inspección aprobada</string>
+    <string name="inspection_redirecting">Redirigiendo a detalles...</string>
+    <string name="inspection_finished">Inspección Finalizada</string>
+    <string name="inspection_failed">INSPECCIÓN FALLIDA</string>
+    <string name="inspection_approved_status">INSPECCIÓN APROBADA</string>
+    <string name="inspection_rejected_status">INSPECCIÓN RECHAZADA</string>
+    <string name="part_processed">La pieza ha sido procesada. ¿Qué desea hacer?</string>
+    <string name="new_inspection">Nueva inspección</string>
 
     <!-- Component Scan -->
-    <string name="scanComponent">Escanear componente</string>
+    <string name="scan_component">Escanear componente</string>
 
     <!-- Issue Reporting -->
-    <string name="reportIssue">Informar problema</string>
+    <string name="report_issue">Informar problema</string>
+    <string name="report_issue_sent">Reporte de incidencia enviado</string>
+    <string name="report_anomaly">INFORMAR ANOMALÍA DE INSPECCIÓN</string>
 
     <!-- Status Labels -->
-    <string name="statusPassed">Pieza aprobada</string>
-    <string name="statusWarning">Revisión recomendada</string>
-    <string name="statusFailed">Fallo crítico</string>
-
-    <!-- Calibration -->
-    <string name="calibrationOpen">Abrir Calibración</string>
-    <string name="calibrationSection">Calibración</string>
-    <string name="calibrationOpening">Abriendo calibración...</string>
-
-    <!-- Reports -->
-    <string name="reportGenerate">Generar Informe</string>
-    <string name="reportGenerateConfirm">¿Desea generar el informe de inspección?</string>
-    <string name="reportRequesting">Solicitando informe...</string>
-    <string name="reportSection">Informes</string>
-
-
-    <!-- Dashboard -->
-    <string name="dashboardTitle">Panel Celestic</string>
-    <string name="dashboardOpenDetails">Abriendo detalles...</string>
-    <string name="viewHistory">Ver Historial</string>
-
-
-    <!-- Analysis Modes -->
-    <string name="analysisModes">Modos de Análisis</string>
-
-    <string name="modeBodywork">Carrocería</string>
-    <string name="modeBodyworkActivated">Modo carrocería activado</string>
-
-    <string name="modePrecision">Precisión</string>
-    <string name="modePrecisionActivated">Modo precisión activado</string>
-
-    <!--    <string name="modeMetals">Metales</string>-->
-    <!--    <string name="modeMetalsActivated">Modo metales activado</string>-->
-    <string name="celesticMode">Celestic</string>
-    <string name="CalibrationOpen">Calibración Abierta</string>
-    <string name="opencv_init_error">Error de inicialización de OpenCV</string>
-    <string name="capture">Capturar</string>
-    <string name="analyzing">Analizando</string>
-    <string name="retry">Reintentar</string>
-    <string name="email">Correo electrónico</string>
-    <string name="password">Contraseña</string>
-    <string name="login">Iniciar Sesión</string>
-    <string name="ok">Aceptar</string>
-    <string name="back">Volver</string>
-
-    <!-- Dashboard & Details -->
-    <string name="systemVersion">Sistema de Visión Celestic v2.0</string>
+    <string name="status_passed">Pieza aprobada</string>
+    <string name="status_warning">Revisión recomendada</string>
+    <string name="status_failed">Fallo crítico</string>
+    <string name="status_label">ESTADO: %1$s</string>
+    <string name="final_status">Estado Final</string>
     <string name="standby">ESPERA</string>
     <string name="success">ÉXITO</string>
-    <string name="inspectionFailed">INSPECCIÓN FALLIDA</string>
-    <string name="resetSystem">REINICIAR SISTEMA</string>
-    <string name="returnToDashboard">Volver al Panel</string>
-    <string name="statusLabel">ESTADO: %1$s</string>
-    <string name="batch_label">Lote: %1$s</string>
-    <string name="start">INICIAR</string>
-    <string name="stop">PARAR</string>
+
+    <!-- Calibration -->
+    <string name="calibration_title">CALIBRACIÓN</string>
+    <string name="calibration_open">Abrir Calibración</string>
+    <string name="calibration_section">Calibración</string>
+    <string name="calibration_opening">Abriendo calibración...</string>
+    <string name="last_calibration">Última: %1$s</string>
+    <string name="pattern_detected">PATRÓN DETECTADO</string>
+    <string name="pattern_not_visible">PATRÓN NO VISIBLE</string>
+    <string name="captures">CAPTURAS</string>
+    <string name="rms_error">ERROR RMS</string>
+    <string name="calibrate">CALIBRAR</string>
+    <string name="calibration_instructions">Mueva el patrón a diferentes ángulos.</string>
     <string name="cal_abbr">CAL</string>
-    <string name="hist_abbr">HIST</string>
+
+    <!-- Reports -->
+    <string name="reports_title">INFORMES</string>
+    <string name="reports_module">MÓDULO DE INFORMES</string>
+    <string name="reports_select_range">Seleccione un rango de fechas para generar estadísticas.</string>
+    <string name="generate_pdf_report">GENERAR INFORME PDF</string>
+    <string name="report_generate">Generar Informe</string>
+    <string name="report_generate_confirm">¿Desea generar el informe de inspección?</string>
+    <string name="report_requesting">Solicitando informe...</string>
+    <string name="report_section">Informes</string>
+    <string name="view_reports">Ver informes</string>
+    <string name="download_report">DESCARGAR INFORME</string>
+    <string name="share_report">COMPARTIR INFORME</string>
+    <string name="select_report_format">Seleccionar formato de informe</string>
     <string name="rep_abbr">INF</string>
-    <string name="blueprint_desc">Imagen del Plano</string>
 
-    <!-- Details Screen -->
-    <string name="visualAnalysis">VISUALIZACIÓN TÉCNICA</string>
-    <string name="detectionsHeadline">DETECCIONES</string>
-    <string name="traceabilityHeadline">TRAZABILIDAD</string>
-    <string name="detailedAnalysis">Análisis Detallado</string>
-    <string name="partCode">Código Pieza</string>
-    <string name="modelType">Modelo/Tipo</string>
-    <string name="operator">Operario</string>
-    <string name="inspectionDate">Fecha Inspección</string>
-    <string name="finalStatus">Estado Final</string>
-    <string name="noTraceability">Sin información de trazabilidad disponible.</string>
-    <string name="reportIssueSent">Reporte de incidencia enviado</string>
-
-    <!-- Settings -->
-    <string name="settingsTitle">CONFIGURACIÓN</string>
-    <string name="returnDesc">Regresar</string>
-    <string name="unitsPreferences">UNIDADES Y PREFERENCIAS</string>
-    <string name="imperialSystem">Sistema Imperial (Pulgadas)</string>
-    <string name="imperialSystemDesc">Alternar entre milímetros y pulgadas</string>
-    <string name="aprilTagDetection">Detección AprilTag</string>
-    <string name="aprilTagDetectionDesc">Usar AprilTag en lugar de ArUco</string>
-    <string name="appearance">APARIENCIA</string>
-    <string name="darkMode">Modo Oscuro</string>
-    <string name="darkModeDesc">Forzar interfaz de alto contraste</string>
-    <string name="hardwareOptics">HARDWARE Y ÓPTICA</string>
-    <string name="opticsAutoAdjust">Las especificaciones ópticas se ajustan automáticamente según el perfil del hardware detectado para optimizar la precisión.</string>
+    <!-- Dashboard -->
+    <string name="dashboard_title">Panel Celestic</string>
+    <string name="dashboard_open_details">Abriendo detalles...</string>
+    <string name="view_history">Ver Historial</string>
+    <string name="hist_abbr">HIST</string>
 
     <!-- Analysis Modes -->
-    <string name="modeMetals">Metales</string>
-    <string name="modeMetalsActivated">Modo metales activado</string>
+    <string name="analysis_modes">Modos de Análisis</string>
+    <string name="mode_bodywork">Carrocería</string>
+    <string name="mode_bodywork_activated">Modo carrocería activado</string>
+    <string name="mode_precision">Precisión</string>
+    <string name="mode_precision_activated">Modo precisión activado</string>
+    <string name="mode_metals">Metales</string>
+    <string name="mode_metals_activated">Modo metales activado</string>
+    <string name="celestic_mode">Celestic</string>
 
-    <!-- Calibration Screen -->
-    <string name="calibrationTitle">CALIBRACIÓN</string>
-    <string name="lastCalibration">Última: %1$s</string>
-    <string name="reset">Reiniciar</string>
-    <string name="patternDetected">PATRÓN DETECTADO</string>
-    <string name="patternNotVisible">PATRÓN NO VISIBLE</string>
-    <string name="captures">CAPTURAS</string>
-    <string name="rmsError">ERROR RMS</string>
-    <string name="calibrate">CALIBRAR</string>
-    <string name="calibrationInstructions">Mueva el patrón a diferentes ángulos.</string>
+    <!-- Traceability & Batch -->
+    <string name="traceability_headline">TRAZABILIDAD</string>
+    <string name="part_code">Código Pieza</string>
+    <string name="model_type">Modelo/Tipo</string>
+    <string name="operator">Operario</string>
+    <string name="inspection_date">Fecha Inspección</string>
+    <string name="no_traceability">Sin información de trazabilidad disponible.</string>
+    <string name="batch_label">Lote: %1$s</string>
+    <string name="batch_id_label">ID de Lote: %1$s</string>
+    <string name="assign_batch">Asignar Lote</string>
+    <string name="enter_batch_prompt">Ingrese el número de lote o albarán para esta inspección:</string>
+    <string name="batch_number">Número de Lote</string>
+    <string name="batch_abbr">LOTE: %1$s</string>
+    <string name="operative_shift">Turno Operativo</string>
+    <string name="unknown_operator">Operador Desconocido</string>
+    <string name="unassigned_shift">Turno no asignado</string>
+    <string name="general_batch">GENERAL</string>
+    <string name="operator_label">Operador: %1$s</string>
+    <string name="shift_label">Turno: %1$s</string>
+    <string name="date_label">Fecha: %1$s</string>
+    <string name="report_header">Reporte de Inspección - Lote: %1$s</string>
 
-    <!-- Status Screen -->
-    <string name="systemStatus">ESTADO DEL SISTEMA</string>
-    <string name="hardwareInfo">INFO DE HARDWARE</string>
-    <string name="softwareInfo">INFO DE SOFTWARE</string>
+    <!-- Settings -->
+    <string name="settings_title">CONFIGURACIÓN</string>
+    <string name="return_desc">Regresar</string>
+    <string name="units_preferences">UNIDADES Y PREFERENCIAS</string>
+    <string name="imperial_system">Sistema Imperial (Pulgadas)</string>
+    <string name="imperial_system_desc">Alternar entre milímetros y pulgadas</string>
+    <string name="apriltag_detection">Detección AprilTag</string>
+    <string name="apriltag_detection_desc">Usar AprilTag en lugar de ArUco</string>
+    <string name="appearance">APARIENCIA</string>
+    <string name="dark_mode">Modo Oscuro</string>
+    <string name="dark_mode_desc">Forzar interfaz de alto contraste</string>
+    <string name="hardware_optics">HARDWARE Y ÓPTICA</string>
+    <string name="optics_auto_adjust">Las especificaciones ópticas se ajustan automáticamente según el perfil del hardware detectado para optimizar la precisión.</string>
+
+    <!-- System Info -->
+    <string name="system_status">ESTADO DEL SISTEMA</string>
+    <string name="hardware_info">INFO DE HARDWARE</string>
+    <string name="software_info">INFO DE SOFTWARE</string>
     <string name="configuration">CONFIGURACIÓN</string>
-
-    <!-- Login -->
-    <string name="fillAllFields">Por favor, rellene todos los campos</string>
-    <string name="authError">Error de autenticación</string>
-    <string name="offlineMode">Modo Offline / Firebase no inicializado</string>
-
-    <!-- Reports Screen -->
-    <string name="reportsTitle">INFORMES</string>
-    <string name="reportsModule">MÓDULO DE INFORMES</string>
-    <string name="reportsSelectRange">Seleccione un rango de fechas para generar estadísticas.</string>
-    <string name="generatePdfReport">GENERAR INFORME PDF</string>
-
-    <string name="shareReport">COMPARTIR INFORME</string>
-    <string name="forceApproval">FORZAR APROBACIÓN (FALSO POSITIVO)</string>
-    <string name="inspectionApprovedStatus">INSPECCIÓN APROBADA</string>
-    <string name="inspectionRejectedStatus">INSPECCIÓN RECHAZADA</string>
-    <string name="batchIdLabel">Batch ID: %1$s</string>
-
-    <!-- Albaran and Reports -->
-    <string name="assignAlbaran">Asignar Albarán</string>
-    <string name="enterAlbaranPrompt">Ingrese el número de albarán o lote para esta inspección:</string>
-    <string name="albaranNumber">Número de Albarán</string>
-    <string name="save">Guardar</string>
-    <string name="albAbbr">ALB: %1$s</string>
-
-    <string name="reportHeader">Reporte de Inspección - Albarán: %1$s</string>
-    <string name="operatorLabel">Operador: %1$s</string>
-    <string name="shiftLabel">Turno: %1$s</string>
-    <string name="dateLabel">Fecha: %1$s</string>
-    <string name="unknownOperator">Operador Desconocido</string>
-    <string name="unassignedShift">Turno no asignado</string>
-    <string name="generalAlbaran">GENERAL</string>
+    <string name="go_to_technical_details">Ir a detalle técnico</string>
+    <string name="no_records">No se encontraron registros.</string>
 
     <!-- Golden Sample -->
-    <string name="goldenSampleTitle">Plano Maestro (Golden Sample)</string>
-    <string name="blueprintConfig">Configuración del Plano</string>
-    <string name="partCodeLabel">Código de Pieza (ej. PUERTA-X1)</string>
-    <string name="hasTwoFacesLabel">¿La pieza tiene Anverso y Reverso?</string>
-    <string name="captureObverse">Capturar Anverso</string>
-    <string name="captureReverse">Capturar Reverso</string>
-    <string name="saveBlueprintBtn">GUARDAR PLANO MAESTRO</string>
-    <string name="ptsAbbr">%1$d pt</string>
-    <string name="planoAbbr">PLANO</string>
+    <string name="golden_sample_title">Plano Maestro (Golden Sample)</string>
+    <string name="blueprint_config">Configuración del Plano</string>
+    <string name="part_code_label">Código de Pieza (ej. PUERTA-X1)</string>
+    <string name="has_two_faces_label">¿La pieza tiene Anverso y Reverso?</string>
+    <string name="capture_obverse">Capturar Anverso</string>
+    <string name="capture_reverse">Capturar Reverso</string>
+    <string name="save_blueprint_btn">GUARDAR PLANO MAESTRO</string>
+    <string name="pts_abbr">%1$d pt</string>
+    <string name="plan_abbr">PLANO</string>
+    <string name="blueprint_desc">Imagen del Plano</string>
+    <string name="camera_view_placeholder">camerapreviewPlaceHolder</string>
+
+    <!-- Detection Classes -->
+    <string name="unknown_class">Clase desconocida</string>
+    <string name="surface_defect">Defecto superficial</string>
+    <string name="irregular_curvature">Curvatura irregular</string>
+    <string name="no_defect_piece">Pieza sin defecto</string>
+
+    <!-- Camera Status -->
+    <string name="low_light">Luz insuficiente</string>
+    <string name="too_much_light">Exceso de luz / Reflejo</string>
+    <string name="focusing">Enfocando...</string>
+
+    <!-- UI Specific (Internal) -->
+    <string name="visual_analysis" translatable="false">VISUALIZACIÓN TÉCNICA</string>
+    <string name="detections_headline" translatable="false">DETECCIONES</string>
+    <string name="force_approval">FORZAR APROBACIÓN (FALSO POSITIVO)</string>
+    <string name="return_to_dashboard">Volver al Panel</string>
+    <string name="reset_system">REINICIAR SISTEMA</string>
 
 </resources>

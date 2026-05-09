@@ -49,7 +49,7 @@ fun ReportsScreen(
             TopAppBar(
                 title = {
                     Text(
-                        stringResource(R.string.reportsTitle),
+                        stringResource(R.string.reports_title),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 2.sp,
@@ -60,7 +60,7 @@ fun ReportsScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.returnDesc),
+                            contentDescription = stringResource(R.string.return_desc),
                             tint = colors.textColor
                         )
                     }
@@ -88,14 +88,14 @@ fun ReportsScreen(
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                stringResource(R.string.reportsModule),
+                stringResource(R.string.reports_module),
                 color = colors.textColor,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                stringResource(R.string.reportsSelectRange),
+                stringResource(R.string.reports_select_range),
                 color = Color.Gray,
                 fontSize = 14.sp
             )
@@ -110,7 +110,7 @@ fun ReportsScreen(
                     ) else Color(0xFF3366CC)
                 )
             ) {
-                Text(stringResource(R.string.generatePdfReport), color = Color.White)
+                Text(stringResource(R.string.generate_pdf_report), color = Color.White)
             }
         }
     }

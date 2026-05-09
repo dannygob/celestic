@@ -10,82 +10,116 @@ import javax.inject.Singleton
 
 @Singleton
 class SharedDataRepository @Inject constructor() {
-    // Inspection state
+
+    // ===== INSPECTION STATE =====
+
+    /** Holds the ID of the currently active inspection. */
     private val _currentInspectionId = MutableStateFlow<Long?>(null)
     val currentInspectionId: StateFlow<Long?> = _currentInspectionId.asStateFlow()
 
-    // Specification state
+    // ===== SPECIFICATION STATE =====
+
+    /** Stores the ID of the currently selected specification. */
     private val _selectedSpecificationId = MutableStateFlow<Long?>(null)
     val selectedSpecificationId: StateFlow<Long?> = _selectedSpecificationId.asStateFlow()
 
-    // Camera and marker settings
+    // ===== CAMERA & MARKER SETTINGS =====
+
+    /** Defines the currently selected marker type (e.g., ARUCO). */
     private val _markerType = MutableStateFlow(MarkerType.ARUCO)
     val markerType: StateFlow<MarkerType> = _markerType.asStateFlow()
 
+    /** Indicates whether measurements should be displayed in inches instead of millimeters. */
     private val _useInches = MutableStateFlow(false)
     val useInches: StateFlow<Boolean> = _useInches.asStateFlow()
 
+    /** Tracks whether the app is currently using dark mode. */
     private val _isDarkMode = MutableStateFlow(true)
     val isDarkMode: StateFlow<Boolean> = _isDarkMode.asStateFlow()
 
-    // Processing state
+    // ===== PROCESSING STATE =====
+
+    /** Indicates whether the system is currently processing detection or analysis tasks. */
     private val _isProcessing = MutableStateFlow(false)
     val isProcessing: StateFlow<Boolean> = _isProcessing.asStateFlow()
 
+    /** Stores the last known latitude of the device. */
     private val _latitude = MutableStateFlow<Double?>(null)
     val latitude: StateFlow<Double?> = _latitude.asStateFlow()
 
+    /** Stores the last known longitude of the device. */
     private val _longitude = MutableStateFlow<Double?>(null)
     val longitude: StateFlow<Double?> = _longitude.asStateFlow()
 
-    // Results state
+    // ===== RESULTS STATE =====
+
+    /** Holds the most recent detection results produced by the system. */
     private val _lastDetectionResults = MutableStateFlow<List<DetectionItem>?>(null)
     val lastDetectionResults: StateFlow<List<DetectionItem>?> = _lastDetectionResults.asStateFlow()
 
-    // Device info (static, no need for StateFlow)
+    // ===== DEVICE INFO (STATIC) =====
+
+    /** Device model information (manufacturer + model). */
     val deviceModel = "${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}"
+
+    /** Hardware summary including CPU and API level. */
     val hardwareInfo = "CPU: ${android.os.Build.HARDWARE} | API: ${android.os.Build.VERSION.SDK_INT}"
 
-    // Methods
+    // ===== STATE MUTATION METHODS =====
+
+    /** Sets the currently active inspection ID. */
     fun setCurrentInspection(id: Long) {
         _currentInspectionId.value = id
     }
 
+    /** Sets the currently selected specification ID. */
     fun setSelectedSpecification(id: Long) {
         _selectedSpecificationId.value = id
     }
 
+    /** Updates the selected marker type. */
     fun setMarkerType(type: MarkerType) {
         _markerType.value = type
     }
 
+    /** Enables or disables inch-based measurement mode. */
     fun setUseInches(useInches: Boolean) {
         _useInches.value = useInches
     }
 
+    /** Toggles dark mode on or off. */
     fun setDarkMode(dark: Boolean) {
         _isDarkMode.value = dark
     }
 
+    /** Sets whether the system is currently processing data. */
     fun setProcessing(processing: Boolean) {
         _isProcessing.value = processing
     }
 
+    /** Stores the latest detection results. */
     fun setLastDetectionResults(results: List<DetectionItem>?) {
         _lastDetectionResults.value = results
     }
 
+    /** Updates the device's last known GPS location. */
     fun setLocation(lat: Double?, lon: Double?) {
         _latitude.value = lat
         _longitude.value = lon
     }
 
+    /** Clears the current inspection and its associated results. */
     fun clearCurrentInspection() {
         _currentInspectionId.value = null
         _lastDetectionResults.value = null
     }
 
-    // Utility to get current state
+    // ===== STATE SNAPSHOT =====
+
+    /**
+     * Returns a snapshot of the current shared application state.
+     * Useful for debugging or exporting state.
+     */
     fun getCurrentState(): SharedAppState {
         return SharedAppState(
             currentInspectionId = _currentInspectionId.value,
@@ -101,6 +135,7 @@ class SharedDataRepository @Inject constructor() {
     }
 }
 
+/** Immutable snapshot of the shared application state. */
 data class SharedAppState(
     val currentInspectionId: Long?,
     val selectedSpecificationId: Long?,

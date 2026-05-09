@@ -10,21 +10,29 @@ import org.opencv.core.Mat
 import org.opencv.core.Point
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.sqrt
 
 /**
- * Matcher de planos de referencia
- * - Identifica el tipo de lámina usando template matching
- * - Detecta orientación (anverso/reverso)
- * - Valida posiciones y cantidades de características
+ * BlueprintMatcher handles reference blueprint matching using OpenCV.
+ *
+ * Responsibilities:
+ * - Load blueprint definitions and template images from assets
+ * - Perform template matching to identify which blueprint best matches an input image
+ * - Detect sheet orientation (front/back)
+ * - Validate detected features against expected blueprint geometry
  */
 @Singleton
 class BlueprintMatcher @Inject constructor(
     @field:ApplicationContext private val context: Context
 ) {
+
+    /** Loaded blueprint definitions (metadata + expected geometry). */
     private val blueprints = mutableMapOf<String, Blueprint>()
+
+    /** Loaded template images used for matching each blueprint. */
     private val templates = mutableMapOf<String, Mat>()
 
     init {
@@ -32,50 +40,63 @@ class BlueprintMatcher @Inject constructor(
     }
 
     /**
-     * Carga todos los planos desde assets/blueprints/
+     * Loads all blueprint JSON files and their corresponding template images
+     * from the assets/blueprints/ directory.
+     *
+     * Each blueprint consists of:
+     * - Metadata (ID, name, expected holes, tolerances, etc.)
+     * - A template PNG used for template matching
      */
     private fun loadBlueprints() {
         try {
-            // Cargar todos los archivos JSON de planos
             val blueprintFiles = context.assets.list("blueprints") ?: emptyArray()
 
             blueprintFiles.filter { it.endsWith(".json") }.forEach { filename ->
                 try {
+                    // Load blueprint metadata
                     val json = context.assets.open("blueprints/$filename")
                         .bufferedReader().use { it.readText() }
 
                     val blueprint = Gson().fromJson(json, Blueprint::class.java)
                     blueprints[blueprint.id] = blueprint
 
-                    // Cargar template correspondiente si existe
+                    // Load associated template image
                     val templateName = filename.replace(".json", "_template.png")
+
                     try {
                         val templatePath = copyAssetToCache("blueprints/$templateName")
                         val template = Imgcodecs.imread(templatePath)
+
                         if (!template.empty()) {
                             templates[blueprint.id] = template
-                            Log.d(TAG, "Plano cargado: ${blueprint.name}")
+                            Log.d(TAG, "Blueprint loaded: ${blueprint.name}")
                         }
                     } catch (e: Exception) {
-                        Log.w(TAG, "Template no encontrado para ${blueprint.name}", e)
+                        Log.w(TAG, "Template not found for ${blueprint.name}", e)
                     }
+
                 } catch (e: Exception) {
-                    Log.e(TAG, "Error al cargar plano: $filename", e)
+                    Log.e(TAG, "Error loading blueprint: $filename", e)
                 }
             }
 
-            Log.d(TAG, "Total de planos cargados: ${blueprints.size}")
+            Log.d(TAG, "Total blueprints loaded: ${blueprints.size}")
+
         } catch (e: Exception) {
-            Log.e(TAG, "Error al cargar planos", e)
+            Log.e(TAG, "Error loading blueprints", e)
         }
     }
 
     /**
-     * Encuentra el plano que mejor coincide con la imagen
+     * Attempts to find the blueprint that best matches the input image
+     * using OpenCV template matching.
+     *
+     * @return BlueprintMatchResult if a match exceeds the confidence threshold,
+     *         otherwise null.
      */
     fun matchBlueprint(image: Mat): BlueprintMatchResult? {
         if (blueprints.isEmpty()) {
-            Log.w(TAG, "No hay planos cargados")
+            Log.w(TAG, "No blueprints loaded")
             return null
         }
 
@@ -83,30 +104,28 @@ class BlueprintMatcher @Inject constructor(
         var bestScore = 0.0
 
         blueprints.forEach { (id, blueprint) ->
-            val template = templates[id]
-            if (template == null || template.empty()) {
-                return@forEach
-            }
+            val template = templates[id] ?: return@forEach
 
             val result = Mat()
             try {
-                // Template matching
+                // Perform normalized cross‑correlation template matching
                 Imgproc.matchTemplate(image, template, result, Imgproc.TM_CCOEFF_NORMED)
 
-                val minMaxResult = Core.minMaxLoc(result)
-                val score = minMaxResult.maxVal
+                val minMax = Core.minMaxLoc(result)
+                val score = minMax.maxVal
 
                 if (score > bestScore && score > MATCH_THRESHOLD) {
                     bestScore = score
                     bestMatch = BlueprintMatchResult(
                         blueprint = blueprint,
                         matchScore = score,
-                        matchLocation = minMaxResult.maxLoc,
+                        matchLocation = minMax.maxLoc,
                         orientation = detectOrientation(image, template)
                     )
                 }
+
             } catch (e: Exception) {
-                Log.e(TAG, "Error en template matching para ${blueprint.name}", e)
+                Log.e(TAG, "Template matching error for ${blueprint.name}", e)
             } finally {
                 result.release()
             }
@@ -116,32 +135,30 @@ class BlueprintMatcher @Inject constructor(
     }
 
     /**
-     * Detecta la orientación de la lámina (anverso/reverso)
+     * Detects sheet orientation (front/back) by comparing template matching scores
+     * between the normal template and a 180° flipped version.
      */
     private fun detectOrientation(image: Mat, template: Mat): Orientation {
         val resultNormal = Mat()
         val templateFlipped = Mat()
         val resultFlipped = Mat()
-        
+
         try {
-            // Intentar match normal
+            // Normal orientation
             Imgproc.matchTemplate(image, template, resultNormal, Imgproc.TM_CCOEFF_NORMED)
             val scoreNormal = Core.minMaxLoc(resultNormal).maxVal
 
-            // Intentar match rotado 180°
-            Core.flip(template, templateFlipped, -1) // Flip horizontal y vertical
-
+            // Flipped orientation (180° rotation)
+            Core.flip(template, templateFlipped, -1)
             Imgproc.matchTemplate(image, templateFlipped, resultFlipped, Imgproc.TM_CCOEFF_NORMED)
             val scoreFlipped = Core.minMaxLoc(resultFlipped).maxVal
 
-            return if (scoreNormal > scoreFlipped) {
-                Orientation.ANVERSO
-            } else {
-                Orientation.REVERSO
-            }
+            return if (scoreNormal > scoreFlipped) Orientation.ANVERSO else Orientation.REVERSO
+
         } catch (e: Exception) {
-            Log.e(TAG, "Error al detectar orientación", e)
+            Log.e(TAG, "Orientation detection error", e)
             return Orientation.UNKNOWN
+
         } finally {
             resultNormal.release()
             resultFlipped.release()
@@ -149,26 +166,30 @@ class BlueprintMatcher @Inject constructor(
         }
     }
 
-
     /**
-     * Valida las detecciones contra el plano de referencia
+     * Validates detected features against the expected blueprint geometry.
+     *
+     * Checks:
+     * - Expected number of holes
+     * - Expected hole positions (within tolerance)
+     * - Expected countersinks
      */
     fun validateDetections(
         detections: List<Detection>,
         blueprint: Blueprint
     ): ValidationResult {
+
         val issues = mutableListOf<String>()
 
-        // Validar cantidad de agujeros
+        // Validate hole count
         val holeCount = detections.count { it.className == "agujero" }
         if (holeCount != blueprint.expectedHoleCount) {
             issues.add(
-                "Cantidad de agujeros incorrecta: " +
-                        "esperado ${blueprint.expectedHoleCount}, encontrado $holeCount"
+                "Incorrect number of holes: expected ${blueprint.expectedHoleCount}, found $holeCount"
             )
         }
 
-        // Validar posiciones de agujeros esperados
+        // Validate hole positions
         blueprint.expectedHoles.forEach { expectedHole ->
             val found = detections.any { detection ->
                 if (detection.className != "agujero") return@any false
@@ -186,18 +207,16 @@ class BlueprintMatcher @Inject constructor(
 
             if (!found) {
                 issues.add(
-                    "Agujero ${expectedHole.id} faltante en posición " +
-                            "(${expectedHole.x}, ${expectedHole.y})"
+                    "Missing hole ${expectedHole.id} at position (${expectedHole.x}, ${expectedHole.y})"
                 )
             }
         }
 
-        // Validar avellanados si existen
+        // Validate countersinks
         val countersinkCount = detections.count { it.className == "avellanado" }
         if (countersinkCount != blueprint.expectedCountersinks.size) {
             issues.add(
-                "Cantidad de avellanados incorrecta: " +
-                        "esperado ${blueprint.expectedCountersinks.size}, encontrado $countersinkCount"
+                "Incorrect number of countersinks: expected ${blueprint.expectedCountersinks.size}, found $countersinkCount"
             )
         }
 
@@ -208,7 +227,7 @@ class BlueprintMatcher @Inject constructor(
     }
 
     /**
-     * Calcula la distancia euclidiana entre dos puntos
+     * Computes Euclidean distance between two points.
      */
     private fun calculateDistance(p1: Point, p2: Point): Double {
         val dx = p1.x - p2.x
@@ -217,10 +236,10 @@ class BlueprintMatcher @Inject constructor(
     }
 
     /**
-     * Copia un archivo de assets a cache
+     * Copies an asset file to the app cache directory and returns its absolute path.
      */
     private fun copyAssetToCache(assetPath: String): String {
-        val cacheFile = java.io.File(context.cacheDir, assetPath)
+        val cacheFile = File(context.cacheDir, assetPath)
         cacheFile.parentFile?.mkdirs()
 
         if (!cacheFile.exists()) {
@@ -234,35 +253,29 @@ class BlueprintMatcher @Inject constructor(
         return cacheFile.absolutePath
     }
 
-    /**
-     * Obtiene un plano por su ID
-     */
+    /** Returns a blueprint by its ID. */
     fun getBlueprintById(id: String): Blueprint? = blueprints[id]
 
-    /**
-     * Obtiene todos los planos cargados
-     */
+    /** Returns all loaded blueprints. */
     fun getAllBlueprints(): List<Blueprint> = blueprints.values.toList()
 
     /**
-     * Libera recursos
+     * Releases OpenCV Mat resources and clears loaded data.
      */
     fun release() {
         templates.values.forEach { it.release() }
         templates.clear()
         blueprints.clear()
-        Log.d(TAG, "Recursos del matcher liberados")
+        Log.d(TAG, "Blueprint matcher resources released")
     }
 
     companion object {
         private const val TAG = "BlueprintMatcher"
-        private const val MATCH_THRESHOLD = 0.7 // Umbral de confianza para template matching
+        private const val MATCH_THRESHOLD = 0.7 // Confidence threshold for template matching
     }
 }
 
-/**
- * Resultado de matching con plano
- */
+/** Result of a blueprint matching operation. */
 data class BlueprintMatchResult(
     val blueprint: Blueprint,
     val matchScore: Double,
@@ -270,18 +283,14 @@ data class BlueprintMatchResult(
     val orientation: Orientation
 )
 
-/**
- * Orientación de la lámina
- */
+/** Sheet orientation result. */
 enum class Orientation {
     ANVERSO,
     REVERSO,
     UNKNOWN
 }
 
-/**
- * Resultado de validación
- */
+/** Result of blueprint validation. */
 data class ValidationResult(
     val passed: Boolean,
     val issues: List<String>

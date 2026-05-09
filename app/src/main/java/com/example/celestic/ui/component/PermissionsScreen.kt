@@ -67,7 +67,7 @@ fun PermissionsScreen(onGrantPermissions: () -> Unit) {
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = stringResource(R.string.permissionsRequired),
+            text = stringResource(R.string.permissions_required),
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = colors.textColor
@@ -76,7 +76,7 @@ fun PermissionsScreen(onGrantPermissions: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = stringResource(R.string.permissionsDesc),
+            text = stringResource(R.string.permissions_desc),
             fontSize = 16.sp,
             color = Color.Gray,
             textAlign = TextAlign.Center,
@@ -110,13 +110,13 @@ fun PermissionsScreen(onGrantPermissions: () -> Unit) {
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = colors.accentColor)
         ) {
-            Text(stringResource(R.string.grantPermissions), fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.grant_permissions), fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = stringResource(R.string.permissionsWarning),
+            text = stringResource(R.string.permissions_warning),
             fontSize = 12.sp,
             color = colors.errorColor,
             textAlign = TextAlign.Center

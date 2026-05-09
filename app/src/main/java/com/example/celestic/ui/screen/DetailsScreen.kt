@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ReportProblem
 import androidx.compose.material3.Button
@@ -104,15 +105,15 @@ fun DetailsScreen(
     val cardBg =
         if (isDarkMode) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
 
-    val reportSentMsg = stringResource(R.string.reportIssueSent)
+    val reportSentMsg = stringResource(R.string.report_issue_sent)
     var selectedReportFormat by remember { mutableStateOf("PDF") }
     val reportFormats = listOf("PDF", "Word", "Excel", "CSV")
 
     val title = when (detailType) {
-        "hole" -> stringResource(R.string.detailsHole)
-        "alodine" -> stringResource(R.string.detailsAlodine)
-        "countersink" -> stringResource(R.string.detailsCountersink)
-        else -> stringResource(R.string.detailedAnalysis)
+        "hole" -> stringResource(R.string.details_hole)
+        "alodine" -> stringResource(R.string.details_alodine)
+        "countersink" -> stringResource(R.string.details_countersink)
+        else -> stringResource(R.string.detailed_analysis)
     }
 
     LaunchedEffect(detectionId) {
@@ -191,15 +192,15 @@ fun DetailsScreen(
                             Spacer(modifier = Modifier.width(16.dp))
                             Column {
                                 Text(
-                                    text = if (item.status == DetectionStatus.OK) stringResource(R.string.inspectionApprovedStatus) else stringResource(
-                                        R.string.inspectionRejectedStatus
+                                    text = if (item.status == DetectionStatus.OK) stringResource(R.string.inspection_approved_status) else stringResource(
+                                        R.string.inspection_rejected_status
                                     ),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp,
                                     color = colors.textColor
                                 )
                                 Text(
-                                    text = stringResource(R.string.batchIdLabel, item.frameId),
+                                    text = stringResource(R.string.batch_id_label, item.frameId),
                                     fontSize = 12.sp,
                                     color = Color.Gray
                                 )
@@ -223,7 +224,7 @@ fun DetailsScreen(
                             Icon(Icons.Default.CheckCircle, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                stringResource(R.string.forceApproval),
+                                stringResource(R.string.force_approval),
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -232,7 +233,7 @@ fun DetailsScreen(
             }
             // Sección de Visualización Técnica
             item {
-                SectionHeader(stringResource(R.string.visualAnalysis), colors.accentColor)
+                SectionHeader(stringResource(R.string.visual_analysis), colors.accentColor)
                 Spacer(modifier = Modifier.height(8.dp))
                 Card(
                     shape = RoundedCornerShape(16.dp),
@@ -261,7 +262,7 @@ fun DetailsScreen(
 
             // Sección de Características Detectadas
             item {
-                SectionHeader(stringResource(R.string.detectionsHeadline), colors.accentColor)
+                SectionHeader(stringResource(R.string.detections_headline), colors.accentColor)
             }
 
             items(features) { feature ->
@@ -297,7 +298,7 @@ fun DetailsScreen(
             // Sección de Trazabilidad
             item {
                 Spacer(modifier = Modifier.height(8.dp))
-                SectionHeader(stringResource(R.string.traceabilityHeadline), colors.accentColor)
+                SectionHeader(stringResource(R.string.traceability_headline), colors.accentColor)
                 Spacer(modifier = Modifier.height(8.dp))
 
                 AnimatedContent(
@@ -319,13 +320,13 @@ fun DetailsScreen(
                                     ) {
                                         Column(modifier = Modifier.padding(16.dp)) {
                                             TraceabilityRow(
-                                                stringResource(R.string.partCode),
+                                                stringResource(R.string.part_code),
                                                 data.code,
                                                 colors.textColor,
                                                 Color.Gray
                                             )
                                             TraceabilityRow(
-                                                stringResource(R.string.modelType),
+                                                stringResource(R.string.model_type),
                                                 data.partName,
                                                 colors.textColor,
                                                 Color.Gray
@@ -337,13 +338,13 @@ fun DetailsScreen(
                                                 Color.Gray
                                             )
                                             TraceabilityRow(
-                                                stringResource(R.string.inspectionDate),
+                                                stringResource(R.string.inspection_date),
                                                 data.inspectionDate,
                                                 colors.textColor,
                                                 Color.Gray
                                             )
                                             TraceabilityRow(
-                                                stringResource(R.string.finalStatus),
+                                                stringResource(R.string.final_status),
                                                 data.finalStatus,
                                                 colors.textColor,
                                                 Color.Gray,
@@ -360,7 +361,7 @@ fun DetailsScreen(
 
                             else -> {
                                 Text(
-                                    stringResource(R.string.noTraceability),
+                                    stringResource(R.string.no_traceability),
                                     color = Color.Gray,
                                     fontSize = 14.sp
                                 )
@@ -382,7 +383,7 @@ fun DetailsScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            stringResource(R.string.selectReportFormat),
+                            stringResource(R.string.select_report_format),
                             color = colors.textColor,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium
@@ -501,7 +502,7 @@ fun DetailsScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                stringResource(R.string.shareReport),
+                                stringResource(R.string.share_report),
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
@@ -524,7 +525,7 @@ fun DetailsScreen(
                 ) {
                     Icon(Icons.Default.ReportProblem, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.reportAnomaly))
+                    Text(stringResource(R.string.report_anomaly))
                 }
                 Spacer(modifier = Modifier.height(40.dp))
             }

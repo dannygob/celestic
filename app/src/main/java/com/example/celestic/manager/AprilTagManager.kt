@@ -1,21 +1,27 @@
 package com.example.celestic.manager
 
-
 import com.example.celestic.models.FiducialMarker
 import org.opencv.core.Mat
 import org.opencv.core.MatOfInt
 import org.opencv.objdetect.ArucoDetector
 import org.opencv.objdetect.Objdetect
-
 import javax.inject.Inject
 
 /**
- * AprilTagManager gestiona la detección de etiquetas AprilTag físicas
- * y la generación de etiquetas virtuales para elementos detectados.
+ * Manages the detection of physical AprilTag markers and the generation
+ * of virtual fiducial markers used for visualization or feature tracking.
+ *
+ * This class wraps OpenCV's ArUco/AprilTag detector and provides a clean
+ * interface for marker detection and virtual tag creation.
  */
 class AprilTagManager @Inject constructor() {
 
-    // OpenCV ArucoDetector configurado para AprilTag 36h11
+    /**
+     * Lazily initialized OpenCV ArucoDetector configured for AprilTag 36h11.
+     *
+     * DICT_APRILTAG_36h11 is one of the most common AprilTag families used
+     * in robotics, AR, and computer vision applications.
+     */
     private val detector: ArucoDetector by lazy {
         val dictionary = Objdetect.getPredefinedDictionary(Objdetect.DICT_APRILTAG_36h11)
         val params = org.opencv.objdetect.DetectorParameters()
@@ -23,16 +29,26 @@ class AprilTagManager @Inject constructor() {
     }
 
     /**
-     * Inicialización opcional para configuración futura.
+     * Optional initialization hook for future configuration needs.
+     * Currently unused but kept for extensibility.
      */
     fun init() {
+        // No initialization required at the moment
     }
 
     /**
-     * Detecta etiquetas físicas AprilTag en una imagen.
+     * Detects physical AprilTag markers in the provided image.
+     *
+     * @param image Input image (RGBA Mat) where markers will be detected.
+     * @return A list of FiducialMarker objects containing marker IDs and corner coordinates.
+     *
+     * Steps:
+     * - Converts the image to grayscale for faster processing.
+     * - Runs the ArUco/AprilTag detector.
+     * - Extracts marker IDs and corner positions.
      */
     fun detectMarkers(image: Mat): List<FiducialMarker> {
-        // Optimización: Procesar la imagen en blanco y negro reduce la carga de CPU
+        // Convert to grayscale to reduce CPU load
         val gray = Mat()
         org.opencv.imgproc.Imgproc.cvtColor(image, gray, org.opencv.imgproc.Imgproc.COLOR_RGBA2GRAY)
 
@@ -43,6 +59,7 @@ class AprilTagManager @Inject constructor() {
         gray.release()
 
         val markers = mutableListOf<FiducialMarker>()
+
         if (ids.total() > 0) {
             val idsArray = IntArray(ids.total().toInt())
             ids.get(0, 0, idsArray)
@@ -57,10 +74,17 @@ class AprilTagManager @Inject constructor() {
     }
 
     /**
-     * Genera una etiqueta virtual para un elemento detectado.
-     * @param featureId ID único del elemento
-     * @param position Coordenadas (x, y) del centro del elemento
-     * @param size Tamaño visual del tag (por defecto 20 px)
+     * Generates a virtual fiducial marker for a detected feature.
+     *
+     * This is useful for:
+     * - Overlaying markers in augmented reality
+     * - Visual debugging
+     * - Representing detected features as synthetic tags
+     *
+     * @param featureId Unique ID for the virtual marker.
+     * @param position Center position of the marker (x, y).
+     * @param size Visual size of the marker in pixels (default: 20px).
+     * @return A FiducialMarker containing synthetic corner coordinates.
      */
     fun generateVirtualTagForFeature(
         featureId: Int,
@@ -86,9 +110,10 @@ class AprilTagManager @Inject constructor() {
     }
 
     /**
-     * Libera los recursos (ya no es necesario para ArucoDetector de OpenCV).
+     * Releases resources if needed.
+     * Currently a no-op because ArucoDetector does not require manual cleanup.
      */
     fun close() {
-        // No-op
+        // No resources to release
     }
 }

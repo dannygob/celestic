@@ -82,18 +82,18 @@ fun generatePdfFromDetections(
 
     val sharedPrefs = context.getSharedPreferences("celestic_prefs", Context.MODE_PRIVATE)
     val operator =
-        sharedPrefs.getString("current_user", context.getString(R.string.unknownOperator))
-    val shift = sharedPrefs.getString("current_shift", context.getString(R.string.unassignedShift))
+        sharedPrefs.getString("current_user", context.getString(R.string.unknown_operator))
+    val shift = sharedPrefs.getString("current_shift", context.getString(R.string.unassigned_shift))
     val albaran =
-        sharedPrefs.getString("current_albaran", context.getString(R.string.generalAlbaran))
+        sharedPrefs.getString("current_albaran", context.getString(R.string.general_batch))
     val date = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(java.util.Date())
 
     document.add(
-        Paragraph(context.getString(R.string.reportHeader, albaran)).setBold().setFontSize(18f)
+        Paragraph(context.getString(R.string.report_header, albaran)).setBold().setFontSize(18f)
     )
-    document.add(Paragraph(context.getString(R.string.operatorLabel, operator)))
-    document.add(Paragraph(context.getString(R.string.shiftLabel, shift)))
-    document.add(Paragraph(context.getString(R.string.dateLabel, date)))
+    document.add(Paragraph(context.getString(R.string.operator_label, operator)))
+    document.add(Paragraph(context.getString(R.string.shift_label, shift)))
+    document.add(Paragraph(context.getString(R.string.date_label, date)))
     document.add(Paragraph(" "))
     
     detections.forEach {
@@ -127,21 +127,21 @@ fun generateCsvFromDetections(
     val writer = file.bufferedWriter()
     val sharedPrefs = context.getSharedPreferences("celestic_prefs", Context.MODE_PRIVATE)
     val operator =
-        sharedPrefs.getString("current_user", context.getString(R.string.unknownOperator))
-    val shift = sharedPrefs.getString("current_shift", context.getString(R.string.unassignedShift))
+        sharedPrefs.getString("current_user", context.getString(R.string.unknown_operator))
+    val shift = sharedPrefs.getString("current_shift", context.getString(R.string.unassigned_shift))
     val albaran =
-        sharedPrefs.getString("current_albaran", context.getString(R.string.generalAlbaran))
+        sharedPrefs.getString("current_albaran", context.getString(R.string.general_batch))
     val date = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(java.util.Date())
 
     writer.write(
-        "${context.getString(R.string.albaranNumber)}: $albaran, ${
+        "${context.getString(R.string.batch_number)}: $albaran, ${
             context.getString(
-                R.string.operatorLabel,
+                R.string.operator_label,
                 operator
             )
-        }, ${context.getString(R.string.shiftLabel, shift)}, ${
+        }, ${context.getString(R.string.shift_label, shift)}, ${
             context.getString(
-                R.string.dateLabel,
+                R.string.date_label,
                 date
             )
         }\n\n"
@@ -181,12 +181,12 @@ fun generateWordFromDetections(
 
     val sharedPrefs = context.getSharedPreferences("celestic_prefs", Context.MODE_PRIVATE)
     val albaran =
-        sharedPrefs.getString("current_albaran", context.getString(R.string.generalAlbaran))
-    titleRun.setText(context.getString(R.string.reportHeader, albaran))
+        sharedPrefs.getString("current_albaran", context.getString(R.string.general_batch))
+    titleRun.setText(context.getString(R.string.report_header, albaran))
 
     val operator =
-        sharedPrefs.getString("current_user", context.getString(R.string.unknownOperator))
-    val shift = sharedPrefs.getString("current_shift", context.getString(R.string.unassignedShift))
+        sharedPrefs.getString("current_user", context.getString(R.string.unknown_operator))
+    val shift = sharedPrefs.getString("current_shift", context.getString(R.string.unassigned_shift))
     val date = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(java.util.Date())
 
     val meta = document.createParagraph()
@@ -194,12 +194,12 @@ fun generateWordFromDetections(
     metaRun.setText(
         "${
             context.getString(
-                R.string.operatorLabel,
+                R.string.operator_label,
                 operator
             )
-        } | ${context.getString(R.string.shiftLabel, shift)} | ${
+        } | ${context.getString(R.string.shift_label, shift)} | ${
             context.getString(
-                R.string.dateLabel,
+                R.string.date_label,
                 date
             )
         }"
@@ -239,26 +239,26 @@ fun generateExcelFromDetections(
 
     val sharedPrefs = context.getSharedPreferences("celestic_prefs", Context.MODE_PRIVATE)
     val operator =
-        sharedPrefs.getString("current_user", context.getString(R.string.unknownOperator))
-    val shift = sharedPrefs.getString("current_shift", context.getString(R.string.unassignedShift))
+        sharedPrefs.getString("current_user", context.getString(R.string.unknown_operator))
+    val shift = sharedPrefs.getString("current_shift", context.getString(R.string.unassigned_shift))
     val albaran =
-        sharedPrefs.getString("current_albaran", context.getString(R.string.generalAlbaran))
+        sharedPrefs.getString("current_albaran", context.getString(R.string.general_batch))
     val date = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(java.util.Date())
 
     val metaRow = sheet.createRow(0)
     metaRow.createCell(0)
         .setCellValue(
-            "${context.getString(R.string.albaranNumber)}: $albaran | ${
+            "${context.getString(R.string.batch_number)}: $albaran | ${
                 context.getString(
-                    R.string.operatorLabel,
+                    R.string.operator_label,
                     operator
                 )
             } | ${
                 context.getString(
-                    R.string.shiftLabel,
+                    R.string.shift_label,
                     shift
                 )
-            } | ${context.getString(R.string.dateLabel, date)}"
+            } | ${context.getString(R.string.date_label, date)}"
         )
     
     // Header

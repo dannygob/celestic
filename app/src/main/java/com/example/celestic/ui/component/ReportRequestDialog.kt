@@ -29,7 +29,7 @@ import com.example.celestic.R
 
 fun ReportRequestDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
     val context = LocalContext.current
-    val requestingMsg = stringResource(R.string.reportRequesting)
+    val requestingMsg = stringResource(R.string.report_requesting)
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
@@ -38,7 +38,7 @@ fun ReportRequestDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
                 Icon(Icons.Default.Description, contentDescription = null, tint = Color(0xFF415A77))
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = stringResource(R.string.reportGenerate).uppercase(),
+                    text = stringResource(R.string.report_generate).uppercase(),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp
@@ -47,7 +47,7 @@ fun ReportRequestDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
         },
         text = {
             Text(
-                text = stringResource(R.string.reportGenerateConfirm),
+                text = stringResource(R.string.report_generate_confirm),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
