@@ -187,4 +187,11 @@
     <string name="selectReportFormat">Select Report Format</string>
     <string name="cancel">Cancel</string>
 
+    <!-- Recently Added -->
+    <string name="shareReport">SHARE REPORT</string>
+    <string name="forceApproval">FORCE APPROVAL (FALSE POSITIVE)</string>
+    <string name="inspectionApprovedStatus">INSPECTION APPROVED</string>
+    <string name="inspectionRejectedStatus">INSPECTION REJECTED</string>
+    <string name="batchIdLabel">Batch ID: %1$s</string>
+
 </resources>
