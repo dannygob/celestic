@@ -501,7 +501,7 @@ fun DetailsScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                "COMPARTIR INFORME",
+                                stringResource(R.string.shareReport),
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
