@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Para archivos guardados en getExternalFilesDir(null) -->
+    <external-files-path
+            name="reports"
+            path="." />
+</paths>
