@@ -115,3 +115,11 @@ fun ReportsScreen(
         }
     }
 }
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun ReportsScreenPreview() {
+    com.example.celestic.ui.theme.CelesticTheme {
+        ReportsScreen(navController = androidx.navigation.compose.rememberNavController())
+    }
+}

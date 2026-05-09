@@ -161,6 +161,60 @@ private fun DashboardTopBar(
     navController: NavController,
     viewModel: DashboardViewModel
 ) {
+    var showAlbaranDialog by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf(
+            false
+        )
+    }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var currentAlbaran by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf(
+            context.getSharedPreferences("celestic_prefs", android.content.Context.MODE_PRIVATE)
+                .getString("current_albaran", "GENERAL") ?: "GENERAL"
+        )
+    }
+    var albaranText by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf("") }
+
+    if (showAlbaranDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showAlbaranDialog = false },
+            title = { Text(stringResource(R.string.assignAlbaran), fontWeight = FontWeight.Bold) },
+            text = {
+                androidx.compose.foundation.layout.Column {
+                    Text(stringResource(R.string.enterAlbaranPrompt), fontSize = 14.sp)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    androidx.compose.material3.OutlinedTextField(
+                        value = albaranText,
+                        onValueChange = { albaranText = it },
+                        label = { Text(stringResource(R.string.albaranNumber)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(onClick = {
+                    val prefs = context.getSharedPreferences(
+                        "celestic_prefs",
+                        android.content.Context.MODE_PRIVATE
+                    )
+                    val finalAlbaran =
+                        albaranText.ifBlank { context.getString(R.string.generalAlbaran) }
+                    prefs.edit().putString("current_albaran", finalAlbaran).apply()
+                    currentAlbaran = finalAlbaran
+                    showAlbaranDialog = false
+                }) {
+                    Text(stringResource(R.string.save))
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { showAlbaranDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
     Surface(
         color = if (isDarkMode) Color.Black else Color.White,
         shadowElevation = 4.dp,
@@ -206,6 +260,13 @@ private fun DashboardTopBar(
                         ) { navController.navigate("calibration") }
 
                         NavIconBtn(
+                            Icons.Default.ModelTraining,
+                            stringResource(R.string.planoAbbr),
+                            isLandscape,
+                            isDarkMode
+                        ) { navController.navigate("golden_sample") }
+
+                        NavIconBtn(
                             Icons.Default.History,
                             stringResource(R.string.hist_abbr),
                             isLandscape,
@@ -219,7 +280,21 @@ private fun DashboardTopBar(
                             isDarkMode
                         ) { navController.navigate("reports") }
 
-
+                        androidx.compose.material3.TextButton(
+                            onClick = {
+                                albaranText = currentAlbaran
+                                showAlbaranDialog = true
+                            },
+                            modifier = Modifier.padding(end = 4.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp)
+                        ) {
+                            Text(
+                                stringResource(R.string.albAbbr, currentAlbaran),
+                                color = textPrimary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = if (isLandscape) 12.sp else 10.sp
+                            )
+                        }
 
                         IconButton(
                             onClick = { navController.navigate("settings") },
@@ -238,8 +313,11 @@ private fun DashboardTopBar(
 
                     Button(
                         onClick = {
-                            if (state is DashboardState.Idle || state is DashboardState.NavigateToDetails) viewModel.startInspection()
-                            else viewModel.resetState()
+                            if (state is DashboardState.Idle || state is DashboardState.NavigateToDetails) {
+                                viewModel.startInspection()
+                            } else {
+                                viewModel.resetState()
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (state is DashboardState.Idle || state is DashboardState.NavigateToDetails)

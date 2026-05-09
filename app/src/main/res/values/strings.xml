@@ -187,11 +187,36 @@
     <string name="selectReportFormat">Select Report Format</string>
     <string name="cancel">Cancel</string>
 
-    <!-- Recently Added -->
     <string name="shareReport">SHARE REPORT</string>
     <string name="forceApproval">FORCE APPROVAL (FALSE POSITIVE)</string>
     <string name="inspectionApprovedStatus">INSPECTION APPROVED</string>
     <string name="inspectionRejectedStatus">INSPECTION REJECTED</string>
     <string name="batchIdLabel">Batch ID: %1$s</string>
+
+    <!-- Albaran and Reports -->
+    <string name="assignAlbaran">Assign Batch</string>
+    <string name="enterAlbaranPrompt">Enter the batch or albaran number for this inspection:</string>
+    <string name="albaranNumber">Batch Number</string>
+    <string name="save">Save</string>
+    <string name="albAbbr">BAT: %1$s</string>
+
+    <string name="reportHeader">Inspection Report - Batch: %1$s</string>
+    <string name="operatorLabel">Operator: %1$s</string>
+    <string name="shiftLabel">Shift: %1$s</string>
+    <string name="dateLabel">Date: %1$s</string>
+    <string name="unknownOperator">Unknown Operator</string>
+    <string name="unassignedShift">Unassigned Shift</string>
+    <string name="generalAlbaran">GENERAL</string>
+
+    <!-- Golden Sample -->
+    <string name="goldenSampleTitle">Master Blueprint (Golden Sample)</string>
+    <string name="blueprintConfig">Blueprint Configuration</string>
+    <string name="partCodeLabel">Part Code (e.g. PUERTA-X1)</string>
+    <string name="hasTwoFacesLabel">Does the piece have Obverse and Reverse?</string>
+    <string name="captureObverse">Capture Obverse</string>
+    <string name="captureReverse">Capture Reverse</string>
+    <string name="saveBlueprintBtn">SAVE MASTER BLUEPRINT</string>
+    <string name="ptsAbbr">%1$d pt</string>
+    <string name="planoAbbr">PLAN</string>
 
 </resources>

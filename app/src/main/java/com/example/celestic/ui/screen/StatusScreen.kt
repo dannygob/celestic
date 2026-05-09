@@ -212,3 +212,11 @@ fun StatusItem(label: String, value: String, textColor: Color) {
         Text(value, color = textColor, fontWeight = FontWeight.Medium, fontSize = 14.sp)
     }
 }
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun StatusScreenPreview() {
+    com.example.celestic.ui.theme.CelesticTheme {
+        StatusScreen(navController = androidx.navigation.compose.rememberNavController())
+    }
+}

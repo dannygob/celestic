@@ -12,12 +12,24 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
+/**
+ * Helper class responsible for basic Image conversion tasks.
+ * Converts YUV_420_888 images from Android Camera2 API into standard OpenCV Mat formats (RGB).
+ */
 class ImageProcessor @Inject constructor(
     private val frameAnalyzer: FrameAnalyzer,
     private val calibrationManager: CalibrationManager,
     private val traceabilityManager: TraceabilityManager
 ) {
 
+    /**
+     * Processes an OpenCV Mat to detect holes, countersinks, and scratches, and associates
+     * them with traceability information if a QR code or marker is present.
+     *
+     * @param mat The input OpenCV image matrix.
+     * @param markerType The type of marker expected for alignment/calibration.
+     * @return An [ImageProcessorResult] containing the detected items and orientation.
+     */
     fun processImage(mat: Mat, markerType: MarkerType?): ImageProcessorResult {
         val result = frameAnalyzer.analyze(mat, markerType)
         val linkedCode = result.decodedQrCode ?: result.markers.firstOrNull()?.id?.toString()

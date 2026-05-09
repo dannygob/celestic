@@ -169,11 +169,36 @@
     <string name="reportsSelectRange">Seleccione un rango de fechas para generar estadísticas.</string>
     <string name="generatePdfReport">GENERAR INFORME PDF</string>
 
-    <!-- Recently Added -->
     <string name="shareReport">COMPARTIR INFORME</string>
     <string name="forceApproval">FORZAR APROBACIÓN (FALSO POSITIVO)</string>
     <string name="inspectionApprovedStatus">INSPECCIÓN APROBADA</string>
     <string name="inspectionRejectedStatus">INSPECCIÓN RECHAZADA</string>
     <string name="batchIdLabel">Batch ID: %1$s</string>
+
+    <!-- Albaran and Reports -->
+    <string name="assignAlbaran">Asignar Albarán</string>
+    <string name="enterAlbaranPrompt">Ingrese el número de albarán o lote para esta inspección:</string>
+    <string name="albaranNumber">Número de Albarán</string>
+    <string name="save">Guardar</string>
+    <string name="albAbbr">ALB: %1$s</string>
+
+    <string name="reportHeader">Reporte de Inspección - Albarán: %1$s</string>
+    <string name="operatorLabel">Operador: %1$s</string>
+    <string name="shiftLabel">Turno: %1$s</string>
+    <string name="dateLabel">Fecha: %1$s</string>
+    <string name="unknownOperator">Operador Desconocido</string>
+    <string name="unassignedShift">Turno no asignado</string>
+    <string name="generalAlbaran">GENERAL</string>
+
+    <!-- Golden Sample -->
+    <string name="goldenSampleTitle">Plano Maestro (Golden Sample)</string>
+    <string name="blueprintConfig">Configuración del Plano</string>
+    <string name="partCodeLabel">Código de Pieza (ej. PUERTA-X1)</string>
+    <string name="hasTwoFacesLabel">¿La pieza tiene Anverso y Reverso?</string>
+    <string name="captureObverse">Capturar Anverso</string>
+    <string name="captureReverse">Capturar Reverso</string>
+    <string name="saveBlueprintBtn">GUARDAR PLANO MAESTRO</string>
+    <string name="ptsAbbr">%1$d pt</string>
+    <string name="planoAbbr">PLANO</string>
 
 </resources>

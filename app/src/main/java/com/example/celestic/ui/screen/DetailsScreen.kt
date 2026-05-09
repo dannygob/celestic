@@ -418,25 +418,25 @@ fun DetailsScreen(
                                     "PDF" -> com.example.celestic.utils.generatePdfFromDetections(
                                         context,
                                         detections,
-                                        loteId
+                                        false
                                     )
 
                                     "Word" -> com.example.celestic.utils.generateWordFromDetections(
                                         context,
                                         detections,
-                                        loteId
+                                        false
                                     )
 
                                     "Excel" -> com.example.celestic.utils.generateExcelFromDetections(
                                         context,
                                         detections,
-                                        loteId
+                                        false
                                     )
 
                                     "CSV" -> com.example.celestic.utils.generateCsvFromDetections(
                                         context,
                                         detections,
-                                        loteId
+                                        false
                                     )
 
                                     else -> null
