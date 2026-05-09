@@ -1,6 +1,5 @@
 package com.example.celestic.navigation
 
-
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -18,8 +17,13 @@ import com.example.celestic.ui.screen.SettingsScreen
 import com.example.celestic.ui.screen.StatusScreen
 import com.example.celestic.viewmodel.SharedViewModel
 
+/**
+ * Defines the navigation graph for the application using Jetpack Compose Navigation.
+ *
+ * Each composable destination corresponds to a screen in the app.
+ * NavigationRoutes is used to centralize route definitions.
+ */
 @Composable
-
 fun NavigationGraph(
     navController: NavHostController,
     sharedViewModel: SharedViewModel
@@ -28,13 +32,17 @@ fun NavigationGraph(
         navController = navController,
         startDestination = "login"
     ) {
+        // Login screen
         composable("login") {
             LoginScreen(navController, sharedViewModel)
         }
+
+        // Dashboard
         composable(NavigationRoutes.Dashboard.route) {
             DashboardScreen(navController, sharedViewModel = sharedViewModel)
         }
 
+        // Details screen with arguments
         composable(
             NavigationRoutes.Details.route,
             arguments = listOf(
@@ -53,27 +61,35 @@ fun NavigationGraph(
             )
         }
 
+        // Calibration
         composable(NavigationRoutes.Calibration.route) {
             CalibrationScreen(navController, sharedViewModel = sharedViewModel)
         }
 
+        // Report request dialog
         composable(NavigationRoutes.ReportDialog.route) {
             ReportRequestDialog(
                 onDismiss = { navController.popBackStack() },
-                onConfirm = { navController.popBackStack() } // lógica real si quieres enviar algo
+                onConfirm = { navController.popBackStack() }
             )
         }
 
-
+        // Settings
         composable("settings") {
             SettingsScreen(navController, sharedViewModel = sharedViewModel)
         }
+
+        // Reports
         composable(NavigationRoutes.Reports.route) {
             ReportsScreen(navController, sharedViewModel = sharedViewModel)
         }
+
+        // Detection list
         composable("detection_list") {
             DetectionListScreen(navController, sharedViewModel = sharedViewModel)
         }
+
+        // Status screen
         composable(NavigationRoutes.Status.route) {
             StatusScreen(navController, sharedViewModel = sharedViewModel)
         }

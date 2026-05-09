@@ -3,9 +3,15 @@ package com.example.celestic.models
 import org.opencv.core.Mat
 
 /**
- * Representa un marcador fiducial (ArUco o AprilTag) detectado.
+ * Represents a detected fiducial marker (ArUco, ChArUco, or AprilTag).
+ *
+ * Contains:
+ * - The marker ID
+ * - The detected corner coordinates stored in an OpenCV Mat
  */
 data class FiducialMarker(
     val id: Int,
-    val corners: Mat // Mat de corners detectados
+
+    /** Matrix containing the detected corner points of the marker. */
+    val corners: Mat
 )

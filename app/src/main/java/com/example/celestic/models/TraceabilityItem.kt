@@ -6,17 +6,32 @@ import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
 /**
- * Data class for traceability information (Digital Twin / Batch Info).
- * Named TraceabilityItem in English to avoid mixed languages in code.
+ * Represents traceability information associated with a part or inspection.
+ *
+ * This includes:
+ * - Unique traceability code (QR, batch code, serial number, etc.)
+ * - Part name or identifier
+ * - Operator responsible for the inspection
+ * - Date of inspection
+ * - Final status assigned to the part
+ *
+ * Stored in Room and linked to detection items when needed.
  */
 @Parcelize
 @Entity(tableName = "traceability_items")
 data class TraceabilityItem(
     @PrimaryKey
     val code: String,
+
+    /** Name of the part or component being inspected. */
     val partName: String,
+
+    /** Name of the operator who performed the inspection. */
     val operatorName: String,
+
+    /** Date of the inspection (formatted string). */
     val inspectionDate: String,
+
+    /** Final status assigned to the part (e.g., OK, FAILED, REWORK). */
     val finalStatus: String
 ) : Parcelable
-
