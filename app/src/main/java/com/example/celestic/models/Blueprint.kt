@@ -3,8 +3,17 @@ package com.example.celestic.models
 import com.google.gson.annotations.SerializedName
 
 /**
- * Modelo de plano de referencia para una lámina
- * Define las especificaciones y características esperadas
+ * Represents a reference blueprint for a sheet or metal part.
+ *
+ * A blueprint defines:
+ * - Expected geometry (holes, countersinks, dimensions)
+ * - Tolerances for validation
+ * - Whether alodine coating is required
+ *
+ * This model is loaded from JSON and used for:
+ * - Template matching
+ * - Feature validation
+ * - Report generation
  */
 data class Blueprint(
     @SerializedName("id")
@@ -31,15 +40,17 @@ data class Blueprint(
     @SerializedName("tolerances")
     val tolerances: Tolerances = Tolerances(),
 
+    /** Maximum allowed deviation (in mm) when matching hole positions. */
     @SerializedName("position_tolerance")
-    val positionTolerance: Double = 5.0, // mm
+    val positionTolerance: Double = 5.0,
 
+    /** Whether the part requires alodine coating. */
     @SerializedName("requires_alodine")
     val requiresAlodine: Boolean = false
 )
 
 /**
- * Dimensiones de la lámina
+ * Physical dimensions of the sheet or metal part.
  */
 data class Dimensions(
     @SerializedName("width_mm")
@@ -53,7 +64,12 @@ data class Dimensions(
 )
 
 /**
- * Agujero esperado en el plano
+ * Expected hole definition inside the blueprint.
+ *
+ * Includes:
+ * - Position (x, y)
+ * - Diameter
+ * - Allowed tolerance
  */
 data class ExpectedHole(
     @SerializedName("id")
@@ -73,7 +89,12 @@ data class ExpectedHole(
 )
 
 /**
- * Avellanado esperado en el plano
+ * Expected countersink definition inside the blueprint.
+ *
+ * Includes:
+ * - Position (x, y)
+ * - Inner and outer diameters
+ * - Allowed tolerance
  */
 data class ExpectedCountersink(
     @SerializedName("id")
@@ -96,7 +117,14 @@ data class ExpectedCountersink(
 )
 
 /**
- * Tolerancias permitidas
+ * Global tolerances applied to the blueprint.
+ *
+ * Includes:
+ * - Dimensional tolerance
+ * - Hole diameter tolerance
+ * - Maximum allowed scratch length
+ * - Maximum number of scratches
+ * - Maximum allowed deformation
  */
 data class Tolerances(
     @SerializedName("dimension_tolerance_mm")
