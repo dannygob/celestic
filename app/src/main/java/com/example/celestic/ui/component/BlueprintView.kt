@@ -14,12 +14,23 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.sp
 import com.example.celestic.models.calibration.DetectedFeature
 
+/**
+ * Renders a blueprint‑style view showing detected features on a grid.
+ *
+ * Each feature is drawn with:
+ * - A highlighted anchor point
+ * - A secondary inner circle
+ * - A dimension line
+ * - A measurement label (mm or inches)
+ */
 @Composable
-
-fun BlueprintView(features: List<DetectedFeature>, useInches: Boolean = false) {
+fun BlueprintView(
+    features: List<DetectedFeature>,
+    useInches: Boolean = false
+) {
     val textMeasurer = rememberTextMeasurer()
 
-    // Colores de Blueprint
+    // Blueprint color palette
     val blueprintGridColor = Color(0xFF1B263B).copy(alpha = 0.5f)
     val blueprintFeatureColor = Color(0xFF00B4D8)
     val textColor = Color.White.copy(alpha = 0.8f)
@@ -29,26 +40,28 @@ fun BlueprintView(features: List<DetectedFeature>, useInches: Boolean = false) {
             .fillMaxSize()
             .background(Color(0xFF0D1B2A))
     ) {
+        // Draw grid
         val step = 50f
         for (x in 0..size.width.toInt() step step.toInt()) {
             drawLine(
-                blueprintGridColor,
-                Offset(x.toFloat(), 0f),
-                Offset(x.toFloat(), size.height),
-                0.5f
+                color = blueprintGridColor,
+                start = Offset(x.toFloat(), 0f),
+                end = Offset(x.toFloat(), size.height),
+                strokeWidth = 0.5f
             )
         }
         for (y in 0..size.height.toInt() step step.toInt()) {
             drawLine(
-                blueprintGridColor,
-                Offset(0f, y.toFloat()),
-                Offset(size.width, y.toFloat()),
-                0.5f
+                color = blueprintGridColor,
+                start = Offset(0f, y.toFloat()),
+                end = Offset(size.width, y.toFloat()),
+                strokeWidth = 0.5f
             )
         }
 
+        // Draw detected features
         features.forEach { feature ->
-            // Dibujar punto de anclaje
+            // Anchor point
             drawCircle(
                 color = blueprintFeatureColor,
                 center = Offset(feature.xCoord, feature.yCoord),
@@ -61,7 +74,7 @@ fun BlueprintView(features: List<DetectedFeature>, useInches: Boolean = false) {
                 radius = 4f
             )
 
-            // Líneas de cota (simuladas)
+            // Decorative dimension line
             drawLine(
                 color = blueprintFeatureColor.copy(alpha = 0.5f),
                 start = Offset(feature.xCoord, feature.yCoord),
@@ -69,6 +82,7 @@ fun BlueprintView(features: List<DetectedFeature>, useInches: Boolean = false) {
                 strokeWidth = 1f
             )
 
+            // Measurement label
             val unit = if (useInches) "in" else "mm"
             val dimension = if (useInches) {
                 feature.measurements["diameter"]?.div(25.4f)

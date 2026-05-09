@@ -10,6 +10,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+/**
+ * Small circular indicator used to represent an active/inactive status.
+ *
+ * @param isActive Whether the indicator should appear active (green) or inactive (red).
+ */
 @Composable
 fun StatusIndicator(isActive: Boolean) {
     val indicatorSizeDp = 12.dp

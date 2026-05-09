@@ -37,9 +37,13 @@ import androidx.compose.ui.unit.sp
 import com.example.celestic.R
 import com.example.celestic.ui.theme.rememberScreenColors
 
+/**
+ * Screen shown when the app requires permissions (camera, location, Bluetooth).
+ * Displays an explanation and a button to request permissions.
+ */
 @Composable
 fun PermissionsScreen(onGrantPermissions: () -> Unit) {
-    val colors = rememberScreenColors(false) // Usamos modo claro/oscuro por defecto
+    val colors = rememberScreenColors(false)
 
     Column(
         modifier = Modifier
@@ -49,6 +53,7 @@ fun PermissionsScreen(onGrantPermissions: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        // Icon container
         Surface(
             modifier = Modifier.size(100.dp),
             shape = CircleShape,
@@ -66,6 +71,7 @@ fun PermissionsScreen(onGrantPermissions: () -> Unit) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        // Title
         Text(
             text = stringResource(R.string.permissions_required),
             fontSize = 28.sp,
@@ -75,6 +81,7 @@ fun PermissionsScreen(onGrantPermissions: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Description
         Text(
             text = stringResource(R.string.permissions_desc),
             fontSize = 16.sp,
@@ -85,23 +92,25 @@ fun PermissionsScreen(onGrantPermissions: () -> Unit) {
 
         Spacer(modifier = Modifier.height(40.dp))
 
+        // Permission items list
         PermissionItem(
-            "Cámara",
-            "Para la captura y análisis de piezas.",
-            Icons.Default.CameraAlt,
-            colors.accentColor,
-            colors.textColor
+            title = "Camera",
+            description = "Required for capturing and analyzing parts.",
+            icon = Icons.Default.CameraAlt,
+            accentColor = colors.accentColor,
+            textColor = colors.textColor
         )
         PermissionItem(
-            "Ubicación y Bluetooth",
-            "Para la vinculación de dispositivos y sincronización.",
-            Icons.Default.Settings,
-            colors.accentColor,
-            colors.textColor
+            title = "Location & Bluetooth",
+            description = "Required for device pairing and synchronization.",
+            icon = Icons.Default.Settings,
+            accentColor = colors.accentColor,
+            textColor = colors.textColor
         )
 
         Spacer(modifier = Modifier.weight(1f))
 
+        // Button to request permissions
         Button(
             onClick = onGrantPermissions,
             modifier = Modifier
@@ -115,6 +124,7 @@ fun PermissionsScreen(onGrantPermissions: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Warning text
         Text(
             text = stringResource(R.string.permissions_warning),
             fontSize = 12.sp,
@@ -124,6 +134,9 @@ fun PermissionsScreen(onGrantPermissions: () -> Unit) {
     }
 }
 
+/**
+ * Row item representing a single permission with icon, title, and description.
+ */
 @Composable
 private fun PermissionItem(
     title: String,

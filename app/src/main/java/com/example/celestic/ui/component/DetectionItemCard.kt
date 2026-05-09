@@ -31,13 +31,21 @@ import com.example.celestic.models.DetectionItem
 import com.example.celestic.models.enums.DetectionStatus
 import java.util.Locale
 
+/**
+ * Card component used to display a single detection item with:
+ * - Status icon and color
+ * - Detection type and ID
+ * - Linked QR/batch code
+ * - Measurement (if available)
+ * - Status label
+ */
 @Composable
-
 fun DetectionItemCard(
     item: DetectionItem,
     onClick: () -> Unit = {}
 ) {
     val locale = Locale.getDefault()
+
     val statusColor = when (item.status) {
         DetectionStatus.OK -> Color(0xFF2E7D32)
         DetectionStatus.WARNING -> Color(0xFFF9A825)
@@ -63,7 +71,7 @@ fun DetectionItemCard(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Indicador de Estado Lateral
+            // Status icon
             Box(
                 modifier = Modifier
                     .size(48.dp)
@@ -80,6 +88,7 @@ fun DetectionItemCard(
 
             Spacer(modifier = Modifier.width(12.dp))
 
+            // Main info
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "${item.type} ID: ${item.id}",
@@ -94,6 +103,7 @@ fun DetectionItemCard(
                 )
             }
 
+            // Measurement + status
             Column(horizontalAlignment = Alignment.End) {
                 item.measurementMm?.let {
                     Text(

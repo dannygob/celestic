@@ -25,17 +25,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.celestic.R
 
+/**
+ * Dialog shown when the user requests the generation of a report.
+ * Displays a confirmation message and triggers the report creation process.
+ */
 @Composable
-
-fun ReportRequestDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
+fun ReportRequestDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
     val context = LocalContext.current
     val requestingMsg = stringResource(R.string.report_requesting)
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
+
+        // Dialog title with icon
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Description, contentDescription = null, tint = Color(0xFF415A77))
+                Icon(
+                    imageVector = Icons.Default.Description,
+                    contentDescription = null,
+                    tint = Color(0xFF415A77)
+                )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = stringResource(R.string.report_generate).uppercase(),
@@ -45,6 +57,8 @@ fun ReportRequestDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
                 )
             }
         },
+
+        // Dialog body text
         text = {
             Text(
                 text = stringResource(R.string.report_generate_confirm),
@@ -52,6 +66,8 @@ fun ReportRequestDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
+
+        // Confirm button (generates the report)
         confirmButton = {
             Button(
                 onClick = {
@@ -61,14 +77,24 @@ fun ReportRequestDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1B263B))
             ) {
-                Text(stringResource(R.string.ok), fontWeight = FontWeight.Bold)
+                Text(
+                    text = stringResource(R.string.ok),
+                    fontWeight = FontWeight.Bold
+                )
             }
         },
+
+        // Cancel button
         dismissButton = {
             TextButton(onClick = { onDismiss() }) {
-                Text(stringResource(R.string.back), color = Color.Gray)
+                Text(
+                    text = stringResource(R.string.back),
+                    color = Color.Gray
+                )
             }
         },
+
+        // Dialog styling
         containerColor = Color(0xFF0D1B2A),
         titleContentColor = Color.White,
         textContentColor = Color.LightGray,

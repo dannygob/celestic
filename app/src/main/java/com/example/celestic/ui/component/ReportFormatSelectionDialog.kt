@@ -1,6 +1,11 @@
 package com.example.celestic.ui.component
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material3.AlertDialog
@@ -15,6 +20,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.celestic.models.enums.ReportFormat
 
+/**
+ * Dialog that allows the user to select the desired report format.
+ * Options include PDF, Word, CSV, and JSON.
+ */
 @Composable
 fun ReportFormatSelectionDialog(
     onDismiss: () -> Unit,
@@ -25,33 +34,65 @@ fun ReportFormatSelectionDialog(
         title = { Text("Select Report Format") },
         text = {
             Column {
-                FormatOptionItem("PDF Document", Icons.Default.Assessment) { onFormatSelected(ReportFormat.PDF) }
+                // PDF option
                 FormatOptionItem(
-                    "Word Document (DOCX)",
-                    Icons.Default.Assessment
+                    label = "PDF Document",
+                    icon = Icons.Default.Assessment
+                ) { onFormatSelected(ReportFormat.PDF) }
+
+                // Word option
+                FormatOptionItem(
+                    label = "Word Document (DOCX)",
+                    icon = Icons.Default.Assessment
                 ) { onFormatSelected(ReportFormat.WORD) }
-                FormatOptionItem("Text Data (CSV)", Icons.Default.Assessment) { onFormatSelected(ReportFormat.CSV) }
+
+                // CSV option
                 FormatOptionItem(
-                    "Technical Summary (JSON)",
-                    Icons.Default.Assessment
+                    label = "Text Data (CSV)",
+                    icon = Icons.Default.Assessment
+                ) { onFormatSelected(ReportFormat.CSV) }
+
+                // JSON option
+                FormatOptionItem(
+                    label = "Technical Summary (JSON)",
+                    icon = Icons.Default.Assessment
                 ) { onFormatSelected(ReportFormat.JSON) }
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
         }
     )
 }
 
+/**
+ * Single selectable item inside the report format dialog.
+ * Displays an icon and a label, and triggers a callback when clicked.
+ */
 @Composable
-fun FormatOptionItem(label: String, icon: ImageVector, onClick: () -> Unit) {
+fun FormatOptionItem(
+    label: String,
+    icon: ImageVector,
+    onClick: () -> Unit
+) {
     TextButton(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(12.dp)
     ) {
-        Icon(icon, null, modifier = Modifier.size(20.dp), tint = Color(0xFF4FC3F7))
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(20.dp),
+            tint = Color(0xFF4FC3F7)
+        )
         Spacer(modifier = Modifier.width(12.dp))
-        Text(label, color = Color.White, fontSize = 14.sp)
+        Text(
+            text = label,
+            color = Color.White,
+            fontSize = 14.sp
+        )
     }
 }

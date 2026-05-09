@@ -25,6 +25,7 @@ fun FeatureCard(
     val cardPaddingDp = 8.dp
     val contentPaddingDp = 16.dp
     val spacerHeightDp = 8.dp
+
     Card(
         modifier = Modifier
             .fillMaxWidth()

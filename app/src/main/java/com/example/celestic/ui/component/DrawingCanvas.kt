@@ -10,6 +10,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.celestic.models.calibration.DetectedFeature
 
+/**
+ * Simple canvas that draws detected features as red circles.
+ */
 @Composable
 fun DrawingCanvas(features: List<DetectedFeature>) {
     Canvas(modifier = Modifier.fillMaxSize()) {
