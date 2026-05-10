@@ -124,7 +124,7 @@
     <string name="assign_batch">تعيين الدفعة</string>
     <string name="enter_batch_prompt">أدخل رقم الدفعة أو الإرسالية لهذا الفحص:</string>
     <string name="batch_number">رقم الدفعة</string>
-    <string name="batch_abbr">دفعة: %1$s</string>
+    <string name="batch_abbr">N°BATCH: %1$s</string>
     <string name="operative_shift">الوردية التشغيلية</string>
     <string name="unknown_operator">مشغل غير معروف</string>
     <string name="unassigned_shift">وردية غير معينة</string>
@@ -160,4 +160,10 @@
     <string name="too_much_light">إضاءة زائدة / انعكاس</string>
     <string name="focusing">جاري التركيز...</string>
 
+    <!-- Reports Connection -->
+    <string name="select_batch_report">حدد الدفعة للتقرير</string>
+    <string name="report_overview">نظرة عامة على التقرير</string>
+    <string name="report_summary_stats">%1$d دفعات | %2$d كشف</string>
+    <string name="detections_count">%1$d كشف</string>
+    <string name="no_history_reports">لا يوجد سجل متاح لإنشاء التقارير.</string>
 </resources>

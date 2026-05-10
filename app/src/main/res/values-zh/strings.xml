@@ -124,7 +124,7 @@
     <string name="assign_batch">分配批次</string>
     <string name="enter_batch_prompt">输入此检查的批次或送货单号:</string>
     <string name="batch_number">批次编号</string>
-    <string name="batch_abbr">批次: %1$s</string>
+    <string name="batch_abbr">N°批次: %1$s</string>
     <string name="operative_shift">班次</string>
     <string name="unknown_operator">未知操作员</string>
     <string name="unassigned_shift">未分配班次</string>
@@ -155,4 +155,10 @@
     <string name="blueprint_desc">蓝图图像</string>
     <string name="camera_view_placeholder">camerapreviewPlaceHolder</string>
 
+    <!-- Reports Connection -->
+    <string name="select_batch_report">选择报告批次</string>
+    <string name="report_overview">报告概览</string>
+    <string name="report_summary_stats">%1$d 批次 | %2$d 检测</string>
+    <string name="detections_count">%1$d 检测</string>
+    <string name="no_history_reports">没有可用于生成报告的历史记录。</string>
 </resources>

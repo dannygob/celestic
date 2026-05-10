@@ -124,7 +124,7 @@
     <string name="assign_batch">Assegna Lotto</string>
     <string name="enter_batch_prompt">Inserisci il numero di lotto per questa ispezione:</string>
     <string name="batch_number">Numero Lotto</string>
-    <string name="batch_abbr">LOT: %1$s</string>
+    <string name="batch_abbr">N°BATCH: %1$s</string>
     <string name="operative_shift">Turno Operativo</string>
     <string name="unknown_operator">Operatore sconosciuto</string>
     <string name="unassigned_shift">Turno non assegnato</string>
@@ -155,4 +155,10 @@
     <string name="blueprint_desc">Immagine Progetto</string>
     <string name="camera_view_placeholder">camerapreviewPlaceHolder</string>
 
+    <!-- Reports Connection -->
+    <string name="select_batch_report">Seleziona lotto per il rapporto</string>
+    <string name="report_overview">Panoramica del rapporto</string>
+    <string name="report_summary_stats">%1$d Lotti | %2$d Rilevamenti</string>
+    <string name="detections_count">%1$d Rilevamenti</string>
+    <string name="no_history_reports">Nessuna cronologia disponibile per generare rapporti.</string>
 </resources>
