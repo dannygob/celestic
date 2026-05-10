@@ -8,6 +8,7 @@ import com.example.celestic.models.SpecificationFeature
 import com.example.celestic.models.enums.DetectionType
 import com.example.celestic.models.enums.Orientation
 import com.example.celestic.opencv.ImageProcessor
+import com.example.celestic.opencv.ImageProcessorResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,7 +36,7 @@ class GoldenSampleViewModel @Inject constructor(
     private val _obverseFeatures = MutableStateFlow<List<SpecificationFeature>>(emptyList())
     val obverseFeatures: StateFlow<List<SpecificationFeature>> = _obverseFeatures.asStateFlow()
 
-    private val _reverseFeatures = MutableStateFlow<List<SpecificationFeature>>(emptyStateList())
+    private val _reverseFeatures = MutableStateFlow<List<SpecificationFeature>>(emptyList())
     val reverseFeatures: StateFlow<List<SpecificationFeature>> = _reverseFeatures.asStateFlow()
 
     /**
@@ -160,4 +161,4 @@ class GoldenSampleViewModel @Inject constructor(
     }
 }
 
-private fun <T> emptyStateList(): List<T> = emptyList()
+}

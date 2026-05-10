@@ -78,6 +78,17 @@ import com.example.celestic.viewmodel.DashboardViewModel.DashboardState
 import com.example.celestic.viewmodel.SharedViewModel
 
 
+/**
+ * Main inspection dashboard screen.
+ * 
+ * Provides a live view of the automated inspection pipeline, including
+ * real-time camera feed, batch status, and access to secondary tools like
+ * calibration, blueprint training, and history.
+ * 
+ * @param navController Navigation controller for app flow.
+ * @param viewModel Main view model managing the inspection state machine.
+ * @param sharedViewModel Shared view model for user preferences and theme.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @UiComposable
@@ -414,6 +425,12 @@ private fun DashboardMainContent(
     }
 }
 
+/**
+ * Reusable icon button for the top navigation bar.
+ * 
+ * Provides a consistent style for dashboard actions with support
+ * for both landscape and portrait layouts.
+ */
 @Composable
 fun NavIconBtn(
     icon: ImageVector,

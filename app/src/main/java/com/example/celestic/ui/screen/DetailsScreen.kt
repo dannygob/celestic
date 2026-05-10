@@ -69,6 +69,16 @@ import com.example.celestic.ui.theme.rememberScreenColors
 import com.example.celestic.viewmodel.DetailsViewModel
 import com.example.celestic.viewmodel.SharedViewModel
 
+/**
+ * Detailed inspection results screen.
+ * 
+ * Displays the status of a specific detection, technical visualization (overlaying 
+ * blueprint over real capture), traceability metadata, and report export options.
+ * 
+ * @param navController Navigation controller for back-stack management.
+ * @param detailType The type of feature being inspected (hole, countersink, alodine).
+ * @param detectionId The unique identifier of the detection record.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @UiComposable
@@ -157,7 +167,7 @@ fun DetailsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Sección de Estado de Inspección
+            // Section: Inspection Status
             item {
                 detectionItem?.let { item ->
                     Card(
@@ -231,14 +241,13 @@ fun DetailsScreen(
                     }
                 }
             }
-            // Sección de Visualización Técnica
+            // Section: Technical Visualization
             item {
                 SectionHeader(stringResource(R.string.visual_analysis), colors.accentColor)
                 Spacer(modifier = Modifier.height(8.dp))
                 Card(
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(containerColor = if (isDarkMode) Color.Black else Color.White),
-// Fallback to background if image fails
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(300.dp)
@@ -249,10 +258,10 @@ fun DetailsScreen(
                         imageBitmap?.let { bitmap ->
                             androidx.compose.foundation.Image(
                                 bitmap = bitmap.asImageBitmap(),
-                                contentDescription = "Captura Real",
+                                contentDescription = "Technical Image",
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Fit,
-                                alpha = 0.4f // Fondo sutil si ponemos el blueprint encima
+                                alpha = 0.4f
                             )
                         }
                         BlueprintView(features = features, useInches = useInches)
@@ -260,7 +269,7 @@ fun DetailsScreen(
                 }
             }
 
-            // Sección de Características Detectadas
+            // Section: Detected Features
             item {
                 SectionHeader(stringResource(R.string.detections_headline), colors.accentColor)
             }
@@ -295,7 +304,7 @@ fun DetailsScreen(
                 }
             }
 
-            // Sección de Trazabilidad
+            // Section: Traceability
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 SectionHeader(stringResource(R.string.traceability_headline), colors.accentColor)
@@ -371,10 +380,10 @@ fun DetailsScreen(
                 }
             }
 
-            // Sección de Exportación de Reporte
+            // Section: Report Export
             item {
                 Spacer(modifier = Modifier.height(8.dp))
-                SectionHeader("EXPORTAR INFORME", colors.accentColor)
+                SectionHeader(stringResource(R.string.export_report), colors.accentColor)
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Card(
@@ -390,7 +399,6 @@ fun DetailsScreen(
                         )
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        // Fila de Filtros/Formatos
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -413,7 +421,7 @@ fun DetailsScreen(
                         Button(
                             onClick = {
                                 val detections = detectionItem?.let { listOf(it) } ?: emptyList()
-                                val loteId = detectionItem?.frameId ?: "DESCONOCIDO"
+                                val loteId = detectionItem?.frameId ?: "UNKNOWN"
 
                                 val file = when (selectedReportFormat) {
                                     "PDF" -> com.example.celestic.utils.generatePdfFromDetections(
@@ -439,7 +447,6 @@ fun DetailsScreen(
                                         detections,
                                         false
                                     )
-
                                     else -> null
                                 }
 
@@ -466,29 +473,42 @@ fun DetailsScreen(
                                                     )
                                                     putExtra(
                                                         android.content.Intent.EXTRA_SUBJECT,
-                                                        "Reporte de Inspección Industrial - Lote: $loteId"
+                                                        context.getString(
+                                                            R.string.share_report_subject,
+                                                            loteId
+                                                        )
                                                     )
                                                     putExtra(
                                                         android.content.Intent.EXTRA_TEXT,
-                                                        "Adjunto reporte generado por Celestic.\n\nFormato: $selectedReportFormat"
+                                                        context.getString(
+                                                            R.string.share_report_body,
+                                                            selectedReportFormat
+                                                        )
                                                     )
                                                     addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                                 }
                                         context.startActivity(
                                             android.content.Intent.createChooser(
                                                 intent,
-                                                "Compartir Informe Celestic"
+                                                context.getString(R.string.share_report_title)
                                             )
                                         )
                                     } catch (e: Exception) {
                                         Toast.makeText(
                                             context,
-                                            "Error al preparar archivo: ${e.localizedMessage}",
+                                            context.getString(
+                                                R.string.error_preparing_file,
+                                                e.localizedMessage
+                                            ),
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
                                 } else {
-                                    Toast.makeText(context, "Error al generar informe", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.error_generating_report),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             },
                             modifier = Modifier.fillMaxWidth(),
@@ -511,7 +531,7 @@ fun DetailsScreen(
                 }
             }
 
-            // Botón de Reporte de Problema
+            // Section: Report Anomaly
             item {
                 Spacer(modifier = Modifier.height(24.dp))
                 OutlinedButton(
@@ -533,6 +553,15 @@ fun DetailsScreen(
     }
 }
 
+/**
+ * Renders a single row of traceability information.
+ * 
+ * @param label The localized string for the field name.
+ * @param value The value to display.
+ * @param textColor Standard text color for the theme.
+ * @param labelColor Color for the field label.
+ * @param isStatus Flag to indicate if this row displays a status (triggers specific coloring).
+ */
 @Composable
 fun TraceabilityRow(
     label: String,
@@ -550,17 +579,21 @@ fun TraceabilityRow(
         Text(label, color = labelColor, fontSize = 14.sp)
         Text(
             value,
-            color = if (isStatus && value.contains(
-                    "OK",
-                    true
-                )
-            ) Color.Green else if (isStatus && value.contains("NO", true)) Color.Red else textColor,
+            color = if (isStatus && value.contains("OK", true)) Color.Green
+            else if (isStatus && value.contains("NO", true)) Color.Red
+            else textColor,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp
         )
     }
 }
 
+/**
+ * Reusable header for sections in the details screen.
+ * 
+ * @param title The localized title of the section.
+ * @param color The accent color for the text.
+ */
 @Composable
 fun SectionHeader(title: String, color: Color) {
     Text(
@@ -572,6 +605,9 @@ fun SectionHeader(title: String, color: Color) {
     )
 }
 
+/**
+ * Multi-locale preview for the Details screen.
+ */
 @Preview(showBackground = true, locale = "en")
 @Preview(showBackground = true, locale = "es")
 @Preview(showBackground = true, locale = "zh")

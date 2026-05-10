@@ -51,6 +51,17 @@ import com.example.celestic.ui.component.CameraPreview
 import com.example.celestic.viewmodel.GoldenSampleViewModel
 import com.example.celestic.viewmodel.SharedViewModel
 
+/**
+ * Supervisor screen for learning new piece geometries (Golden Samples).
+ * 
+ * Provides a live camera interface to capture features from one or both faces
+ * of a master part. The captured features are stored as relative coordinates 
+ * to allow piece-position independent inspection.
+ * 
+ * @param navController Navigation controller for returning to the dashboard.
+ * @param viewModel ViewModel handling the capture and persistence logic.
+ * @param sharedViewModel ViewModel providing global settings like dark mode.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoldenSampleScreen(
