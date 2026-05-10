@@ -93,7 +93,7 @@ fun DetailsScreen(
     val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
     val colors = rememberScreenColors(isDarkMode)
 
-    // Observar estados del ViewModel
+    // Observer estados del ViewModel
     val detectionItem by detailsViewModel.detectionItem.collectAsState()
     val traceabilityResult by detailsViewModel.traceabilityItem.collectAsState()
     val features = detailsViewModel.features.collectAsState().value ?: emptyList()
