@@ -42,6 +42,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.celestic.R
+import com.example.celestic.models.enums.Orientation
+import com.example.celestic.ui.component.CameraCaptureController
+import com.example.celestic.ui.component.CameraPreview
 import com.example.celestic.viewmodel.GoldenSampleViewModel
 import com.example.celestic.viewmodel.SharedViewModel
 
@@ -59,6 +62,9 @@ fun GoldenSampleScreen(
     val isSaving by viewModel.isSaving.collectAsState()
     val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
 
+    val cameraController = remember { CameraCaptureController() }
+    var captureTarget by remember { mutableStateOf<Orientation?>(null) }
+
     val bgColor = if (isDarkMode) Color(0xFF121212) else Color(0xFFF5F5F5)
     val panelColor = if (isDarkMode) Color(0xFF1E1E1E) else Color.White
     val textColor = if (isDarkMode) Color.White else Color.Black
@@ -74,7 +80,10 @@ fun GoldenSampleScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back)
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -91,7 +100,7 @@ fun GoldenSampleScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            // Camera Area (Simulated for architecture layout, normally would use CameraPreview)
+            // Camera Area (Real CameraPreview)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -99,8 +108,15 @@ fun GoldenSampleScreen(
                     .background(Color.Black, RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                // In production, this uses the real CameraPreview from Dashboard
-                Text(stringResource(R.string.camera_view_placeholder), color = Color.White)
+                CameraPreview(
+                    controller = cameraController,
+                    onFrameCaptured = { bitmap ->
+                        captureTarget?.let { face ->
+                            viewModel.captureFrame(bitmap, face)
+                            captureTarget = null
+                        }
+                    }
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -148,8 +164,8 @@ fun GoldenSampleScreen(
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Button(
                             onClick = {
-                                // In production, grab current ImageProcessorResult
-                                // viewModel.captureFace(result, Orientation.ANVERSO)
+                                captureTarget = Orientation.ANVERSO
+                                cameraController.triggerCapture()
                             },
                             modifier = Modifier.weight(1f),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
@@ -171,8 +187,8 @@ fun GoldenSampleScreen(
                         if (hasTwoFaces) {
                             Button(
                                 onClick = {
-                                    // In production, grab current ImageProcessorResult
-                                    // viewModel.captureFace(result, Orientation.REVERSO)
+                                    captureTarget = Orientation.REVERSO
+                                    cameraController.triggerCapture()
                                 },
                                 modifier = Modifier.weight(1f),
                                 colors = ButtonDefaults.buttonColors(

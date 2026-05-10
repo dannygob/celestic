@@ -7,8 +7,14 @@ import com.example.celestic.models.enums.DetectionStatus
 import com.example.celestic.models.enums.DetectionType
 import com.example.celestic.models.geometry.BoundingBox
 
+/**
+ * Preview composable used to visualize how a DetectionItem
+ * will look when displayed in the UI.
+ */
 @Composable
 fun DetectionItemPreview() {
+
+    // Sample detection item for preview purposes
     val item = DetectionItem(
         frameId = "frame_007",
         type = DetectionType.COUNTERSINK,
@@ -18,10 +24,11 @@ fun DetectionItemPreview() {
         measurementMm = 4.2f,
         timestamp = System.currentTimeMillis(),
         linkedQrCode = "QR-L123",
-        notes = "Preview de prueba",
+        notes = "Test preview",
         id = 1,
         inspectionId = 1
     )
 
+    // Simple text preview showing key values
     Text(text = "⚙️ Preview: ${item.type} - ${item.measurementMm}mm - ${item.status}")
 }

@@ -11,6 +11,7 @@ import com.example.celestic.ui.screen.CalibrationScreen
 import com.example.celestic.ui.screen.DashboardScreen
 import com.example.celestic.ui.screen.DetailsScreen
 import com.example.celestic.ui.screen.DetectionListScreen
+import com.example.celestic.ui.screen.GoldenSampleScreen
 import com.example.celestic.ui.screen.LoginScreen
 import com.example.celestic.ui.screen.ReportsScreen
 import com.example.celestic.ui.screen.SettingsScreen
@@ -92,6 +93,11 @@ fun NavigationGraph(
         // Status screen
         composable(NavigationRoutes.Status.route) {
             StatusScreen(navController, sharedViewModel = sharedViewModel)
+        }
+
+        // Golden Sample (Master Blueprint Training)
+        composable("golden_sample") {
+            GoldenSampleScreen(navController, sharedViewModel = sharedViewModel)
         }
     }
 }
