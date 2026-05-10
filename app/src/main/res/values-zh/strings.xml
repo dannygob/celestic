@@ -93,13 +93,11 @@
 
     <!-- Reports -->
     <string name="reports_title">报告</string>
-    <string name="reports_module">报告模块</string>
-    <string name="reports_select_range">选择日期范围以生成统计信息。</string>
-    <string name="generate_pdf_report">生成 PDF 报告</string>
     <string name="report_generate">生成报告</string>
     <string name="report_generate_confirm">您要生成检查报告吗？</string>
     <string name="report_requesting">正在请求报告...</string>
-    <string name="report_section">报告</string>
+    <string name="share_report">分享报告</string>
+    <string name="select_report_format">选择报告格式</string>
     <string name="rep_abbr">报告</string>
 
     <!-- Dashboard -->

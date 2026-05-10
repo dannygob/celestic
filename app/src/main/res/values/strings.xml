@@ -35,7 +35,7 @@
     <string name="error_inference">Inference error</string>
     <string name="error_camera_init">Camera initialization error</string>
     <string name="error_inspection">Inspection error</string>
-    <string name="error_initializing_model">Error al inicializar modelo</string>
+    <string name="error_initializing_model">Model initialization error</string>
 
     <!-- Details Screens -->
     <string name="details_hole">Hole Details</string>
@@ -97,16 +97,10 @@
 
     <!-- Reports -->
     <string name="reports_title">REPORTS</string>
-    <string name="reports_module">REPORTS MODULE</string>
-    <string name="reports_select_range">Select a date range to generate statistics.</string>
-    <string name="generate_pdf_report">GENERATE PDF REPORT</string>
     <string name="report_generate">Generate Report</string>
     <string name="report_generate_confirm">Do you want to generate the inspection report?</string>
     <string name="report_requesting">Requesting report...</string>
-    <string name="report_section">Reports</string>
-    <string name="view_reports" translatable="false">View reports</string>
-    <string name="download_report" translatable="false">DOWNLOAD REPORT</string>
-    <string name="share_report" translatable="false">SHARE REPORT</string>
+    <string name="share_report">SHARE REPORT</string>
     <string name="select_report_format" translatable="false">Select Report Format</string>
     <string name="rep_abbr">REP</string>
 
@@ -190,10 +184,10 @@
     <string name="camera_view_placeholder">camerapreviewPlaceHolder</string>
 
     <!-- Detection Classes -->
-    <string name="unknown_class" translatable="false">Clase desconocida</string>
-    <string name="surface_defect" translatable="false">Defecto superficial</string>
-    <string name="irregular_curvature" translatable="false">Curvatura irregular</string>
-    <string name="no_defect_piece" translatable="false">Pieza sin defecto</string>
+    <string name="unknown_class" translatable="false">Unknown class</string>
+    <string name="surface_defect" translatable="false">Surface defect</string>
+    <string name="irregular_curvature" translatable="false">Irregular curvature</string>
+    <string name="no_defect_piece" translatable="false">Non-defective part</string>
 
     <!-- Camera Status -->
     <string name="low_light" translatable="false">Low light</string>

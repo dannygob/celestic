@@ -93,13 +93,11 @@
 
     <!-- Reports -->
     <string name="reports_title">RAPPORTI</string>
-    <string name="reports_module">MODULO RAPPORTI</string>
-    <string name="reports_select_range">Seleziona un intervallo di date per generare statistiche.</string>
-    <string name="generate_pdf_report">GENERA RAPPORTO PDF</string>
     <string name="report_generate">Genera Rapporto</string>
     <string name="report_generate_confirm">Vuoi generare il rapporto di ispezione?</string>
     <string name="report_requesting">Richiesta rapporto in corso...</string>
-    <string name="report_section">Rapporti</string>
+    <string name="share_report">CONDIVIDI RAPPORTO</string>
+    <string name="select_report_format">Seleziona formato rapporto</string>
     <string name="rep_abbr">RAPP</string>
 
     <!-- Dashboard -->

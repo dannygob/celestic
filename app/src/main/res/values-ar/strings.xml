@@ -93,13 +93,11 @@
 
     <!-- Reports -->
     <string name="reports_title">التقارير</string>
-    <string name="reports_module">وحدة التقارير</string>
-    <string name="reports_select_range">حدد نطاقاً زمنياً لإنشاء الإحصائيات.</string>
-    <string name="generate_pdf_report">إنشاء تقرير PDF</string>
     <string name="report_generate">إصدار تقرير</string>
     <string name="report_generate_confirm">هل تريد إصدار تقرير الفحص؟</string>
     <string name="report_requesting">جاري طلب التقرير...</string>
-    <string name="report_section">التقارير</string>
+    <string name="share_report">مشاركة التقرير</string>
+    <string name="select_report_format">اختر تنسيق التقرير</string>
     <string name="rep_abbr">تقارير</string>
 
     <!-- Dashboard -->

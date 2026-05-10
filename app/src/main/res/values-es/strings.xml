@@ -96,15 +96,9 @@
 
     <!-- Reports -->
     <string name="reports_title">INFORMES</string>
-    <string name="reports_module">MÓDULO DE INFORMES</string>
-    <string name="reports_select_range">Seleccione un rango de fechas para generar estadísticas.</string>
-    <string name="generate_pdf_report">GENERAR INFORME PDF</string>
     <string name="report_generate">Generar Informe</string>
     <string name="report_generate_confirm">¿Desea generar el informe de inspección?</string>
     <string name="report_requesting">Solicitando informe...</string>
-    <string name="report_section">Informes</string>
-    <string name="view_reports">Ver informes</string>
-    <string name="download_report">DESCARGAR INFORME</string>
     <string name="share_report">COMPARTIR INFORME</string>
     <string name="select_report_format">Seleccionar formato de informe</string>
     <string name="rep_abbr">INF</string>
