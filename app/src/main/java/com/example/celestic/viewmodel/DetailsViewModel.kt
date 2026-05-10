@@ -14,6 +14,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for the inspection details screen.
+ * 
+ * Responsible for loading specific detection records, their associated features,
+ * and performing traceability lookups via JSON. It also allows manual status 
+ * overrides for quality control.
+ */
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val repository: DetectionRepository,
@@ -29,6 +36,11 @@ class DetailsViewModel @Inject constructor(
     private val _detectionItem = MutableStateFlow<com.example.celestic.models.DetectionItem?>(null)
     val detectionItem: StateFlow<com.example.celestic.models.DetectionItem?> = _detectionItem
 
+    /**
+     * Loads traceability data for a specific part code.
+     * 
+     * @param code The part code or QR code string.
+     */
     fun loadTraceability(code: String) {
         viewModelScope.launch {
             try {
@@ -40,6 +52,11 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Loads features (measurements) associated with a specific detection record.
+     * 
+     * @param detectionItemId The ID of the detection record.
+     */
     fun loadFeatures(detectionItemId: Long) {
         viewModelScope.launch {
             repository.getFeaturesForDetection(detectionItemId).collect {
@@ -48,6 +65,11 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Loads a complete detection record and its related data by its ID.
+     * 
+     * @param id The ID of the detection to load.
+     */
     fun loadDetectionById(id: Long) {
         viewModelScope.launch {
             _traceabilityItem.value = Result.Loading
@@ -67,30 +89,36 @@ class DetailsViewModel @Inject constructor(
                 _traceabilityItem.value = Result.Success(null)
             }
         }
+    }
 
-        fun overrideStatusToOk() {
-            val currentItem = _detectionItem.value ?: return
-            viewModelScope.launch {
-                val updatedItem = currentItem.copy(
-                    status = com.example.celestic.models.enums.DetectionStatus.OK,
-                    notes = "${currentItem.notes} | (OVERRIDE MANUAL: APROBADO)"
+    /**
+     * Manually overrides the status of the current detection to "OK".
+     * 
+     * Used in industrial environments for false positive correction.
+     * Updates the database and triggers local state refresh.
+     */
+    fun overrideStatusToOk() {
+        val currentItem = _detectionItem.value ?: return
+        viewModelScope.launch {
+            val updatedItem = currentItem.copy(
+                status = com.example.celestic.models.enums.DetectionStatus.OK,
+                notes = "${currentItem.notes ?: ""} | (MANUAL OVERRIDE: APPROVED)"
+            )
+            repository.insertDetection(updatedItem)
+            _detectionItem.value = updatedItem
+
+            // Cleanup: Delete heavy raw image if we manually approve the part
+            try {
+                val file = java.io.File(
+                    context.filesDir,
+                    "detection_images/${currentItem.frameId}.jpg"
                 )
-                repository.insertDetection(updatedItem)
-                _detectionItem.value = updatedItem
-
-                // Auto-limpieza: Si forzamos la aprobación, borramos la imagen pesada
-                try {
-                    val file = java.io.File(
-                        context.filesDir,
-                        "detection_images/${currentItem.frameId}.jpg"
-                    )
-                    if (file.exists()) {
-                        file.delete()
-                    }
-                } catch (e: Exception) {
-                    // Ignore silent fail
+                if (file.exists()) {
+                    file.delete()
+                }
+            } catch (e: Exception) {
+                // Silent fail for cleanup
             }
         }
     }
-}
-}
+}

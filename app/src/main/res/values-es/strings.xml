@@ -146,6 +146,12 @@
     <string name="shift_label">Turno: %1$s</string>
     <string name="date_label">Fecha: %1$s</string>
     <string name="report_header">Reporte de Inspección - Lote: %1$s</string>
+    <string name="export_report">EXPORTAR INFORME</string>
+    <string name="share_report_subject">Reporte de Inspección Industrial - Lote: %1$s</string>
+    <string name="share_report_body">Adjunto reporte generado por Celestic.\n\nFormato: %1$s</string>
+    <string name="share_report_title">Compartir Informe Celestic</string>
+    <string name="error_preparing_file">Error al preparar archivo: %1$s</string>
+    <string name="error_generating_report">Error al generar informe</string>
 
     <!-- Settings -->
     <string name="settings_title">CONFIGURACIÓN</string>

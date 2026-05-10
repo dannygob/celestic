@@ -4,8 +4,8 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 /**
- * Representa el área delimitadora de una característica detectada
- * en coordenadas relativas (pixeles o escala normalizada).
+ * Represent el área deliminator de una characteristic detected
+ * en coordenadas relatives (pixels o escala normalize).
  */
 @Parcelize
 data class BoundingBox(

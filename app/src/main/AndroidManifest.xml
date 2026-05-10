@@ -2,10 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permisos de cámara -->
+    <!-- Camera Permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <!-- Permisos de almacenamiento -->
+    <!-- Storage Permissions (Legacy & Modern) -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
@@ -14,28 +14,32 @@
         android:maxSdkVersion="32"
         tools:ignore="ScopedStorage" />
 
-    <!-- Permisos de Bluetooth -->
+    <!-- Bluetooth Permissions for future industrial peripheral integration -->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
 
-    <!-- Permisos de WIFI -->
+    <!-- Network & Location Permissions -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <!-- Habilitar la cámara como característica obligatoria -->
+    <!-- Required Hardware Features -->
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true"/>
     <uses-feature
+            android:name="android.hardware.camera.autofocus"
+            android:required="false" />
+    <uses-feature
             android:name="android.hardware.bluetooth"
-            android:required="true"/>
+            android:required="false" />
     <uses-feature
             android:name="android.hardware.wifi"
-            android:required="true"/>
+            android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -47,21 +51,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Celestic"
-        android:label="@string/appName"
+            android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         tools:targetApi="35">
 
-        <!-- Actividad principal -->
+        <!-- Main Single-Activity Entry Point -->
         <activity
             android:name="com.example.celestic.MainActivity"
-            android:exported="true">
+                android:exported="true"
+                android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
+                android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Proveedor de Archivos para Compartir Reportes (Nube/Correo) -->
+        <!-- File Provider for Report Sharing (PDF/CSV/Excel) -->
         <provider
                 android:name="androidx.core.content.FileProvider"
                 android:authorities="${applicationId}.provider"

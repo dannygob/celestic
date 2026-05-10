@@ -48,7 +48,7 @@ class AprilTagManager @Inject constructor() {
      * - Extracts marker IDs and corner positions.
      */
     fun detectMarkers(image: Mat): List<FiducialMarker> {
-        // Convert to grayscale to reduce CPU load
+        // Convert too grayscale to reduce CPU load
         val gray = Mat()
         org.opencv.imgproc.Imgproc.cvtColor(image, gray, org.opencv.imgproc.Imgproc.COLOR_RGBA2GRAY)
 
@@ -111,7 +111,7 @@ class AprilTagManager @Inject constructor() {
 
     /**
      * Releases resources if needed.
-     * Currently a no-op because ArucoDetector does not require manual cleanup.
+     * Currently, a no-op because ArucoDetector does not require manual cleanup.
      */
     fun close() {
         // No resources to release
