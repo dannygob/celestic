@@ -138,7 +138,7 @@
     <string name="assign_batch">Assign Batch</string>
     <string name="enter_batch_prompt">Enter the batch or albaran number for this inspection:</string>
     <string name="batch_number">Batch Number</string>
-    <string name="batch_abbr">BAT: %1$s</string>
+    <string name="batch_abbr">N°BATCH: %1$s</string>
     <string name="operative_shift">Operative Shift</string>
     <string name="unknown_operator">Unknown Operator</string>
     <string name="unassigned_shift">Unassigned Shift</string>
@@ -206,5 +206,12 @@
     <string name="force_approval">FORCE APPROVAL (FALSE POSITIVE)</string>
     <string name="return_to_dashboard">Return to Dashboard</string>
     <string name="reset_system">RESET SYSTEM</string>
+
+    <!-- Reports Connection -->
+    <string name="select_batch_report">Select Batch for Report</string>
+    <string name="report_overview">Report Overview</string>
+    <string name="report_summary_stats">%1$d Batches | %2$d Detections</string>
+    <string name="detections_count">%1$d Detections</string>
+    <string name="no_history_reports">No history available to generate reports.</string>
 
 </resources>

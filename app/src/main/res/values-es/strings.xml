@@ -137,7 +137,7 @@
     <string name="assign_batch">Asignar Lote</string>
     <string name="enter_batch_prompt">Ingrese el número de lote o albarán para esta inspección:</string>
     <string name="batch_number">Número de Lote</string>
-    <string name="batch_abbr">LOTE: %1$s</string>
+    <string name="batch_abbr">N°BATCH: %1$s</string>
     <string name="operative_shift">Turno Operativo</string>
     <string name="unknown_operator">Operador Desconocido</string>
     <string name="unassigned_shift">Turno no asignado</string>
@@ -205,5 +205,12 @@
     <string name="force_approval">FORZAR APROBACIÓN (FALSO POSITIVO)</string>
     <string name="return_to_dashboard">Volver al Panel</string>
     <string name="reset_system">REINICIAR SISTEMA</string>
+
+    <!-- Reports Connection -->
+    <string name="select_batch_report">Seleccionar Lote para Informe</string>
+    <string name="report_overview">Vista General de Informes</string>
+    <string name="report_summary_stats">%1$d Lotes | %2$d Detecciones</string>
+    <string name="detections_count">%1$d Detecciones</string>
+    <string name="no_history_reports">No hay historial disponible para generar informes.</string>
 
 </resources>

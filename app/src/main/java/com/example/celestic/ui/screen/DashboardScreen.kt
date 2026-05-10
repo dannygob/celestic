@@ -29,8 +29,10 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.ModelTraining
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PrecisionManufacturing
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -66,6 +68,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -214,7 +217,7 @@ private fun DashboardTopBar(
                     )
                     val finalAlbaran =
                         albaranText.ifBlank { context.getString(R.string.general_batch) }
-                    prefs.edit().putString("current_albaran", finalAlbaran).apply()
+                    prefs.edit { putString("current_albaran", finalAlbaran) }
                     currentAlbaran = finalAlbaran
                     showAlbaranDialog = false
                 }) {
@@ -324,32 +327,6 @@ private fun DashboardTopBar(
 
                         Spacer(modifier = Modifier.width(if (isLandscape) 8.dp else 4.dp))
                     }
-
-                    Button(
-                        onClick = {
-                            if (state is DashboardState.Idle || state is DashboardState.NavigateToDetails) {
-                                viewModel.startInspection()
-                            } else {
-                                viewModel.resetState()
-                            }
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (state is DashboardState.Idle || state is DashboardState.NavigateToDetails)
-                                Color(0xFF00695C)
-                            else Color(0xFFB71C1C)
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        contentPadding = PaddingValues(horizontal = if (isLandscape) 12.dp else 8.dp),
-                        modifier = Modifier.height(if (isLandscape) 36.dp else 30.dp)
-                    ) {
-                        Text(
-                            if (state == DashboardState.Idle) stringResource(R.string.start)
-                            else stringResource(R.string.stop),
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = Color.White
-                        )
-                    }
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
@@ -409,6 +386,49 @@ private fun DashboardMainContent(
                     }
                 }
 
+                // New Centered Inspection Control Button
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = if (isLandscape) 24.dp else 40.dp),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    val isIdle =
+                        state is DashboardState.Idle || state is DashboardState.NavigateToDetails
+
+                    Button(
+                        onClick = {
+                            if (isIdle) viewModel.startInspection()
+                            else viewModel.resetState()
+                        },
+                        modifier = Modifier
+                            .height(if (isLandscape) 56.dp else 64.dp)
+                            .width(if (isLandscape) 140.dp else 180.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isIdle) Color(0xFF00695C) else Color(0xFFB71C1C)
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 12.dp),
+                        shape = RoundedCornerShape(if (isLandscape) 28.dp else 32.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = if (isIdle) Icons.Default.PlayArrow else Icons.Default.Stop,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(if (isLandscape) 20.dp else 24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                if (isIdle) stringResource(R.string.start).uppercase()
+                                else stringResource(R.string.stop).uppercase(),
+                                fontWeight = FontWeight.Black,
+                                fontSize = if (isLandscape) 14.sp else 16.sp,
+                                letterSpacing = 2.sp,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
             }
 
             if (!isLandscape) {

@@ -39,6 +39,10 @@ class DetectionRepository @Inject constructor(
     fun getAllDetectionItems(): Flow<List<DetectionItem>> =
         dao.getAllDetectionItems()
 
+    /** Retrieves unique batch numbers from the inspection history. */
+    fun getUniqueBatches(): Flow<List<String>> =
+        dao.getUniqueBatches()
+
     /** Retrieves all detection items linked to a specific inspection. */
     fun getDetectionItemsByInspection(inspectionId: Long): Flow<List<DetectionItem>> =
         dao.getDetectionItemsByInspection(inspectionId)

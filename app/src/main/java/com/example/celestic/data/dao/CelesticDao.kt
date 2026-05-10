@@ -28,6 +28,10 @@ interface CelesticDao {
     @Query("SELECT * FROM detection_items ORDER BY timestamp DESC")
     fun getAllDetectionItems(): Flow<List<DetectionItem>>
 
+    /** Returns a list of unique QR codes/batch numbers from detections. */
+    @Query("SELECT DISTINCT linkedQrCode FROM detection_items WHERE linkedQrCode IS NOT NULL")
+    fun getUniqueBatches(): Flow<List<String>>
+
     /** Returns all detection items associated with a specific inspection. */
     @Query("SELECT * FROM detection_items WHERE inspectionId = :inspectionId")
     fun getDetectionItemsByInspection(inspectionId: Long): Flow<List<DetectionItem>>
