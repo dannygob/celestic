@@ -42,7 +42,7 @@ class GoldenSampleViewModel @Inject constructor(
     /**
      * Updates the internal name of the blueprint being created.
      * 
-     * @param name The new identification code for the master piece.
+     * @param name The new identification code for the masterpiece.
      */
     fun updateName(name: String) {
         _blueprintName.value = name
@@ -92,24 +92,25 @@ class GoldenSampleViewModel @Inject constructor(
      * @param face The orientation being scanned (ANVERSO or REVERSO).
      */
     fun captureFace(result: ImageProcessorResult, face: Orientation) {
-        val validItems = result.detectedItems.filter {
+        val validItems = result.detections.filter {
             it.type == DetectionType.HOLE || it.type == DetectionType.COUNTERSINK
         }
 
         if (validItems.isEmpty()) return
 
         // OPTION 2: Relative Coordinates (Smart Bounding Box Offset)
-        val minX = validItems.minOf { it.boundingBox.x }
-        val minY = validItems.minOf { it.boundingBox.y }
+        // Note: We use 'left' as X and 'top' as Y
+        val minX = validItems.minOf { it.boundingBox.left }
+        val minY = validItems.minOf { it.boundingBox.top }
 
-        val features = validItems.map { item ->
+        val features = validItems.map { item: com.example.celestic.models.DetectionItem ->
             SpecificationFeature(
                 specificationId = 0, // Assigned during DB transaction
                 face = face,
                 type = item.type,
                 // Coordinate normalization relative to the piece's anchor point
-                positionX_mm = (item.boundingBox.x - minX).toDouble(),
-                positionY_mm = (item.boundingBox.y - minY).toDouble(),
+                positionX_mm = (item.boundingBox.left - minX).toDouble(),
+                positionY_mm = (item.boundingBox.top - minY).toDouble(),
                 diameter_mm = item.measurementMm?.toDouble() ?: 10.0,
                 tolerance_mm = 2.0, // Industrial default tolerance
                 requireAlodine = false,
@@ -161,4 +162,4 @@ class GoldenSampleViewModel @Inject constructor(
     }
 }
 
-}
+
