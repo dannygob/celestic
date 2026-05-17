@@ -6,10 +6,8 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.camera.core.ImageProxy
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
-import com.google.common.util.concurrent.ListenableFuture
 import org.opencv.android.Utils
 import org.opencv.core.CvType
 import org.opencv.core.Mat
@@ -38,12 +36,6 @@ fun imageProxyToBitmap(image: ImageProxy): Bitmap {
     return bmp
 }
 
-fun hasCameraPermission(context: Context): Boolean {
-    return ContextCompat.checkSelfPermission(
-        context,
-        Manifest.permission.CAMERA
-    ) == PackageManager.PERMISSION_GRANTED
-}
 
 fun hasRequiredPermissions(context: Context): Boolean {
     val required = mutableListOf(Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -55,10 +47,6 @@ fun hasRequiredPermissions(context: Context): Boolean {
     return required.all {
         ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
     }
-}
-
-fun getCameraProvider(context: Context): ListenableFuture<ProcessCameraProvider> {
-    return ProcessCameraProvider.getInstance(context)
 }
 
 fun saveBitmapToFile(context: Context, bitmap: Bitmap, fileName: String): File? {

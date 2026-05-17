@@ -94,6 +94,9 @@ data class Specification(
     /** Whether the part requires an alodine halo. */
     val requireAlodineHalo: Boolean,
 
-    /** Minimum required uniformity score for alodine coating. */
-    val minAlodineUniformity: Double
+    /** Minimum required required uniformity score for alodine coating. */
+    val minAlodineUniformity: Double,
+
+    /** ID of the associated technical blueprint (if any) for geometric matching. */
+    val linkedBlueprintId: String? = null
 )

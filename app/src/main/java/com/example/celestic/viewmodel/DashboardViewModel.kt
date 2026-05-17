@@ -32,7 +32,9 @@ class DashboardViewModel @Inject constructor(
     private val calibrationManager: CalibrationManager,
     private val frameAnalyzer: FrameAnalyzer,
     private val imageProcessor: ImageProcessor,
+    private val blueprintMatcher: com.example.celestic.ml.BlueprintMatcher,
     private val sharedData: SharedDataRepository,
+    private val imageClassifier: com.example.celestic.manager.ImageClassifier,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -98,19 +100,88 @@ class DashboardViewModel @Inject constructor(
             try {
                 val currentMarkerType = markerType.value
                 val processResult = imageProcessor.processImage(mat, currentMarkerType)
-                val detections = processResult.detections
+                val detections = processResult.detections.toMutableList()
                 val orientation = processResult.orientation
 
-                // Validate against specification
+                // 1. Automatic Blueprint Identification (Vision Artificial)
+                val blueprintMatch = blueprintMatcher.matchBlueprint(mat)
+
+                // 1.5 Run AI Semantic Classification using MobileNet V2
+                val aiPredictions = imageClassifier.runInference(bitmap)
+                val aiResultLabel = imageClassifier.mapPredictionToFeatureType(aiPredictions)
+                val maxAiConfidence = aiPredictions.maxOrNull() ?: 0f
+
+                var aiDefectAdded = false
+                if (aiResultLabel == "Defecto superficial" || aiResultLabel == "Curvatura irregular") {
+                    val aiDefectType =
+                        if (aiResultLabel == "Defecto superficial") DetectionType.DEFECT else DetectionType.BEND
+                    val aiDetectionItem = DetectionItem(
+                        inspectionId = 0,
+                        frameId = frameId,
+                        type = aiDefectType,
+                        boundingBox = com.example.celestic.models.geometry.BoundingBox(
+                            0f,
+                            0f,
+                            bitmap.width.toFloat(),
+                            bitmap.height.toFloat()
+                        ),
+                        confidence = maxAiConfidence,
+                        status = DetectionStatus.NOT_ACCEPTED,
+                        timestamp = System.currentTimeMillis(),
+                        notes = "IA SEMÁNTICA: $aiResultLabel detectado (Confianza: ${(maxAiConfidence * 100).toInt()}%)"
+                    )
+                    detections.add(aiDetectionItem)
+                    aiDefectAdded = true
+                }
+
+                // 2. Validate against specification (Golden Sample DB + Blueprint Logic)
                 val specification = currentSpecification
                 val validationResult = if (specification != null) {
                     val expectedFeatures = repository.getFeaturesBySpecificationAndFace(
                         specification.id,
                         orientation
                     ).firstOrNull() ?: emptyList()
-                    validateAgainstSpecification(detections, specification, expectedFeatures)
+
+                    // If we have a blueprint match that matches our spec, we use its advanced validation
+                    if (blueprintMatch != null && blueprintMatch.blueprint.id == specification.linkedBlueprintId) {
+                        val bpValidation = blueprintMatcher.validateDetections(
+                            detections.map { it.toMLDetection() },
+                            blueprintMatch.blueprint
+                        )
+                        // Merge validation results
+                        validateAgainstSpecification(
+                            detections,
+                            specification,
+                            expectedFeatures,
+                            bpValidation,
+                            aiDefectAdded,
+                            aiResultLabel
+                        )
+                    } else {
+                        validateAgainstSpecification(
+                            detections,
+                            specification,
+                            expectedFeatures,
+                            null,
+                            aiDefectAdded,
+                            aiResultLabel
+                        )
+                    }
+                } else if (blueprintMatch != null) {
+                    // Use only blueprint if no manual spec is selected
+                    val bpValidation = blueprintMatcher.validateDetections(
+                        detections.map { it.toMLDetection() },
+                        blueprintMatch.blueprint
+                    )
+                    createBlueprintValidationResult(
+                        detections,
+                        blueprintMatch.blueprint,
+                        bpValidation,
+                        aiDefectAdded,
+                        aiResultLabel
+                    )
                 } else {
-                    createDefaultValidationResult(detections)
+                    createDefaultValidationResult(detections, aiDefectAdded, aiResultLabel)
                 }
 
                 // Save to database with current frameId
@@ -154,29 +225,35 @@ class DashboardViewModel @Inject constructor(
     private fun validateAgainstSpecification(
         detections: List<DetectionItem>,
         specification: Specification,
-        expectedFeatures: List<SpecificationFeature>
+        expectedFeatures: List<SpecificationFeature>,
+        bpValidation: com.example.celestic.ml.ValidationResult? = null,
+        aiDefectAdded: Boolean = false,
+        aiResultLabel: String = ""
     ): ValidationResult {
         val violations = mutableListOf<String>()
         var overallStatus = DetectionStatus.OK
 
+        if (aiDefectAdded) {
+            violations.add("IA SEMÁNTICA: $aiResultLabel detectado en la pieza.")
+            overallStatus = DetectionStatus.NOT_ACCEPTED
+        }
+
+        // If blueprint validation exists and failed, it takes priority on geometry
+        if (bpValidation != null && !bpValidation.passed) {
+            violations.addAll(bpValidation.issues)
+            overallStatus = DetectionStatus.NOT_ACCEPTED
+        }
+
         if (expectedFeatures.isNotEmpty()) {
-            // Validate specific features for this face
+            // Validate specific features for this face (Golden Sample DB)
             val expectedHoles = expectedFeatures.count { it.type == DetectionType.HOLE }
             val detectedHoles = detections.count { it.type == DetectionType.HOLE }
             if (expectedHoles > 0 && detectedHoles != expectedHoles) {
-                violations.add("Hole count mismatch for this face: expected $expectedHoles, found $detectedHoles")
-                overallStatus = DetectionStatus.NOT_ACCEPTED
-            }
-
-            val expectedCountersinks =
-                expectedFeatures.count { it.type == DetectionType.COUNTERSINK }
-            val detectedCountersinks = detections.count { it.type == DetectionType.COUNTERSINK }
-            if (expectedCountersinks > 0 && detectedCountersinks != expectedCountersinks) {
-                violations.add("Countersink count mismatch for this face: expected $expectedCountersinks, found $detectedCountersinks")
+                violations.add("Hole count mismatch (Golden Sample): expected $expectedHoles, found $detectedHoles")
                 overallStatus = DetectionStatus.NOT_ACCEPTED
             }
         } else {
-            // Fallback to general specification (both faces combined or general layout)
+            // Fallback to general specification
             val holesCount = detections.count { it.type == DetectionType.HOLE }
             if (holesCount != specification.expectedHoleCount) {
                 violations.add("Hole count mismatch: expected ${specification.expectedHoleCount}, found $holesCount")
@@ -184,7 +261,7 @@ class DashboardViewModel @Inject constructor(
             }
         }
 
-        // Validate scratches
+        // Validate scratches (Surface Quality)
         val scratchesCount = detections.count { it.type == DetectionType.SCRATCH }
         if (scratchesCount > specification.maxAllowedScratches) {
             violations.add("Too many scratches: allowed ${specification.maxAllowedScratches}, found $scratchesCount")
@@ -198,12 +275,73 @@ class DashboardViewModel @Inject constructor(
         )
     }
 
-    private fun createDefaultValidationResult(detections: List<DetectionItem>): ValidationResult {
-        val hasCriticalDefects = detections.any { it.type == DetectionType.SCRATCH }
+    private fun createBlueprintValidationResult(
+        detections: List<DetectionItem>,
+        blueprint: com.example.celestic.models.Blueprint,
+        bpValidation: com.example.celestic.ml.ValidationResult,
+        aiDefectAdded: Boolean = false,
+        aiResultLabel: String = ""
+    ): ValidationResult {
+        val violations = mutableListOf<String>()
+        violations.addAll(bpValidation.issues)
+        var overallStatus =
+            if (bpValidation.passed) DetectionStatus.OK else DetectionStatus.NOT_ACCEPTED
+
+        if (aiDefectAdded) {
+            violations.add("IA SEMÁNTICA: $aiResultLabel detectado en la pieza.")
+            overallStatus = DetectionStatus.NOT_ACCEPTED
+        }
+
         return ValidationResult(
-            isValid = !hasCriticalDefects,
-            violations = if (hasCriticalDefects) listOf("Critical defects detected") else emptyList(),
-            overallStatus = if (hasCriticalDefects) DetectionStatus.NOT_ACCEPTED else DetectionStatus.OK
+            isValid = bpValidation.passed && !aiDefectAdded,
+            violations = violations,
+            overallStatus = overallStatus
+        )
+    }
+
+    private fun DetectionItem.toMLDetection(): com.example.celestic.ml.Detection {
+        return com.example.celestic.ml.Detection(
+            classId = 0, // Not critical for matcher
+            className = when (this.type) {
+                DetectionType.HOLE -> "agujero"
+                DetectionType.COUNTERSINK -> "avellanado"
+                DetectionType.SCRATCH -> "arañazo"
+                else -> "unknown"
+            },
+            confidence = this.confidence,
+            boundingBox = org.opencv.core.Rect(
+                this.boundingBox.left.toInt(),
+                this.boundingBox.top.toInt(),
+                (this.boundingBox.right - this.boundingBox.left).toInt(),
+                (this.boundingBox.bottom - this.boundingBox.top).toInt()
+            ),
+            roi = Mat() // Matcher doesn't need ROI
+        )
+    }
+
+    private fun createDefaultValidationResult(
+        detections: List<DetectionItem>,
+        aiDefectAdded: Boolean = false,
+        aiResultLabel: String = ""
+    ): ValidationResult {
+        val violations = mutableListOf<String>()
+        val hasCriticalDefects = detections.any { it.type == DetectionType.SCRATCH }
+        var overallStatus =
+            if (hasCriticalDefects) DetectionStatus.NOT_ACCEPTED else DetectionStatus.OK
+
+        if (hasCriticalDefects) {
+            violations.add("Critical defects detected")
+        }
+
+        if (aiDefectAdded) {
+            violations.add("IA SEMÁNTICA: $aiResultLabel detectado en la pieza.")
+            overallStatus = DetectionStatus.NOT_ACCEPTED
+        }
+
+        return ValidationResult(
+            isValid = !hasCriticalDefects && !aiDefectAdded,
+            violations = violations,
+            overallStatus = overallStatus
         )
     }
 
