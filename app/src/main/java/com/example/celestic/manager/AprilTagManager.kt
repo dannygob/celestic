@@ -1,5 +1,16 @@
 package com.example.celestic.manager
 
+/*
+ **Estado:** Pospuesta (Para después).
+    *   **¿Por qué se deja?** (Nota de Ingeniería): La generación de etiquetas y planos virtuales 3D a través de
+    *   códigos AprilTag requiere un motor de proyección espacial de Realidad Aumentada (como ARCore o Unity)
+    *   integrado en el contenedor de cámara de Jetpack Compose, el cual no está contemplado en el MVP plano de
+    *   esta aplicación industrial.
+    *   **¿Para qué se deja?** (Nota de Ingeniería): Se conserva para habilitar la superposición holográfica en
+    *   Realidad Aumentada (AR) de planos CAD/CAM dorados (Golden Sample blueprints) directamente sobre las chapas
+    *   metálicas físicas del operador en una fase de desarrollo futura.
+ */
+
 import com.example.celestic.models.FiducialMarker
 import org.opencv.core.Mat
 import org.opencv.core.MatOfInt
@@ -76,10 +87,13 @@ class AprilTagManager @Inject constructor() {
     /**
      * Generates a virtual fiducial marker for a detected feature.
      *
-     * This is useful for:
-     * - Overlaying markers in augmented reality
-     * - Visual debugging
-     * - Representing detected features as synthetic tags
+     * NOTA DE INGENIERÍA: Esta función se pospone ("para después").
+     * - ¿Por qué se deja? Porque la visualización u overlay tridimensional holográfico de Realidad
+     *   Aumentada (AR) requiere de un motor de renderizado espacial como ARCore o Unity integrado
+     *   en la cámara, el cual no está contemplado en el alcance inicial del MVP de la app.
+     * - ¿Para qué se deja? Como cimiento técnico para una futura fase del proyecto que permita
+     *   proyectar de manera holográfica el plano CAD/CAM (Golden Sample blueprint) directamente
+     *   alineado sobre la chapa metálica real que el operario está inspeccionando.
      *
      * @param featureId Unique ID for the virtual marker.
      * @param position Center position of the marker (x, y).

@@ -43,7 +43,13 @@ class DetectionRepository @Inject constructor(
     fun getUniqueBatches(): Flow<List<String>> =
         dao.getUniqueBatches()
 
-    /** Retrieves all detection items linked to a specific inspection. */
+    /**
+     * NOTA DE INGENIERÍA: Esta función se pospone ("para después").
+     * - ¿Por qué se deja? La interfaz actual (como DetectionListScreen) muestra un historial plano
+     *   de todas las detecciones de forma cronológica sin agruparlas por sesión de inspección física.
+     * - ¿Para qué se deja? Para habilitar una futura vista Maestro-Detalle de "Sesiones de Inspección",
+     *   permitiendo filtrar y mostrar únicamente los hallazgos de una sesión específica.
+     */
     fun getDetectionItemsByInspection(inspectionId: Long): Flow<List<DetectionItem>> =
         dao.getDetectionItemsByInspection(inspectionId)
 
@@ -53,7 +59,14 @@ class DetectionRepository @Inject constructor(
 
     // ===== DETECTED FEATURES =====
 
-    /** Inserts a single detected feature. */
+    /**
+     * NOTA DE INGENIERÍA: Este bloque completo de persistencia de características se pospone ("para después").
+     * - ¿Por qué se deja? La aplicación actualmente registra y consulta únicamente entidades de alto nivel
+     *   (DetectionItem) en la base de datos local SQLite. No se requiere persistir las formas geométricas
+     *   individuales o contornos detectados por OpenCV en tablas separadas.
+     * - ¿Para qué se deja? Para permitir análisis avanzados y reconstrucción tridimensional de contornos
+     *   en futuras integraciones con software CAD/CAM industrial.
+     */
     suspend fun insertDetectedFeature(detection: DetectedFeature) {
         dao.insertDetectedFeature(detection)
     }
@@ -95,7 +108,12 @@ class DetectionRepository @Inject constructor(
     fun getAllInspections(): Flow<List<Inspection>> =
         dao.getAllInspections()
 
-    /** Retrieves an inspection by its ID. */
+    /**
+     * NOTA DE INGENIERÍA: Esta función se pospone ("para después").
+     * - ¿Por qué se deja? Actualmente no existe una vista detallada de los metadatos de una sesión
+     *   de inspección individual (con coordenadas GPS u hora exacta) en la interfaz de usuario.
+     * - ¿Para qué se deja? Para enriquecer la vista de auditoría en futuras fases del proyecto.
+     */
     suspend fun getInspectionById(id: Long): Inspection? =
         dao.getInspectionById(id)
 
@@ -110,7 +128,13 @@ class DetectionRepository @Inject constructor(
     fun getLatestSpecification(): Flow<Specification?> =
         dao.getLatestSpecification()
 
-    /** Retrieves all specifications. */
+    /**
+     * NOTA DE INGENIERÍA: Este bloque de consulta de especificaciones se pospone ("para después").
+     * - ¿Por qué se deja? Los planos patrón (Golden Samples) se cargan y validan estáticamente
+     *   en memoria para la vista de análisis activo. No hay pantallas de gestión de catálogo de planos.
+     * - ¿Para qué se deja? Para soportar un "Administrador de Especificaciones CAD/CAM" en la base de datos
+     *   en una futura versión corporativa.
+     */
     fun getAllSpecifications(): Flow<List<Specification>> =
         dao.getAllSpecifications()
 
@@ -132,7 +156,13 @@ class DetectionRepository @Inject constructor(
     ): Flow<List<SpecificationFeature>> =
         dao.getFeaturesBySpecificationAndFace(specId, face)
 
-    /** Retrieves all features associated with a specification. */
+    /**
+     * NOTA DE INGENIERÍA: Este bloque de gestión de características de especificaciones se pospone ("para después").
+     * - ¿Por qué se deja? Al igual que las especificaciones, las tolerancias de contornos
+     *   están gestionadas en memoria estática por ahora.
+     * - ¿Para qué se deja? Para permitir la creación, modificación y borrado dinámico de tolerancias de plano
+     *   asociadas a especificaciones por parte de ingenieros de calidad en el futuro.
+     */
     fun getAllFeaturesBySpecification(specId: Long): Flow<List<SpecificationFeature>> =
         dao.getAllFeaturesBySpecification(specId)
 
@@ -189,8 +219,12 @@ class DetectionRepository @Inject constructor(
     // ===== TRANSACTIONAL OPERATIONS =====
 
     /**
-     * Saves an inspection and all associated detection items.
-     * Returns the generated inspection ID.
+     * NOTA DE INGENIERÍA: Esta transacción se pospone ("para después").
+     * - ¿Por qué se deja? La inserción de detecciones se realiza en tiempo real a medida que
+     *   se procesan los fotogramas de la cámara. No hay un flujo de "Guardar Inspección Completa"
+     *   por lotes al finalizar el turno.
+     * - ¿Para qué se deja? Para soportar flujos de trabajo "Offline-First", permitiendo guardar una sesión
+     *   entera acumulada y sus detecciones en una única transacción atómica una vez restablecida la conexión.
      */
     suspend fun saveInspectionWithDetections(
         inspection: Inspection,

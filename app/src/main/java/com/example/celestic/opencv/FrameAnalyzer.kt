@@ -1,19 +1,36 @@
 package com.example.celestic.opencv
+/*
+**Estado:** Pospuesta (Para después).
+    *   **¿Por qué se deja?** (Nota de Ingeniería): El cálculo de Optical Flow (flujo óptico de Lucas-Kanade) es un proceso de visión artificial de alta carga computacional que corre cuadro por cuadro en el hilo de análisis. Actualmente no existe ningún visualizador, gráfica de vibración o indicador de deformación activa en la UI de producción. Mantenerlo encendido degrada innecesariamente el rendimiento de la cámara (FPS) del dispositivo móvil sin aportar valor práctico en esta fase.
+    *   **¿Para qué se deja?** (Nota de Ingeniería): Se conserva como cimiento algorítmico para una futura actualización del sistema destinada a pruebas de tolerancia dinámica estructural y detección de vibraciones/fatiga de materiales en chapas bajo carga física.
+
+ */
 
 import android.util.Log
 import com.example.celestic.manager.AprilTagManager
 import com.example.celestic.manager.ArUcoManager
+import com.example.celestic.manager.CalibrationManager
 import com.example.celestic.models.FiducialMarker
 import com.example.celestic.models.enums.Orientation
 import com.example.celestic.viewmodel.MarkerType
-import org.opencv.core.*
+import org.opencv.core.Core
+import org.opencv.core.Mat
+import org.opencv.core.MatOfByte
+import org.opencv.core.MatOfFloat
+import org.opencv.core.MatOfPoint
+import org.opencv.core.MatOfPoint2f
+import org.opencv.core.Point
+import org.opencv.core.Rect
+import org.opencv.core.Scalar
+import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.Objdetect
 import javax.inject.Inject
 
 class FrameAnalyzer @Inject constructor(
     private val arucoManager: ArUcoManager,
-    private val aprilTagManager: AprilTagManager
+    private val aprilTagManager: AprilTagManager,
+    private val calibrationManager: CalibrationManager
 ) {
 
     data class Marker(val id: Int, val corners: Mat)
@@ -60,9 +77,18 @@ class FrameAnalyzer @Inject constructor(
         val edges = Mat()
         val holesMat = Mat()
 
+        // 1. apply calibration if loaded to correct lens distortion (Paso 2)
+        val camMatrix = calibrationManager.cameraMatrix
+        val distCoeffs = calibrationManager.distortionCoeffs
+        val processedMat = if (camMatrix != null && distCoeffs != null) {
+            applyCalibration(mat, camMatrix, distCoeffs)
+        } else {
+            mat.clone()
+        }
+
         try {
             // Preprocessing
-            Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_BGR2GRAY)
+            Imgproc.cvtColor(processedMat, grayMat, Imgproc.COLOR_BGR2GRAY)
             Imgproc.GaussianBlur(grayMat, grayMat, Size(5.0, 5.0), 0.0)
 
             val thresholded = applyAdaptiveThresholding(grayMat)
@@ -88,7 +114,7 @@ class FrameAnalyzer @Inject constructor(
                 val circle = holesMat.get(0, i)
                 val center = Point(circle[0], circle[1])
                 val radius = circle[2]
-                val hasAlodine = checkAlodine(mat, center, radius)
+                val hasAlodine = checkAlodine(processedMat, center, radius)
                 allCircles.add(Hole(center, radius, hasAlodine))
             }
 
@@ -99,8 +125,8 @@ class FrameAnalyzer @Inject constructor(
 
             // ✅ CORREGIDO: Ahora usando FiducialMarker
             val tempMarkers: List<FiducialMarker> = when (markerType) {
-                MarkerType.ARUCO -> arucoManager.detectMarkers(mat)
-                MarkerType.APRILTAG -> aprilTagManager.detectMarkers(mat)
+                MarkerType.ARUCO -> arucoManager.detectMarkers(processedMat)
+                MarkerType.APRILTAG -> aprilTagManager.detectMarkers(processedMat)
                 null -> emptyList()
                 else -> emptyList()
             }
@@ -125,7 +151,7 @@ class FrameAnalyzer @Inject constructor(
             prevGrayMat?.release()
             prevGrayMat = grayMat.clone()
 
-            val annotatedMat = mat.clone()
+            val annotatedMat = processedMat.clone()
 
             // Dibujado
             Imgproc.drawContours(annotatedMat, filteredContours, -1, Scalar(0.0, 255.0, 0.0), 2)
@@ -168,7 +194,7 @@ class FrameAnalyzer @Inject constructor(
             val qrDetector = org.opencv.objdetect.QRCodeDetector()
             val points = Mat()
             val decodedQr = try {
-                val data = qrDetector.detectAndDecode(mat, points)
+                val data = qrDetector.detectAndDecode(processedMat, points)
                 if (data.isNotEmpty()) data else null
             } catch (e: Exception) {
                 null
@@ -191,7 +217,7 @@ class FrameAnalyzer @Inject constructor(
             Log.e("FrameAnalyzer", "Error analyzing frame", e)
             return AnalysisResult(
                 emptyList(),
-                mat.clone(),
+                processedMat.clone(),
                 emptyList(),
                 emptyList(),
                 Orientation.UNKNOWN,
@@ -203,6 +229,7 @@ class FrameAnalyzer @Inject constructor(
             thresholdedImage.release()
             edges.release()
             holesMat.release()
+            processedMat.release()
             // Nota: Contours y markers en AnalysisResult DEBEN ser liberados por el DashboardViewModel
         }
     }
@@ -340,6 +367,14 @@ class FrameAnalyzer @Inject constructor(
         return contours.filter { Imgproc.contourArea(it) > minArea }
     }
 
+    /**
+     * NOTA DE INGENIERÍA: Esta función se pospone ("para después").
+     * - ¿Por qué se deja? Debido a su alta carga computacional al correr cuadro por cuadro en el
+     *   hilo de análisis dinámico, y dado que la UI actual no cuenta con pantallas o gráficas de
+     *   diagnóstico de deformación estructural/vibración.
+     * - ¿Para qué se deja? Como cimiento para futuras actualizaciones destinadas a pruebas de
+     *   tolerancia dinámica estructural y fatiga de materiales bajo esfuerzo.
+     */
     fun detectDeformationsWithOpticalFlow(prevFrame: Mat, nextFrame: Mat): MatOfPoint2f {
         val corners = MatOfPoint()
         Imgproc.goodFeaturesToTrack(prevFrame, corners, 100, 0.3, 7.0)

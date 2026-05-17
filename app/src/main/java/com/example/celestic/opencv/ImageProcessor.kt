@@ -8,6 +8,7 @@ import com.example.celestic.models.enums.DetectionType
 import com.example.celestic.models.geometry.BoundingBox
 import com.example.celestic.viewmodel.MarkerType
 import org.opencv.core.Mat
+import org.opencv.core.Point
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,10 +36,32 @@ class ImageProcessor @Inject constructor(
         val linkedCode = result.decodedQrCode ?: result.markers.firstOrNull()?.id?.toString()
         val traceabilityInfo = linkedCode?.let { traceabilityManager.lookup(it) }
 
+        // 1. Calculate average side length of fiducial marker in pixels to estimate distance (Paso 3)
+        fun getMarkerWidthPx(corners: Mat): Double {
+            if (corners.empty() || corners.rows() < 4) return 100.0
+            val p0 = Point(corners.get(0, 0)[0], corners.get(0, 0)[1])
+            val p1 = Point(corners.get(1, 0)[0], corners.get(1, 0)[1])
+            val dx = p1.x - p0.x
+            val dy = p1.y - p0.y
+            return kotlin.math.sqrt(dx * dx + dy * dy)
+        }
+
+        val distanceMm = if (result.markers.isNotEmpty()) {
+            val detectedWidthPx = getMarkerWidthPx(result.markers.first().corners)
+            val realMarkerSizeMm = 40.0 // Known physical size of standard marker (40mm / 4cm)
+            calibrationManager.estimateDistance(detectedWidthPx, realMarkerSizeMm)
+        } else {
+            300.0 // Nominal focal inspection distance of 30cm
+        }
+
+        val scaleFactor = calibrationManager.getScaleFactor(distanceMm)
+
         val detectionItems = mutableListOf<DetectionItem>()
 
-        // Convert holes to DetectionItem
+        // Convert holes to DetectionItem (Paso 4)
         result.holes.forEachIndexed { index, hole ->
+            val diameterPx = hole.radius * 2
+            val diameterMm = diameterPx * scaleFactor
             detectionItems.add(
                 DetectionItem(
                     id = 0,
@@ -53,16 +76,20 @@ class ImageProcessor @Inject constructor(
                     ),
                     confidence = 0.9f,
                     status = if (hole.hasAlodine) DetectionStatus.WARNING else DetectionStatus.OK,
+                    measurementMm = diameterMm.toFloat(),
                     timestamp = System.currentTimeMillis(),
                     linkedQrCode = linkedCode,
                     notes = (if (hole.hasAlodine) "Hole with alodine halo" else "Normal hole") +
+                            " | Diameter: ${"%.2f".format(diameterMm)} mm" +
                             (traceabilityInfo?.let { " | Part: ${it.partName}" } ?: "")
                 )
             )
         }
 
-        // Convert countersinks to DetectionItem
+        // Convert countersinks to DetectionItem (Paso 4)
         result.countersinks.forEachIndexed { index, countersink ->
+            val outerDiameterPx = countersink.outerRadius * 2
+            val outerDiameterMm = outerDiameterPx * scaleFactor
             detectionItems.add(
                 DetectionItem(
                     id = 0,
@@ -77,16 +104,18 @@ class ImageProcessor @Inject constructor(
                     ),
                     confidence = 0.9f,
                     status = DetectionStatus.OK,
+                    measurementMm = outerDiameterMm.toFloat(),
                     timestamp = System.currentTimeMillis(),
                     linkedQrCode = linkedCode,
-                    notes = "Countersink detected" + (traceabilityInfo?.let { " | Part: ${it.partName}" }
-                        ?: "")
+                    notes = "Countersink detected | Outer Diameter: ${"%.2f".format(outerDiameterMm)} mm" +
+                            (traceabilityInfo?.let { " | Part: ${it.partName}" } ?: "")
                 )
             )
         }
 
-        // Convert scratches to DetectionItem
+        // Convert scratches to DetectionItem (Paso 4)
         result.scratches.forEachIndexed { index, scratch ->
+            val lengthMm = scratch.length * scaleFactor
             detectionItems.add(
                 DetectionItem(
                     id = 0,
@@ -101,9 +130,10 @@ class ImageProcessor @Inject constructor(
                     ),
                     confidence = 0.9f,
                     status = DetectionStatus.WARNING,
+                    measurementMm = lengthMm.toFloat(),
                     timestamp = System.currentTimeMillis(),
                     linkedQrCode = linkedCode,
-                    notes = "Scratch length: ${"%.2f".format(scratch.length)} pixels" +
+                    notes = "Scratch | Length: ${"%.2f".format(lengthMm)} mm" +
                             (traceabilityInfo?.let { " | Part: ${it.partName}" } ?: "")
                 )
             )

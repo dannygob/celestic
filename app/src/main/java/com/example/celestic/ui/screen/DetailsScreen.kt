@@ -117,7 +117,7 @@ fun DetailsScreen(
 
     val reportSentMsg = stringResource(R.string.report_issue_sent)
     var selectedReportFormat by remember { mutableStateOf("PDF") }
-    val reportFormats = listOf("PDF", "Word", "Excel", "CSV")
+    val reportFormats = listOf("PDF", "Word", "Excel", "CSV", "JSON")
 
     val title = when (detailType) {
         "hole" -> stringResource(R.string.details_hole)
@@ -447,6 +447,12 @@ fun DetailsScreen(
                                         detections,
                                         false
                                     )
+
+                                    "JSON" -> com.example.celestic.utils.exportJsonSummary(
+                                        context,
+                                        detections,
+                                        false
+                                    )
                                     else -> null
                                 }
 
@@ -465,6 +471,7 @@ fun DetailsScreen(
                                                         "Word" -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                                         "Excel" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                                         "CSV" -> "text/csv"
+                                                        "JSON" -> "application/json"
                                                         else -> "*/*"
                                                     }
                                                     putExtra(
