@@ -207,4 +207,8 @@
     <string name="detections_count">%1$d Detecciones</string>
     <string name="no_history_reports">No hay historial disponible para generar informes.</string>
 
+    <!-- CRUD Operations -->
+    <string name="delete_defect">ELIMINAR REGISTRO DE DEFECTO</string>
+    <string name="delete_defect_success">Registro de defecto eliminado correctamente</string>
+
 </resources>

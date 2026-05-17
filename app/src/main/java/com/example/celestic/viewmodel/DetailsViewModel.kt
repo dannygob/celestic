@@ -121,4 +121,30 @@ class DetailsViewModel @Inject constructor(
             }
         }
     }
-}
+
+    /**
+     * Deletes the current detection from the database and internal storage.
+     * 
+     * @param onDeleted Callback invoked after successful deletion.
+     */
+    fun deleteCurrentDetection(onDeleted: () -> Unit) {
+        val currentItem = _detectionItem.value ?: return
+        viewModelScope.launch {
+            repository.deleteDetection(currentItem)
+
+            // Delete associated file if it exists
+            try {
+                val file = java.io.File(
+                    context.filesDir,
+                    "detection_images/${currentItem.frameId}.jpg"
+                )
+                if (file.exists()) {
+                    file.delete()
+                }
+            } catch (e: Exception) {
+                // Silent fail for file cleanup
+            }
+            onDeleted()
+        }
+    }
+}

@@ -554,6 +554,27 @@ fun DetailsScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(stringResource(R.string.report_anomaly))
                 }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                val deleteSuccessMsg = stringResource(R.string.delete_defect_success)
+                OutlinedButton(
+                    onClick = {
+                        detailsViewModel.deleteCurrentDetection {
+                            Toast.makeText(context, deleteSuccessMsg, Toast.LENGTH_SHORT).show()
+                            navController.popBackStack()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, Color.Red.copy(alpha = 0.8f)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
+                ) {
+                    Icon(Icons.Default.Cancel, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.delete_defect))
+                }
+                
                 Spacer(modifier = Modifier.height(40.dp))
             }
         }

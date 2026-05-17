@@ -208,4 +208,8 @@
     <string name="detections_count">%1$d Detections</string>
     <string name="no_history_reports">No history available to generate reports.</string>
 
+    <!-- CRUD Operations -->
+    <string name="delete_defect">DELETE DEFECT RECORD</string>
+    <string name="delete_defect_success">Defect record deleted successfully</string>
+
 </resources>
