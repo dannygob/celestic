@@ -373,6 +373,17 @@ class DashboardViewModel @Inject constructor(
             sharedData.setCurrentInspection(it)
         }
 
+        // Leer el Albarán/Lote activo asignado manualmente desde el Dashboard.
+        // Si no hay QR escaneado, el operario puede asignar un lote manual desde el
+        // botón "LOTE" en la barra superior del Dashboard. Ese valor se persiste en
+        // SharedPreferences y aquí lo recuperamos para vincularlo a cada detección,
+        // de modo que la pantalla de Reportes pueda agrupar correctamente por lote
+        // incluso cuando la pieza no tiene código QR ni código de barras físico.
+        val prefs =
+            context.getSharedPreferences("celestic_prefs", Context.MODE_PRIVATE)
+        val activeBatch = prefs.getString("current_albaran", null)
+            ?.takeIf { it.isNotBlank() && it != "GENERAL" }
+
         val detectionIds = mutableListOf<Long>()
 
         if (detections.isEmpty()) {
@@ -385,16 +396,21 @@ class DashboardViewModel @Inject constructor(
                 confidence = 0f,
                 status = DetectionStatus.NOT_ACCEPTED,
                 timestamp = System.currentTimeMillis(),
-                notes = "No se detectó ningún elemento a inspeccionar."
+                notes = "No se detectó ningún elemento a inspeccionar.",
+                linkedQrCode = activeBatch
             )
             val id = repository.insertDetection(emptyDetection)
             detectionIds.add(id)
         } else {
             detections.forEach { detection ->
+                // Si la detección ya trae un QR escaneado en campo, tiene prioridad.
+                // En caso contrario usamos el lote asignado manualmente en el Dashboard.
+                val batchToLink = detection.linkedQrCode?.takeIf { it.isNotBlank() } ?: activeBatch
                 val validatedDetection = detection.copy(
                     inspectionId = inspectionId,
                     frameId = frameId,
-                    status = validationResult.overallStatus
+                    status = validationResult.overallStatus,
+                    linkedQrCode = batchToLink
                 )
                 val id = repository.insertDetection(validatedDetection)
                 detectionIds.add(id)
