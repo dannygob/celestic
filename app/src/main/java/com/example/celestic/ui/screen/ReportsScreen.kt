@@ -1,5 +1,6 @@
 package com.example.celestic.ui.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,22 +22,30 @@ import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -65,6 +74,12 @@ fun ReportsScreen(
     val colors = rememberScreenColors(isDarkMode)
     val batches by viewModel.batches.collectAsState()
     val allDetections by viewModel.allDetections.collectAsState()
+
+    val context = LocalContext.current
+    var selectedBatch by remember { mutableStateOf<String?>(null) }
+    var showFormatDialog by remember { mutableStateOf(false) }
+    var selectedReportFormat by remember { mutableStateOf("PDF") }
+    val reportFormats = listOf("PDF", "Word", "Excel", "CSV", "JSON")
 
     Scaffold(
         topBar = {
@@ -151,10 +166,155 @@ fun ReportsScreen(
                         count = viewModel.getBatchCount(batchCode),
                         accentColor = colors.accentColor,
                         isDarkMode = isDarkMode,
-                        onGenerate = { viewModel.generateBatchReport(batchCode) }
+                        onGenerate = {
+                            selectedBatch = batchCode
+                            showFormatDialog = true
+                        }
                     )
                 }
             }
+        }
+
+        if (showFormatDialog && selectedBatch != null) {
+            AlertDialog(
+                onDismissRequest = { showFormatDialog = false },
+                title = {
+                    Text(
+                        text = stringResource(R.string.select_report_format).uppercase(),
+                        fontWeight = FontWeight.Bold,
+                        color = colors.textColor,
+                        fontSize = 16.sp
+                    )
+                },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text(
+                            text = "Batch: $selectedBatch",
+                            color = colors.textColor.copy(alpha = 0.8f),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            reportFormats.forEach { format ->
+                                FilterChip(
+                                    selected = selectedReportFormat == format,
+                                    onClick = { selectedReportFormat = format },
+                                    label = { Text(format) },
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = colors.accentColor,
+                                        selectedLabelColor = Color.White
+                                    )
+                                )
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            val batchCode = selectedBatch!!
+                            val batchDetections =
+                                allDetections.filter { it.linkedQrCode == batchCode }
+
+                            val file = when (selectedReportFormat) {
+                                "PDF" -> com.example.celestic.utils.generatePdfFromDetections(
+                                    context,
+                                    batchDetections,
+                                    true
+                                )
+
+                                "Word" -> com.example.celestic.utils.generateWordFromDetections(
+                                    context,
+                                    batchDetections,
+                                    true
+                                )
+
+                                "Excel" -> com.example.celestic.utils.generateExcelFromDetections(
+                                    context,
+                                    batchDetections,
+                                    true
+                                )
+
+                                "CSV" -> com.example.celestic.utils.generateCsvFromDetections(
+                                    context,
+                                    batchDetections,
+                                    true
+                                )
+
+                                "JSON" -> com.example.celestic.utils.exportJsonSummary(
+                                    context,
+                                    batchDetections,
+                                    true
+                                )
+
+                                else -> null
+                            }
+
+                            if (file != null && file.exists()) {
+                                try {
+                                    val uri = androidx.core.content.FileProvider.getUriForFile(
+                                        context,
+                                        "${context.packageName}.provider",
+                                        file
+                                    )
+                                    val intent =
+                                        android.content.Intent(android.content.Intent.ACTION_SEND)
+                                            .apply {
+                                                type = when (selectedReportFormat) {
+                                                    "PDF" -> "application/pdf"
+                                                    "Word" -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    "Excel" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                                    "CSV" -> "text/csv"
+                                                    "JSON" -> "application/json"
+                                                    else -> "*/*"
+                                                }
+                                                putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                                                putExtra(
+                                                    android.content.Intent.EXTRA_SUBJECT,
+                                                    "Industrial Inspection Report - Batch: $batchCode"
+                                                )
+                                                putExtra(
+                                                    android.content.Intent.EXTRA_TEXT,
+                                                    "Attached is the inspection report generated by Celestic."
+                                                )
+                                                addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                            }
+                                    context.startActivity(
+                                        android.content.Intent.createChooser(
+                                            intent,
+                                            "Share Report"
+                                        )
+                                    )
+                                } catch (e: Exception) {
+                                    Toast.makeText(
+                                        context,
+                                        "Error preparing file: ${e.localizedMessage}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Error generating report",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            showFormatDialog = false
+                        }
+                    ) {
+                        Text("SHARE", color = colors.accentColor, fontWeight = FontWeight.Bold)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showFormatDialog = false }) {
+                        Text("CANCEL", color = Color.Gray)
+                    }
+                },
+                containerColor = if (isDarkMode) Color(0xFF1E1E1E) else Color.White
+            )
         }
     }
 }
