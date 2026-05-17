@@ -117,6 +117,13 @@ class SharedDataRepository @Inject constructor() {
     // ===== STATE SNAPSHOT =====
 
     /**
+     * NOTA DE INGENIERÍA: Esta función se pospone ("para después").
+     * - ¿Por qué se deja? Las pantallas y viewmodels de Jetpack Compose leen el estado reactivo
+     *   de forma continua mediante flujos observables (StateFlow.collectAsState()). No se requiere
+     *   realizar capturas de estado no reactivas (snapshots) en el flujo principal.
+     * - ¿Para qué se deja? Para facilitar la depuración, exportación rápida de telemetría y diagnóstico
+     *   de fallos de sincronización en caliente (hot state telemetry dumps) en futuras herramientas de soporte técnico.
+     *
      * Returns a snapshot of the current shared application state.
      * Useful for debugging or exporting state.
      */

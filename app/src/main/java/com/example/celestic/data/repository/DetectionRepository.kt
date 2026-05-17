@@ -31,7 +31,13 @@ class DetectionRepository @Inject constructor(
     suspend fun insertDetection(item: DetectionItem): Long =
         dao.insertDetectionItem(item)
 
-    /** Deletes a specific detection item. */
+    /**
+     * NOTA DE INGENIERÍA: Esta función se pospone ("para después").
+     * - ¿Por qué se deja? La interfaz de usuario actual no permite a los operarios borrar registros
+     *   de defectos individuales del historial para mantener la inmutabilidad de los reportes.
+     * - ¿Para qué se deja? Habilitará a los usuarios administradores borrar registros erróneos o falsos
+     *   positivos del historial en el futuro.
+     */
     suspend fun deleteDetection(item: DetectionItem) =
         dao.deleteDetectionItem(item)
 
@@ -196,6 +202,13 @@ class DetectionRepository @Inject constructor(
     // ===== IMAGE MANAGEMENT =====
 
     /**
+     * NOTA DE INGENIERÍA: Esta función se pospone ("para después").
+     * - ¿Por qué se deja? La lógica de guardado y compresión de fotogramas capturados a JPG está
+     *   codificada de forma inline o local en clases específicas de visualización (como CameraUtils y DashboardViewModel)
+     *   para reducir acoplamiento con la capa de persistencia en SQLite.
+     * - ¿Para qué se deja? Para centralizar y estandarizar toda la persistencia de archivos de imagen
+     *   bajo un único punto de entrada unificado en futuras refactorizaciones del backend de la app.
+     *
      * Saves a bitmap as a JPEG file inside the app's internal storage.
      * Returns the absolute file path or an empty string if saving fails.
      */

@@ -253,10 +253,27 @@ class BlueprintMatcher @Inject constructor(
         return cacheFile.absolutePath
     }
 
-    /** Returns a blueprint by its ID. */
+    /**
+     * NOTA DE INGENIERÍA: Esta función se pospone ("para después").
+     * - ¿Por qué se deja? La validación de chapas realiza un cotejo directo en caliente contra el plano
+     *   identificado por el analizador de OpenCV en una única pasada, sin necesidad de consultar especificaciones
+     *   por ID individualmente desde otros módulos.
+     * - ¿Para qué se deja? Habilitará la vista de catálogo y visualización estática de un plano patrón
+     *   específico seleccionado por el usuario en futuras pantallas del sistema.
+     *
+     * Returns a blueprint by its ID.
+     */
     fun getBlueprintById(id: String): Blueprint? = blueprints[id]
 
-    /** Returns all loaded blueprints. */
+    /**
+     * NOTA DE INGENIERÍA: Esta función se pospone ("para después").
+     * - ¿Por qué se deja? El matcher carga todos los planos en memoria y los coteja contra la chapa actual,
+     *   pero no se expone el listado completo de planos a la interfaz en la fase de MVP.
+     * - ¿Para qué se deja? Para permitir al operario seleccionar manualmente un plano patrón de una lista
+     *   completa en caso de que falle la detección automática de plantilla en futuras versiones.
+     *
+     * Returns all loaded blueprints.
+     */
     fun getAllBlueprints(): List<Blueprint> = blueprints.values.toList()
 
     /**
