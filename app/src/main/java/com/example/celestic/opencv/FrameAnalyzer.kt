@@ -52,6 +52,22 @@ class FrameAnalyzer @Inject constructor(
         val length: Double
     )
 
+    /**
+     * ==================================================================================
+     * ⚠️ NOTA DE INGENIERÍA - CLASE MODELO EN DESUSO (CONCEPTO REEMPLAZADO)
+     * ==================================================================================
+     * ¿POR QUÉ APARECE SIN USO?
+     * La evaluación del tratamiento químico de Alodine SÍ se ejecuta y evalúa de forma 
+     * activa en cada fotograma mediante el algoritmo `checkAlodine(image, center, radius)`.
+     * Sin embargo, para simplificar el modelo matemático, la presencia del halo se almacena 
+     * directamente como un flag lógico (`hasAlodine: Boolean`) dentro del objeto `Hole`.
+     * 
+     * ¿PARA QUÉ SE DEJA?
+     * Se conserva este modelo específico `AlodineHalo` para futuras ampliaciones de metrología
+     * donde se requiera medir y persistir el ancho del halo en mm o la uniformidad del color 
+     * alrededor del agujero de forma independiente.
+     * ==================================================================================
+     */
     data class AlodineHalo(
         val center: Point,
         val radius: Double,
@@ -73,7 +89,16 @@ class FrameAnalyzer @Inject constructor(
 
     fun analyze(mat: Mat, markerType: MarkerType?): AnalysisResult {
         val grayMat = Mat()
+
+        // ==================================================================================
+        // ⚠️ NOTA DE INGENIERÍA - VARIABLE PRE-ASIGNADA PARA OPTIMIZACIÓN JNI
+        // ==================================================================================
+        // ¿POR QUÉ SE DEJA?
+        // Pre-asignar contenedores Mat en OpenCV evita la recolección de basura del heap de C++
+        // en cada iteración de 30 FPS. Se mantiene aquí para optimización de binarización adaptativa.
+        // ==================================================================================
         val thresholdedImage = Mat()
+
         val edges = Mat()
         val holesMat = Mat()
 
@@ -297,6 +322,20 @@ class FrameAnalyzer @Inject constructor(
         return Pair(isolatedHoles, countersinks)
     }
 
+    /**
+     * ==================================================================================
+     * ⚠️ NOTA DE INGENIERÍA - PARÁMETRO RESERVADO PARA FUTURA MEJORA
+     * ==================================================================================
+     * ¿POR QUÉ APARECE SIN USO?
+     * El parámetro 'contours' no se lee actualmente porque la detección de rayaduras utiliza
+     * la transformada probabilística de Hough sobre el mapa de bordes 'edges'.
+     * 
+     * ¿PARA QUÉ SE DEJA?
+     * Se mantiene para la siguiente fase del proyecto, donde se usará 'contours' para filtrar
+     * falsos positivos (por ejemplo, evitar que las circunferencias de los agujeros se detecten
+     * erróneamente como rayaduras si sus contornos están segmentados o imperfectos).
+     * ==================================================================================
+     */
     private fun detectScratches(edges: Mat, contours: List<MatOfPoint>): List<Scratch> {
         val lines = Mat()
         Imgproc.HoughLinesP(edges, lines, 1.0, Math.PI / 180, 50, 50.0, 10.0)

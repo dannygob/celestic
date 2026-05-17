@@ -162,6 +162,14 @@ dependencies {
 
     implementation(libs.play.services.location)
     implementation(libs.transportation.consumer)
+
+    // Local Unit Testing
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("io.mockk:mockk-agent-jvm:1.13.8")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    testImplementation("app.cash.turbine:turbine:1.1.0")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
 }
 
 kotlin {

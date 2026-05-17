@@ -1,5 +1,6 @@
 package com.example.celestic.data.repository
 
+import android.content.Context
 import app.cash.turbine.test
 import com.example.celestic.data.dao.CelesticDao
 import com.example.celestic.models.DetectionItem
@@ -22,15 +23,17 @@ class DetectionRepositoryTest {
 
     private lateinit var repository: DetectionRepository
     private lateinit var dao: CelesticDao
+    private lateinit var context: Context
 
     @Before
     fun setUp() {
         dao = mockk()
-        repository = DetectionRepository(dao)
+        context = mockk(relaxed = true)
+        repository = DetectionRepository(dao, context)
     }
 
     @Test
-    fun `getAll should return the list of detections from the dao`() = runTest {
+    fun `getAllDetectionItems should return the list of detections from the dao`() = runTest {
         val detections = listOf(
             DetectionItem(
                 id = 1,
@@ -46,9 +49,9 @@ class DetectionRepositoryTest {
                 notes = "notes1"
             )
         )
-        coEvery { dao.getAll() } returns flowOf(detections)
+        coEvery { dao.getAllDetectionItems() } returns flowOf(detections)
 
-        repository.getAll().test {
+        repository.getAllDetectionItems().test {
             assertEquals(detections, awaitItem())
             awaitComplete()
         }

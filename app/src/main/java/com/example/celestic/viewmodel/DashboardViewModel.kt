@@ -275,6 +275,22 @@ class DashboardViewModel @Inject constructor(
         )
     }
 
+    /**
+     * ==================================================================================
+     * ⚠️ NOTA DE INGENIERÍA - PARÁMETROS RESERVADOS PARA VALIDACIÓN FUTURA
+     * ==================================================================================
+     * ¿POR QUÉ APARECEN SIN USO?
+     * Los parámetros 'detections' y 'blueprint' no se leen en esta implementación puesto que
+     * la validación geométrica base se delega por completo a la clase 'BlueprintMatcher' y se 
+     * recibe ya precalculada en 'bpValidation'.
+     * 
+     * ¿PARA QUÉ SE DEJAN?
+     * Se mantienen reservados para la siguiente fase, donde el ViewModel ejecutará controles de 
+     * calidad secundarios no geométricos (por ejemplo, comparar umbrales específicos de tolerancia 
+     * térmica o registrar estadísticas del lote contrastando 'detections' con 'blueprint') antes de 
+     * dictaminar el 'ValidationResult' final.
+     * ==================================================================================
+     */
     private fun createBlueprintValidationResult(
         detections: List<DetectionItem>,
         blueprint: com.example.celestic.models.Blueprint,

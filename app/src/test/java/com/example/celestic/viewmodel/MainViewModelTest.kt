@@ -2,10 +2,12 @@ package com.example.celestic.viewmodel
 
 import app.cash.turbine.test
 import com.example.celestic.data.repository.DetectionRepository
+import com.example.celestic.manager.ImageClassifier
 import com.example.celestic.models.DetectionItem
 import com.example.celestic.models.enums.DetectionStatus
 import com.example.celestic.models.enums.DetectionType
 import com.example.celestic.models.geometry.BoundingBox
+import com.example.celestic.utils.Result
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -25,14 +27,14 @@ class MainViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
 
-    private lateinit var viewModel: MainViewModel
     private lateinit var repository: DetectionRepository
+    private lateinit var imageClassifier: ImageClassifier
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         repository = mockk()
-        viewModel = MainViewModel(repository)
+        imageClassifier = mockk(relaxed = true)
     }
 
     @After
@@ -45,6 +47,7 @@ class MainViewModelTest {
         val detections = listOf(
             DetectionItem(
                 id = 1,
+                inspectionId = 1,
                 frameId = "frame1",
                 type = DetectionType.HOLE,
                 boundingBox = BoundingBox(0f, 0f, 0f, 0f),
@@ -56,10 +59,14 @@ class MainViewModelTest {
                 notes = "notes1"
             )
         )
-        coEvery { repository.getAll() } returns flowOf(detections)
+        coEvery { repository.getAllDetectionItems() } returns flowOf(detections)
+
+        val viewModel = MainViewModel(repository, imageClassifier)
 
         viewModel.detections.test {
-            assertEquals(detections, awaitItem())
+            // Flow's initial state is Loading, then Success
+            assertEquals(Result.Loading, awaitItem())
+            assertEquals(Result.Success(detections), awaitItem())
         }
     }
 }

@@ -37,7 +37,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class DNNDetector @Inject constructor(
-    @field:ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context
 ) {
 
     private var net: Net? = null

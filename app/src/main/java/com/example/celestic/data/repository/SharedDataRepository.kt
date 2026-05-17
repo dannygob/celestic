@@ -59,7 +59,19 @@ class SharedDataRepository @Inject constructor() {
 
     // ===== DEVICE INFO (STATIC) =====
 
-    /** Device model information (manufacturer + model). */
+    /**
+     * ==================================================================================
+     * 📊 TELEMETRÍA PÚBLICA - PROPIEDADES EXPUESTAS PARA DIAGNÓSTICO
+     * ==================================================================================
+     * ¿POR QUÉ APARECEN SIN USO EN ESTE ARCHIVO?
+     * Son propiedades públicas declaradas a nivel de miembro que no se leen internamente.
+     * 
+     * ¿PARA QUÉ SE DEJAN?
+     * Están diseñadas para que cualquier componente de logs, exportadores de reportes PDF/JSON
+     * o la vista de autodiagnóstico 'StatusScreen' consulte directamente la información del
+     * hardware del dispositivo operario.
+     * ==================================================================================
+     */
     val deviceModel = "${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}"
 
     /** Hardware summary including CPU and API level. */

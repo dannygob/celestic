@@ -283,6 +283,8 @@ class CalibrationManager @Inject constructor(
         val json = JSONObject()
         json.put("cameraMatrix", cameraMatrix.dump())
         json.put("distortionCoeffs", distortionCoeffs.dump())
+        json.put("resolution_width", resolution.first)
+        json.put("resolution_height", resolution.second)
         json.put(
             "calibrationDate",
             SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())

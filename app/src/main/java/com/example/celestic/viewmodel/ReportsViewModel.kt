@@ -46,12 +46,4 @@ class ReportsViewModel @Inject constructor(
     fun getBatchCount(batchCode: String): Int {
         return _allDetections.value.count { it.linkedQrCode == batchCode }
     }
-
-    /**
-     * Placeholder for report generation logic.
-     * In a production environment, this would trigger PDF/Excel generation using a service.
-     */
-    fun generateBatchReport(batchCode: String) {
-        // Implementation for batch-specific report generation
-    }
 }

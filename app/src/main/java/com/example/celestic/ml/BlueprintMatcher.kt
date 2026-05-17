@@ -26,7 +26,7 @@ import kotlin.math.sqrt
  */
 @Singleton
 class BlueprintMatcher @Inject constructor(
-    @field:ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context
 ) {
 
     /** Loaded blueprint definitions (metadata + expected geometry). */

@@ -28,7 +28,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class DefectClassifier @Inject constructor(
-    @field:ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context
 ) {
 
     private var interpreter: Interpreter? = null

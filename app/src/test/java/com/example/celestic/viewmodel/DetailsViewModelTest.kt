@@ -3,11 +3,13 @@ package com.example.celestic.viewmodel
 import android.content.Context
 import app.cash.turbine.test
 import com.example.celestic.data.repository.DetectionRepository
-import com.example.celestic.models.TrazabilidadItem
+import com.example.celestic.models.TraceabilityItem
+import com.example.celestic.utils.JsonLoader
 import com.example.celestic.utils.Result
-import com.example.celestic.utils.cargarTrazabilidadDesdeJson
 import io.mockk.coEvery
 import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -33,38 +35,40 @@ class DetailsViewModelTest {
         Dispatchers.setMain(testDispatcher)
         repository = mockk()
         context = mockk()
+        mockkObject(JsonLoader)
         viewModel = DetailsViewModel(repository, context)
     }
 
     @After
     fun tearDown() {
+        unmockkObject(JsonLoader)
         Dispatchers.resetMain()
     }
 
     @Test
-    fun `loadTrazabilidad should emit Success when data is loaded successfully`() = runTest {
+    fun `loadTraceability should emit Success when data is loaded successfully`() = runTest {
         val codigo = "123"
-        val trazabilidadItem = TrazabilidadItem(codigo, "pieza", "operario", "fecha", "resultado")
-        val lista = listOf(trazabilidadItem)
+        val traceabilityItem = TraceabilityItem(codigo, "pieza", "operario", "fecha", "resultado")
+        val lista = listOf(traceabilityItem)
 
-        coEvery { cargarTrazabilidadDesdeJson(context) } returns lista
+        coEvery { JsonLoader.loadTraceabilityFromJson(context) } returns lista
 
-        viewModel.trazabilidadItem.test {
-            viewModel.loadTrazabilidad(codigo)
+        viewModel.traceabilityItem.test {
+            viewModel.loadTraceability(codigo)
             assertEquals(Result.Loading, awaitItem())
-            assertEquals(Result.Success(trazabilidadItem), awaitItem())
+            assertEquals(Result.Success(traceabilityItem), awaitItem())
         }
     }
 
     @Test
-    fun `loadTrazabilidad should emit Error when data Loading fails`() = runTest {
+    fun `loadTraceability should emit Error when data Loading fails`() = runTest {
         val codigo = "123"
         val exception = Exception("Error Loading data")
 
-        coEvery { cargarTrazabilidadDesdeJson(context) } throws exception
+        coEvery { JsonLoader.loadTraceabilityFromJson(context) } throws exception
 
-        viewModel.trazabilidadItem.test {
-            viewModel.loadTrazabilidad(codigo)
+        viewModel.traceabilityItem.test {
+            viewModel.loadTraceability(codigo)
             assertEquals(Result.Loading, awaitItem())
             assertEquals(Result.Error(exception), awaitItem())
         }

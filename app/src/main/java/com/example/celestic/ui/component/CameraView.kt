@@ -47,13 +47,27 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
+/**
+ * ==================================================================================
+ * ⚠️ NOTA DE INGENIERÍA - ELEMENTO POSPUESTO / LEGACY
+ * ==================================================================================
+ * ¿POR QUÉ SE DEJA EN EL PROYECTO?
+ * Este componente es una vista previa de cámara con análisis en tiempo real creada
+ * en las primeras fases de desarrollo. Para maximizar la integración con la interfaz
+ * táctil, los estados dinámicos de calibración y el ciclo de vida del controlador,
+ * la cámara de producción activa se implementó directamente como 'DashboardCameraView'
+ * dentro de 'DashboardScreen.kt'. Por lo tanto, esta clase 'CameraView.kt' queda huérfana.
+ *
+ * ¿PARA QUÉ SE DEJA?
+ * Se mantiene como una plantilla técnica de referencia y fallback para futuros módulos
+ * de soporte o pantallas de diagnóstico aisladas que requieran captura directa y autónoma.
+ * ==================================================================================
+ */
 @Composable
-
 fun CameraView(
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel = viewModel(),
-
-    ) {
+    viewModel: MainViewModel = viewModel()
+) {
     val context = LocalContext.current
 
     // Executor para análisis de imágenes
