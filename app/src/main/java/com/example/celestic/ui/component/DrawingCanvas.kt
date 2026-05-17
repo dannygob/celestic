@@ -11,6 +11,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.celestic.models.calibration.DetectedFeature
 
 /**
+ * NOTA DE INGENIERÍA: Este componente se pospone ("para después").
+ * - ¿Por qué se deja? Depende de la entidad 'DetectedFeature' (formas geométricas en bruto de OpenCV),
+ *   la cual no se persiste en base de datos para priorizar el rendimiento del dispositivo.
+ * - ¿Para qué se deja? Para habilitar en el futuro un lienzo interactivo que permita al operario
+ *   tocar e inspeccionar contornos específicos dibujados encima de capturas de fotos estáticas.
+ *
  * Simple canvas that draws detected features as red circles.
  */
 @Composable
