@@ -1,7 +1,6 @@
 package com.example.celestic
 
 import android.app.Application
-import android.content.ComponentCallbacks2
 import android.util.Log
 import dagger.hilt.android.HiltAndroidApp
 
@@ -24,7 +23,7 @@ class CelesticApp : Application() {
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
         Log.d(TAG, "onTrimMemory received with level=$level")
-        if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) {
+        if (level >= TRIM_MEMORY_RUNNING_LOW) {
             System.gc()
         }
     }

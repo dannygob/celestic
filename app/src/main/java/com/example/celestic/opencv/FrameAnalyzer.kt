@@ -182,18 +182,24 @@ class FrameAnalyzer @Inject constructor(
             Imgproc.drawContours(annotatedMat, filteredContours, -1, Scalar(0.0, 255.0, 0.0), 2)
             Imgproc.drawContours(annotatedMat, deformations, -1, Scalar(255.0, 0.0, 0.0), 2)
 
-            for (hole in simpleHoles) {
-                val color = if (hole.hasAlodine) Scalar(0.0, 165.0, 255.0) else Scalar(0.0, 0.0, 255.0)
-                Imgproc.circle(annotatedMat, hole.center, hole.radius.toInt(), color, 2)
+            for ((center, radius, hasAlodine) in simpleHoles) {
+                val color = if (hasAlodine) Scalar(0.0, 165.0, 255.0) else Scalar(0.0, 0.0, 255.0)
+                Imgproc.circle(annotatedMat, center, radius.toInt(), color, 2)
             }
 
-            for (cs in countersinks) {
-                Imgproc.circle(annotatedMat, cs.center, cs.outerRadius.toInt(), Scalar(0.0, 255.0, 255.0), 2)
-                Imgproc.circle(annotatedMat, cs.center, cs.innerRadius.toInt(), Scalar(0.0, 165.0, 255.0), 1)
+            for ((center, innerRadius, outerRadius) in countersinks) {
+                Imgproc.circle(
+                    annotatedMat,
+                    center, outerRadius.toInt(), Scalar(0.0, 255.0, 255.0), 2
+                )
+                Imgproc.circle(
+                    annotatedMat,
+                    center, innerRadius.toInt(), Scalar(0.0, 165.0, 255.0), 1
+                )
             }
 
-            for (scratch in scratches) {
-                Imgproc.line(annotatedMat, scratch.startPoint, scratch.endPoint, Scalar(255.0, 0.0, 255.0), 2)
+            for ((startPoint, endPoint) in scratches) {
+                Imgproc.line(annotatedMat, startPoint, endPoint, Scalar(255.0, 0.0, 255.0), 2)
             }
 
             if (markers.isNotEmpty()) {
