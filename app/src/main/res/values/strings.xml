@@ -49,7 +49,7 @@
 
     <!-- Welcome / General -->
     <string name="welcome_message">Welcome to Celestic Detector</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="language_setting_hint">Language is changed in system settings.</string>
     <string name="system_version">Celestic High Precision Vision System v2.0</string>
     <string name="industrial_edition">v2.0 Industrial Edition</string>
@@ -57,10 +57,10 @@
 
     <!-- Inspection Flow -->
     <string name="inspection_start">Start inspection</string>
-    <string name="inspection_processing">Processing inspection...</string>
-    <string name="analyzing">Analyzing...</string>
+    <string name="inspection_processing">Processing inspection…</string>
+    <string name="analyzing">Analyzing…</string>
     <string name="inspection_approved">Inspection approved</string>
-    <string name="inspection_redirecting">Redirecting to details...</string>
+    <string name="inspection_redirecting">Redirecting to details…</string>
     <string name="inspection_finished">Inspection Finished</string>
     <string name="inspection_failed">INSPECTION FAILED</string>
     <string name="inspection_approved_status">INSPECTION APPROVED</string>
@@ -90,7 +90,7 @@
     <string name="calibration_title">CALIBRATION</string>
     <string name="calibration_open">Open Calibration</string>
     <string name="calibration_section">Calibration</string>
-    <string name="calibration_opening">Opening calibration...</string>
+    <string name="calibration_opening">Opening calibration…</string>
     <string name="last_calibration">Last: %1$s</string>
     <string name="pattern_detected">PATTERN DETECTED</string>
     <string name="pattern_not_visible">PATTERN NOT VISIBLE</string>
@@ -104,7 +104,7 @@
     <string name="reports_title">REPORTS</string>
     <string name="report_generate">Generate Report</string>
     <string name="report_generate_confirm">Do you want to generate the inspection report?</string>
-    <string name="report_requesting">Requesting report...</string>
+    <string name="report_requesting">Requesting report…</string>
     <string name="share_report">SHARE REPORT</string>
     <string name="select_report_format">Select Report Format</string>
     <string name="rep_abbr">REP</string>
@@ -114,7 +114,7 @@
 
     <!-- Dashboard -->
     <string name="dashboard_title">Celestic Dashboard</string>
-    <string name="dashboard_open_details">Opening details...</string>
+    <string name="dashboard_open_details">Opening details…</string>
     <string name="view_history">View History</string>
     <string name="hist_abbr">HIST</string>
 
@@ -200,7 +200,7 @@
     <!-- Camera Status -->
     <string name="low_light">Low light</string>
     <string name="too_much_light">Too much light / Reflection</string>
-    <string name="focusing">Focusing...</string>
+    <string name="focusing">Focusing…</string>
 
     <!-- UI Specific -->
     <string name="visual_analysis">VISUAL ANALYSIS</string>
