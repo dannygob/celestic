@@ -212,4 +212,19 @@
     <string name="delete_defect">DELETE DEFECT RECORD</string>
     <string name="delete_defect_success">Defect record deleted successfully</string>
 
+    <!-- Company / Enterprise Data (used in report templates) -->
+    <string name="company_settings_section">Company Data</string>
+    <string name="company_settings_desc">This information will appear in all generated reports</string>
+    <string name="company_name_label">Company Name</string>
+    <string name="company_name_hint">e.g. Aerospace Parts S.A.</string>
+    <string name="company_address_label">Address</string>
+    <string name="company_address_hint">e.g. Calle Industrial 14, Madrid</string>
+    <string name="company_phone_label">Phone / Contact</string>
+    <string name="company_phone_hint">e.g. +34 91 000 0000</string>
+    <string name="company_vat_label">VAT / Tax ID (NIF/CIF)</string>
+    <string name="company_vat_hint">e.g. B12345678</string>
+    <string name="company_quality_mgr_label">Quality Manager</string>
+    <string name="company_quality_mgr_hint">e.g. María García</string>
+    <string name="company_data_saved">Company data saved</string>
+
 </resources>

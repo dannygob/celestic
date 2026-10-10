@@ -17,15 +17,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.DeveloperBoard
 import androidx.compose.material.icons.filled.DisplaySettings
 import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -35,11 +40,15 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -201,13 +210,123 @@ fun SettingsScreen(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // ── COMPANY DATA SECTION ─────────────────────────────────────────
+            CompanyDataSection(isDarkMode = isDarkMode, accentColor = colors.accentColor)
         }
     }
 }
 
 @Composable
+private fun CompanyDataSection(isDarkMode: Boolean, accentColor: Color) {
+    val context = LocalContext.current
+    val prefs = context.getSharedPreferences("celestic_prefs", android.content.Context.MODE_PRIVATE)
+    val cardBg = if (isDarkMode) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
+    val textColor = if (isDarkMode) Color.White else Color.Black
+    val fieldColors = OutlinedTextFieldDefaults.colors(
+        focusedBorderColor = accentColor,
+        unfocusedBorderColor = Color.Gray.copy(alpha = 0.4f),
+        focusedLabelColor = accentColor,
+        cursorColor = accentColor,
+        focusedTextColor = textColor,
+        unfocusedTextColor = textColor
+    )
 
-fun SettingsItem(
+    var companyName    by remember { mutableStateOf(prefs.getString("company_name",    "") ?: "") }
+    var companyAddress by remember { mutableStateOf(prefs.getString("company_address", "") ?: "") }
+    var companyPhone   by remember { mutableStateOf(prefs.getString("company_phone",   "") ?: "") }
+    var companyVat     by remember { mutableStateOf(prefs.getString("company_vat",     "") ?: "") }
+    var qualityMgr     by remember { mutableStateOf(prefs.getString("company_quality_mgr", "") ?: "") }
+    var saved          by remember { mutableStateOf(false) }
+
+    Text(
+        stringResource(R.string.company_settings_section).uppercase(),
+        color = accentColor,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(bottom = 4.dp)
+    )
+    Text(
+        stringResource(R.string.company_settings_desc),
+        color = Color.Gray,
+        fontSize = 11.sp,
+        modifier = Modifier.padding(bottom = 8.dp)
+    )
+
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = cardBg),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Business, null, tint = accentColor, modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(stringResource(R.string.company_settings_section), color = textColor, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            }
+
+            OutlinedTextField(
+                value = companyName, onValueChange = { companyName = it; saved = false },
+                label = { Text(stringResource(R.string.company_name_label)) },
+                placeholder = { Text(stringResource(R.string.company_name_hint), color = Color.Gray) },
+                singleLine = true, modifier = Modifier.fillMaxWidth(), colors = fieldColors
+            )
+            OutlinedTextField(
+                value = companyAddress, onValueChange = { companyAddress = it; saved = false },
+                label = { Text(stringResource(R.string.company_address_label)) },
+                placeholder = { Text(stringResource(R.string.company_address_hint), color = Color.Gray) },
+                singleLine = true, modifier = Modifier.fillMaxWidth(), colors = fieldColors
+            )
+            OutlinedTextField(
+                value = companyPhone, onValueChange = { companyPhone = it; saved = false },
+                label = { Text(stringResource(R.string.company_phone_label)) },
+                placeholder = { Text(stringResource(R.string.company_phone_hint), color = Color.Gray) },
+                singleLine = true, modifier = Modifier.fillMaxWidth(), colors = fieldColors
+            )
+            OutlinedTextField(
+                value = companyVat, onValueChange = { companyVat = it; saved = false },
+                label = { Text(stringResource(R.string.company_vat_label)) },
+                placeholder = { Text(stringResource(R.string.company_vat_hint), color = Color.Gray) },
+                singleLine = true, modifier = Modifier.fillMaxWidth(), colors = fieldColors
+            )
+            OutlinedTextField(
+                value = qualityMgr, onValueChange = { qualityMgr = it; saved = false },
+                label = { Text(stringResource(R.string.company_quality_mgr_label)) },
+                placeholder = { Text(stringResource(R.string.company_quality_mgr_hint), color = Color.Gray) },
+                singleLine = true, modifier = Modifier.fillMaxWidth(), colors = fieldColors
+            )
+
+            Button(
+                onClick = {
+                    prefs.edit()
+                        .putString("company_name",        companyName)
+                        .putString("company_address",     companyAddress)
+                        .putString("company_phone",       companyPhone)
+                        .putString("company_vat",         companyVat)
+                        .putString("company_quality_mgr", qualityMgr)
+                        .apply()
+                    saved = true
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = accentColor)
+            ) {
+                Text(
+                    if (saved) "✔  ${stringResource(R.string.company_data_saved)}"
+                    else stringResource(R.string.save).uppercase(),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+
+    Spacer(modifier = Modifier.height(32.dp))
+}
+
     title: String,
     subtitle: String,
     icon: ImageVector,
