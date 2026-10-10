@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Assessment
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.CheckCircle
@@ -33,6 +34,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PrecisionManufacturing
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Stop
+import android.widget.Toast
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -50,6 +52,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -107,7 +110,16 @@ fun DashboardScreen(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+    val context = androidx.compose.ui.platform.LocalContext.current
     val cameraController = remember { com.example.celestic.ui.component.CameraCaptureController() }
+    
+    val onlineLearningMessage by viewModel.onlineLearningMessage.collectAsState()
+    LaunchedEffect(onlineLearningMessage) {
+        onlineLearningMessage?.let { msg ->
+            Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+            viewModel.clearOnlineLearningMessage()
+        }
+    }
     
     // Colores
     val accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
@@ -184,6 +196,10 @@ private fun DashboardTopBar(
         )
     }
     val context = androidx.compose.ui.platform.LocalContext.current
+    val isAiSlaveMode by viewModel.isAiSlaveMode.collectAsState()
+    var showAiInfoDialog by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf(false)
+    }
     var currentAlbaran by androidx.compose.runtime.remember {
         androidx.compose.runtime.mutableStateOf(
             context.getSharedPreferences("celestic_prefs", android.content.Context.MODE_PRIVATE)
@@ -191,6 +207,21 @@ private fun DashboardTopBar(
         )
     }
     var albaranText by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf("") }
+    var showOnlineLearningDialog by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf(false)
+    }
+    val learnedSamplesCount by viewModel.learnedSamplesCount.collectAsState()
+    val learnedSamples by viewModel.learnedSamples.collectAsState()
+
+    if (showOnlineLearningDialog) {
+        com.example.celestic.ui.component.OnlineLearningDialog(
+            learnedSamples = learnedSamples,
+            onRollback = { viewModel.rollbackLastSample() },
+            onResetAll = { viewModel.resetAllLearning() },
+            onDeleteSample = { viewModel.deleteLearnedSample(it) },
+            onDismiss = { showOnlineLearningDialog = false }
+        )
+    }
 
     if (showAlbaranDialog) {
         androidx.compose.material3.AlertDialog(
@@ -227,6 +258,35 @@ private fun DashboardTopBar(
             dismissButton = {
                 TextButton(onClick = { showAlbaranDialog = false }) {
                     Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    if (showAiInfoDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showAiInfoDialog = false },
+            title = {
+                Text(
+                    text = if (isAiSlaveMode) "Visión Inteligente & Reaprendizaje en Caliente" else "Motor de IA Activo (TFLite)",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        if (isAiSlaveMode)
+                            "El pipeline opera con Visión Artificial Inteligente y Aprendizaje en Caliente (On-Device Continual Learning).\n\n¡Ya NO necesitas generar datasets sintéticos!\n\nEl sistema aprende directamente de las piezas que validas como conformes en vivo ('Aprender en caliente'), ajustando dinámicamente sus tolerancias adaptativas. Si por descuido se ingresa una pieza en mal estado, dispones de la opción 'Rollback' para deshacer la última muestra o 'Reset' para reiniciar la memoria en cualquier momento.\n\nOpcionalmente, si deseas incorporar una red neuronal TFLite externa, puedes compilarla con 'train_defect_classifier.py' y colocar 'defect_classifier.tflite' en 'assets/models/'."
+                        else
+                            "El modelo de Deep Learning 'defect_classifier.tflite' está cargado junto con la memoria adaptativa de reaprendizaje en caliente.",
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp
+                    )
+                }
+            },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = { showAiInfoDialog = false }) {
+                    Text(stringResource(R.string.ok))
                 }
             }
         )
@@ -296,6 +356,40 @@ private fun DashboardTopBar(
                             isLandscape,
                             isDarkMode
                         ) { navController.navigate("reports") }
+
+                        NavIconBtn(
+                            Icons.Default.AutoAwesome,
+                            "${stringResource(R.string.learning_abbr)} ($learnedSamplesCount)",
+                            isLandscape,
+                            isDarkMode
+                        ) { showOnlineLearningDialog = true }
+
+                        Surface(
+                            onClick = { showAiInfoDialog = true },
+                            shape = RoundedCornerShape(8.dp),
+                            color = if (isAiSlaveMode) Color(0xFFE65100).copy(alpha = 0.15f) else Color(0xFF2E7D32).copy(alpha = 0.15f),
+                            border = BorderStroke(1.dp, if (isAiSlaveMode) Color(0xFFFF9800) else Color(0xFF4CAF50)),
+                            modifier = Modifier.padding(end = 4.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(6.dp)
+                                        .clip(CircleShape)
+                                        .background(if (isAiSlaveMode) Color(0xFFFF9800) else Color(0xFF4CAF50))
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = if (isAiSlaveMode) "IA ESCLAVO" else "IA TFLITE",
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.Black,
+                                    color = if (isAiSlaveMode) Color(0xFFFFB74D) else Color(0xFF81C784)
+                                )
+                            }
+                        }
 
                         TextButton(
                             onClick = {
@@ -626,6 +720,8 @@ fun DashboardModals(
     navController: NavController,
     context: android.content.Context
 ) {
+    var hasLearnedCurrent by remember(state) { mutableStateOf(false) }
+
     if (state is DashboardState.Approved) {
         val detectionId = state.detectionId
         ApprovedResultDialog(
@@ -634,7 +730,12 @@ fun DashboardModals(
             onGoToDetail = {
                 navController.navigate("details/general?id=$detectionId")
                 viewModel.resetState()
-            }
+            },
+            onLearnPiece = {
+                viewModel.learnCurrentPiece()
+                hasLearnedCurrent = true
+            },
+            isLearned = hasLearnedCurrent
         )
     }
 

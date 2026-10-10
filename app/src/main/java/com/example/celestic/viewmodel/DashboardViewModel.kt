@@ -19,8 +19,11 @@ import com.example.celestic.utils.saveBitmapToFile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.opencv.android.Utils
 import org.opencv.core.Mat
@@ -35,6 +38,8 @@ class DashboardViewModel @Inject constructor(
     private val blueprintMatcher: com.example.celestic.ml.BlueprintMatcher,
     private val sharedData: SharedDataRepository,
     private val imageClassifier: com.example.celestic.manager.ImageClassifier,
+    private val defectClassifier: com.example.celestic.ml.DefectClassifier,
+    private val onlineLearningManager: com.example.celestic.manager.OnlineLearningManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -50,6 +55,30 @@ class DashboardViewModel @Inject constructor(
 
     private val _state = MutableStateFlow<DashboardState>(DashboardState.Idle)
     val state: StateFlow<DashboardState> = _state
+
+    val isAiSlaveMode = MutableStateFlow(!defectClassifier.isRealModelLoaded())
+
+    val learnedSamplesCount = onlineLearningManager.getSampleCountFlow().stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        0
+    )
+
+    val learnedSamples = onlineLearningManager.getLearnedSamplesFlow().stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        emptyList()
+    )
+
+    private val _onlineLearningMessage = MutableStateFlow<String?>(null)
+    val onlineLearningMessage: StateFlow<String?> = _onlineLearningMessage.asStateFlow()
+
+    fun clearOnlineLearningMessage() {
+        _onlineLearningMessage.value = null
+    }
+
+    private var lastCapturedFrameId: String = ""
+    private var lastProcessedDetections: List<DetectionItem> = emptyList()
 
     private var currentSpecification: Specification? = null
 
@@ -134,6 +163,50 @@ class DashboardViewModel @Inject constructor(
                     aiDefectAdded = true
                 }
 
+                // 1.8 Run Deep Learning Defect Classifier on each detected feature's ROI
+                val classifiedDetections = detections.map { detection ->
+                    val bbox = detection.boundingBox
+                    val left = bbox.left.toInt().coerceIn(0, bitmap.width - 1)
+                    val top = bbox.top.toInt().coerceIn(0, bitmap.height - 1)
+                    val width = bbox.width().toInt().coerceIn(1, bitmap.width - left)
+                    val height = bbox.height().toInt().coerceIn(1, bitmap.height - top)
+                    if (width > 8 && height > 8) {
+                        try {
+                            val roi = Bitmap.createBitmap(bitmap, left, top, width, height)
+                            val dnnClass = when (detection.type) {
+                                DetectionType.HOLE -> com.example.celestic.ml.DNNDetector.DetectionClass.HOLE
+                                DetectionType.COUNTERSINK -> com.example.celestic.ml.DNNDetector.DetectionClass.COUNTERSINK
+                                DetectionType.DEFECT -> com.example.celestic.ml.DNNDetector.DetectionClass.SCRATCH
+                                DetectionType.BEND -> com.example.celestic.ml.DNNDetector.DetectionClass.DEFORMATION
+                                else -> com.example.celestic.ml.DNNDetector.DetectionClass.SHEET
+                            }
+                            val classResult = defectClassifier.classify(roi, dnnClass)
+                            roi.recycle()
+
+                            val modeTag = if (classResult.isSlaveMode) "[IA Esclavo]" else "[IA TFLite]"
+                            val updatedNotes = "$modeTag ${classResult.defectClass.label} (${(classResult.confidence * 100).toInt()}%) | ${detection.notes}"
+
+                            val isDefective = classResult.defectClass == com.example.celestic.ml.DefectClassifier.DefectClass.HOLE_DEFECTIVE ||
+                                classResult.defectClass == com.example.celestic.ml.DefectClassifier.DefectClass.COUNTERSINK_DEFECTIVE ||
+                                classResult.defectClass == com.example.celestic.ml.DefectClassifier.DefectClass.SCRATCH_SEVERE ||
+                                classResult.defectClass == com.example.celestic.ml.DefectClassifier.DefectClass.DEFORMATION_PRESENT ||
+                                classResult.defectClass == com.example.celestic.ml.DefectClassifier.DefectClass.ALODINE_IRREGULAR
+
+                            detection.copy(
+                                notes = updatedNotes,
+                                status = if (isDefective) DetectionStatus.NOT_ACCEPTED else detection.status
+                            )
+                        } catch (e: Exception) {
+                            Log.w("DashboardViewModel", "Error running defectClassifier ROI", e)
+                            detection
+                        }
+                    } else {
+                        detection
+                    }
+                }
+                detections.clear()
+                detections.addAll(classifiedDetections)
+
                 // 2. Validate against specification (Golden Sample DB + Blueprint Logic)
                 val specification = currentSpecification
                 val validationResult = if (specification != null) {
@@ -187,6 +260,9 @@ class DashboardViewModel @Inject constructor(
                 // Save to database with current frameId
                 val detectionIds = saveDetectionsToDatabase(detections, validationResult, frameId)
 
+                lastCapturedFrameId = frameId
+                lastProcessedDetections = detections.toList()
+
                 // Update shared state
                 sharedData.setLastDetectionResults(detections)
 
@@ -222,7 +298,7 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    private fun validateAgainstSpecification(
+    private suspend fun validateAgainstSpecification(
         detections: List<DetectionItem>,
         specification: Specification,
         expectedFeatures: List<SpecificationFeature>,
@@ -235,6 +311,13 @@ class DashboardViewModel @Inject constructor(
 
         if (aiDefectAdded) {
             violations.add("IA SEMÁNTICA: $aiResultLabel detectado en la pieza.")
+            overallStatus = DetectionStatus.NOT_ACCEPTED
+        }
+
+        // Evaluación de Reaprendizaje en Caliente (Perfil adaptativo)
+        val (simScore, isCompliant) = onlineLearningManager.evaluateAgainstLearnedProfile(detections)
+        if (!isCompliant) {
+            violations.add("REAPRENDIZAJE: Desviación respecto al patrón aprendido (${(simScore * 100).toInt()}% conformidad).")
             overallStatus = DetectionStatus.NOT_ACCEPTED
         }
 
@@ -335,7 +418,7 @@ class DashboardViewModel @Inject constructor(
         )
     }
 
-    private fun createDefaultValidationResult(
+    private suspend fun createDefaultValidationResult(
         detections: List<DetectionItem>,
         aiDefectAdded: Boolean = false,
         aiResultLabel: String = ""
@@ -354,8 +437,15 @@ class DashboardViewModel @Inject constructor(
             overallStatus = DetectionStatus.NOT_ACCEPTED
         }
 
+        // Evaluación de Reaprendizaje en Caliente (Perfil adaptativo)
+        val (simScore, isCompliant) = onlineLearningManager.evaluateAgainstLearnedProfile(detections)
+        if (!isCompliant) {
+            violations.add("REAPRENDIZAJE: Desviación respecto al patrón aprendido (${(simScore * 100).toInt()}% conformidad).")
+            overallStatus = DetectionStatus.NOT_ACCEPTED
+        }
+
         return ValidationResult(
-            isValid = !hasCriticalDefects && !aiDefectAdded,
+            isValid = !hasCriticalDefects && !aiDefectAdded && isCompliant,
             violations = violations,
             overallStatus = overallStatus
         )
@@ -423,17 +513,39 @@ class DashboardViewModel @Inject constructor(
     private fun updateStateBasedOnValidation(validationResult: ValidationResult, detectionIds: List<Long>) {
         when (validationResult.overallStatus) {
             DetectionStatus.OK -> {
+                triggerHapticFeedback(true)
                 _state.value = DashboardState.Approved(detectionIds.firstOrNull() ?: 0)
             }
 
             DetectionStatus.WARNING -> {
+                triggerHapticFeedback(false)
                 _state.value = DashboardState.NavigateToDetails(detectionIds.firstOrNull() ?: 0)
             }
 
             DetectionStatus.NOT_ACCEPTED -> {
+                triggerHapticFeedback(false)
                 _state.value = DashboardState.Rejected(detectionIds.firstOrNull() ?: 0)
             }
         }
+    }
+
+    private fun triggerHapticFeedback(isApproved: Boolean) {
+        try {
+            val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as? android.os.Vibrator
+            if (vibrator != null && vibrator.hasVibrator()) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    if (isApproved) {
+                        vibrator.vibrate(android.os.VibrationEffect.createOneShot(80, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+                    } else {
+                        val timings = longArrayOf(0, 100, 80, 120)
+                        vibrator.vibrate(android.os.VibrationEffect.createWaveform(timings, -1))
+                    }
+                } else {
+                    @Suppress("DEPRECATION")
+                    vibrator.vibrate(if (isApproved) 80 else 250)
+                }
+            }
+        } catch (_: Exception) {}
     }
 
     suspend fun getDetectionById(id: Long): DetectionItem? {
@@ -454,5 +566,51 @@ class DashboardViewModel @Inject constructor(
     fun resetState() {
         sharedData.clearCurrentInspection()
         _state.value = DashboardState.Idle
+    }
+
+    // ===== ACCIONES DE REAPRENDIZAJE EN CALIENTE =====
+
+    fun learnCurrentPiece(notes: String = "") {
+        viewModelScope.launch {
+            val detections = lastProcessedDetections
+            if (detections.isEmpty()) {
+                _onlineLearningMessage.value = "No hay detecciones capturadas en esta sesión para aprender."
+                return@launch
+            }
+            val prefs = context.getSharedPreferences("celestic_prefs", Context.MODE_PRIVATE)
+            val batch = prefs.getString("current_albaran", "GENERAL") ?: "GENERAL"
+            val id = onlineLearningManager.learnApprovedPart(
+                frameId = lastCapturedFrameId.ifBlank { "manual_${System.currentTimeMillis()}" },
+                batchNumber = batch,
+                detections = detections,
+                notes = notes
+            )
+            _onlineLearningMessage.value = "✔ Muestra #$id aprendida en caliente (Lote: $batch)."
+        }
+    }
+
+    fun rollbackLastSample() {
+        viewModelScope.launch {
+            val sample = onlineLearningManager.rollbackLastSample()
+            if (sample != null) {
+                _onlineLearningMessage.value = "↩ Rollback exitoso: Muestra #${sample.id} eliminada del aprendizaje."
+            } else {
+                _onlineLearningMessage.value = "No hay muestras previas para deshacer."
+            }
+        }
+    }
+
+    fun deleteLearnedSample(id: Long) {
+        viewModelScope.launch {
+            onlineLearningManager.deleteSampleById(id)
+            _onlineLearningMessage.value = "Muestra #$id eliminada del banco de memoria."
+        }
+    }
+
+    fun resetAllLearning() {
+        viewModelScope.launch {
+            onlineLearningManager.resetAllLearning()
+            _onlineLearningMessage.value = "↺ Memoria de reaprendizaje restablecida a cero."
+        }
     }
 }

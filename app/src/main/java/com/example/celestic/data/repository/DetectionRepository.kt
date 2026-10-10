@@ -6,6 +6,7 @@ import android.graphics.Bitmap.CompressFormat
 import com.example.celestic.data.dao.CelesticDao
 import com.example.celestic.models.DetectionItem
 import com.example.celestic.models.Inspection
+import com.example.celestic.models.LearnedSample
 import com.example.celestic.models.Specification
 import com.example.celestic.models.SpecificationFeature
 import com.example.celestic.models.calibration.CameraCalibrationData
@@ -268,4 +269,24 @@ class DetectionRepository @Inject constructor(
 
         return specId
     }
+
+    // ===== ONLINE LEARNING / REAPRENDIZAJE EN CALIENTE =====
+
+    suspend fun insertLearnedSample(sample: LearnedSample): Long =
+        dao.insertLearnedSample(sample)
+
+    fun getAllLearnedSamples(): Flow<List<LearnedSample>> =
+        dao.getAllLearnedSamples()
+
+    suspend fun getLatestLearnedSample(): LearnedSample? =
+        dao.getLatestLearnedSample()
+
+    suspend fun deleteLearnedSampleById(id: Long) =
+        dao.deleteLearnedSampleById(id)
+
+    suspend fun deleteAllLearnedSamples() =
+        dao.deleteAllLearnedSamples()
+
+    fun getLearnedSampleCount(): Flow<Int> =
+        dao.getLearnedSampleCount()
 }

@@ -24,6 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val repository: DetectionRepository,
+    private val onlineLearningManager: com.example.celestic.manager.OnlineLearningManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -145,6 +146,22 @@ class DetailsViewModel @Inject constructor(
                 // Silent fail for file cleanup
             }
             onDeleted()
+        }
+    }
+
+    /**
+     * Registra esta pieza en el banco de aprendizaje en caliente (Online Continual Learning).
+     */
+    fun learnCurrentDetectionAsApproved(onSuccess: (Long) -> Unit) {
+        val currentItem = _detectionItem.value ?: return
+        viewModelScope.launch {
+            val id = onlineLearningManager.learnApprovedPart(
+                frameId = currentItem.frameId,
+                batchNumber = currentItem.linkedQrCode ?: "GENERAL",
+                detections = listOf(currentItem),
+                notes = "Validada desde Detalles de Inspección"
+            )
+            onSuccess(id)
         }
     }
 }

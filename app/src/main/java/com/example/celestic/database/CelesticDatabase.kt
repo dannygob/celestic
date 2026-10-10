@@ -9,6 +9,7 @@ import com.example.celestic.data.dao.CelesticDao
 import com.example.celestic.database.converters.Converters
 import com.example.celestic.models.DetectionItem
 import com.example.celestic.models.Inspection
+import com.example.celestic.models.LearnedSample
 import com.example.celestic.models.Specification
 import com.example.celestic.models.SpecificationFeature
 import com.example.celestic.models.TraceabilityItem
@@ -33,9 +34,10 @@ import com.example.celestic.models.report.ReportConfig
         Inspection::class,
         Specification::class,
         SpecificationFeature::class,
-        TraceabilityItem::class
+        TraceabilityItem::class,
+        LearnedSample::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

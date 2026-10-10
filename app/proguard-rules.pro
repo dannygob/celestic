@@ -1,21 +1,41 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ProGuard / R8 Rules for Celestic Quality Inspection System
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# ── General Configuration ───────────────────────────────────────────────────
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# ── Celestic Domain and Data Models (JSON / GSON Serialization) ─────────────
+-keepclassmembers enum * { *; }
+-keep class com.example.celestic.models.** { *; }
+-keepclassmembers class com.example.celestic.models.** { <fields>; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# ── Room Database ───────────────────────────────────────────────────────────
+-keep class * extends androidx.room.RoomDatabase
+-dontwarn androidx.room.paging.**
+
+# ── OpenCV Native Bindings ──────────────────────────────────────────────────
+-keep class org.opencv.** { *; }
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+# ── LiteRT / TensorFlow Lite ────────────────────────────────────────────────
+-keep class com.google.ai.edge.litert.** { *; }
+-keep class org.tensorflow.lite.** { *; }
+-dontwarn org.tensorflow.lite.**
+-dontwarn com.google.ai.edge.litert.**
+
+# ── Document & Report Generation (iText & POI) ──────────────────────────────
+-dontwarn com.itextpdf.**
+-keep class com.itextpdf.** { *; }
+-dontwarn org.apache.poi.**
+-keep class org.apache.poi.** { *; }
+
+# ── MPAndroidChart ──────────────────────────────────────────────────────────
+-keep class com.github.mikephil.charting.** { *; }
+-dontwarn com.github.mikephil.charting.**
+
+# ── Hilt / Dagger ───────────────────────────────────────────────────────────
+-keep class * extends androidx.lifecycle.ViewModel { *; }
+-keep class * extends dagger.hilt.android.internal.managers.ViewComponentManager$FragmentContextWrapper

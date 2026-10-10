@@ -28,15 +28,17 @@ class DetailsViewModelTest {
 
     private lateinit var viewModel: DetailsViewModel
     private lateinit var repository: DetectionRepository
+    private lateinit var onlineLearningManager: com.example.celestic.manager.OnlineLearningManager
     private lateinit var context: Context
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         repository = mockk()
+        onlineLearningManager = mockk()
         context = mockk()
         mockkObject(JsonLoader)
-        viewModel = DetailsViewModel(repository, context)
+        viewModel = DetailsViewModel(repository, onlineLearningManager, context)
     }
 
     @After

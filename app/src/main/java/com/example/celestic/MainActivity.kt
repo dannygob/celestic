@@ -70,15 +70,12 @@ class MainActivity : ComponentActivity() {
                         )
                     } else {
                         PermissionsScreen(onGrantPermissions = {
-                            val required = mutableListOf(
+                            val required = arrayOf(
                                 android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.ACCESS_FINE_LOCATION
+                                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION
                             )
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                                required.add(android.Manifest.permission.BLUETOOTH_CONNECT)
-                                required.add(android.Manifest.permission.BLUETOOTH_SCAN)
-                            }
-                            permissionLauncher.launch(required.toTypedArray())
+                            permissionLauncher.launch(required)
                         })
                     }
                 }

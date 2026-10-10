@@ -1,0 +1,6 @@
+{
+  "name": "Celestic",
+  "description": "Precision vision and defect inspection system",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.celestic.models.DetectionItem
 import com.example.celestic.models.Inspection
+import com.example.celestic.models.LearnedSample
 import com.example.celestic.models.Specification
 import com.example.celestic.models.SpecificationFeature
 import com.example.celestic.models.calibration.CameraCalibrationData
@@ -138,4 +139,30 @@ interface CelesticDao {
     /** Deletes all features associated with a specific specification. */
     @Query("DELETE FROM specification_features WHERE specificationId = :specId")
     suspend fun deleteFeaturesBySpecification(specId: Long)
+
+    // ===== ONLINE LEARNING / LEARNED SAMPLES =====
+
+    /** Inserts a learned sample into the on-device memory bank. */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLearnedSample(sample: LearnedSample): Long
+
+    /** Returns all learned samples ordered by timestamp (newest first). */
+    @Query("SELECT * FROM learned_samples ORDER BY timestamp DESC")
+    fun getAllLearnedSamples(): Flow<List<LearnedSample>>
+
+    /** Retrieves the most recent learned sample (used for Rollback). */
+    @Query("SELECT * FROM learned_samples ORDER BY timestamp DESC LIMIT 1")
+    suspend fun getLatestLearnedSample(): LearnedSample?
+
+    /** Deletes a learned sample by ID. */
+    @Query("DELETE FROM learned_samples WHERE id = :id")
+    suspend fun deleteLearnedSampleById(id: Long)
+
+    /** Resets the entire on-device learning memory bank. */
+    @Query("DELETE FROM learned_samples")
+    suspend fun deleteAllLearnedSamples()
+
+    /** Returns total count of learned samples. */
+    @Query("SELECT COUNT(*) FROM learned_samples")
+    fun getLearnedSampleCount(): Flow<Int>
 }

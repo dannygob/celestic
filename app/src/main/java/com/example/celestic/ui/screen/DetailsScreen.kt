@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Description
@@ -538,9 +539,34 @@ fun DetailsScreen(
                 }
             }
 
+            // Section: Aprender como pieza de referencia en caliente
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                var isLearnedInDetails by remember { mutableStateOf(false) }
+                Button(
+                    onClick = {
+                        detailsViewModel.learnCurrentDetectionAsApproved { id ->
+                            isLearnedInDetails = true
+                            Toast.makeText(context, "✔ Muestra #$id aprendida en caliente.", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0288D1))
+                ) {
+                    Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = Color.White)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        if (isLearnedInDetails) "✔ Pieza Registrada en Aprendizaje" else stringResource(R.string.learn_piece_btn),
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+            }
+
             // Section: Report Anomaly
             item {
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 OutlinedButton(
                     onClick = {
                         Toast.makeText(context, reportSentMsg, Toast.LENGTH_SHORT).show()

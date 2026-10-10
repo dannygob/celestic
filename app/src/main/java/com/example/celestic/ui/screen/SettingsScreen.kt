@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.DeveloperBoard
 import androidx.compose.material.icons.filled.DisplaySettings
 import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -29,12 +30,15 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -215,6 +219,11 @@ fun SettingsScreen(
 
             // ── COMPANY DATA SECTION ─────────────────────────────────────────
             CompanyDataSection(isDarkMode = isDarkMode, accentColor = colors.accentColor)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // ── PRIVACY & COMPLIANCE SECTION ──────────────────────────────────
+            PrivacyComplianceSection(isDarkMode = isDarkMode, accentColor = colors.accentColor)
         }
     }
 }
@@ -327,6 +336,117 @@ private fun CompanyDataSection(isDarkMode: Boolean, accentColor: Color) {
     Spacer(modifier = Modifier.height(32.dp))
 }
 
+@Composable
+private fun PrivacyComplianceSection(isDarkMode: Boolean, accentColor: Color) {
+    val context = LocalContext.current
+    val prefs = context.getSharedPreferences("celestic_prefs", android.content.Context.MODE_PRIVATE)
+    val cardBg = if (isDarkMode) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
+    val textColor = if (isDarkMode) Color.White else Color.Black
+
+    var showPrivacyDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
+    var dataClearedMessage by remember { mutableStateOf(false) }
+
+    Text(
+        stringResource(R.string.privacy_compliance_title),
+        color = accentColor,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(bottom = 8.dp)
+    )
+
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = cardBg),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                "Celestic QC Suite • Industrial Edition",
+                color = textColor,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp
+            )
+            Text(
+                "Version 1.0.0 (Play Store Ready) • ISO 9001 Compliance",
+                color = Color.Gray,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(top = 2.dp, bottom = 12.dp)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedButton(
+                    onClick = { showPrivacyDialog = true },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(stringResource(R.string.privacy_policy_btn), fontSize = 12.sp)
+                }
+
+                Button(
+                    onClick = { showDeleteConfirmDialog = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(stringResource(R.string.data_deletion_btn), fontSize = 12.sp)
+                }
+            }
+
+            if (dataClearedMessage) {
+                Text(
+                    stringResource(R.string.data_deleted_success),
+                    color = accentColor,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        }
+    }
+
+    if (showPrivacyDialog) {
+        AlertDialog(
+            onDismissRequest = { showPrivacyDialog = false },
+            title = { Text(stringResource(R.string.privacy_policy_title), fontWeight = FontWeight.Bold) },
+            text = { Text(stringResource(R.string.privacy_policy_body), fontSize = 14.sp, lineHeight = 20.sp) },
+            confirmButton = {
+                TextButton(onClick = { showPrivacyDialog = false }) {
+                    Text(stringResource(R.string.close), color = accentColor)
+                }
+            }
+        )
+    }
+
+    if (showDeleteConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmDialog = false },
+            title = { Text(stringResource(R.string.data_deletion_title), fontWeight = FontWeight.Bold) },
+            text = { Text(stringResource(R.string.data_deletion_desc), fontSize = 14.sp, lineHeight = 20.sp) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        prefs.edit().clear().apply()
+                        showDeleteConfirmDialog = false
+                        dataClearedMessage = true
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text(stringResource(R.string.confirm_delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirmDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+}
+
+@Composable
+private fun SettingsItem(
     title: String,
     subtitle: String,
     icon: ImageVector,

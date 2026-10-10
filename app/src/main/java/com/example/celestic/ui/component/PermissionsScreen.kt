@@ -101,8 +101,8 @@ fun PermissionsScreen(onGrantPermissions: () -> Unit) {
             textColor = colors.textColor
         )
         PermissionItem(
-            title = "Location & Bluetooth",
-            description = "Required for device pairing and synchronization.",
+            title = "Plant Location",
+            description = "Used to tag the inspection facility and geo-reference batches.",
             icon = Icons.Default.Settings,
             accentColor = colors.accentColor,
             textColor = colors.textColor

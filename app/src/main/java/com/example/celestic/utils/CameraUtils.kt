@@ -38,11 +38,10 @@ fun imageProxyToBitmap(image: ImageProxy): Bitmap {
 
 
 fun hasRequiredPermissions(context: Context): Boolean {
-    val required = mutableListOf(Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION)
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-        required.add(Manifest.permission.BLUETOOTH_CONNECT)
-        required.add(Manifest.permission.BLUETOOTH_SCAN)
-    }
+    val required = listOf(
+        Manifest.permission.CAMERA,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
 
     return required.all {
         ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED

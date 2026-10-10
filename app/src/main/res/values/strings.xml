@@ -227,4 +227,32 @@
     <string name="company_quality_mgr_hint">e.g. María García</string>
     <string name="company_data_saved">Company data saved</string>
 
+    <!-- Privacy & Compliance (Play Store Mandates) -->
+    <string name="privacy_compliance_title">PRIVACY &amp; COMPLIANCE</string>
+    <string name="privacy_policy_btn">Privacy Policy</string>
+    <string name="privacy_policy_title">Celestic Privacy Policy</string>
+    <string name="privacy_policy_body">Celestic is an industrial optical quality inspection tool. Camera feeds and defect telemetry are processed locally on the device using OpenCV and on-device machine learning models. No biometric, personal tracking, or advertising data is collected. Inspection reports (PDF/Excel) remain under the complete control of the operating organization and are stored only within the designated application sandbox.</string>
+    <string name="data_deletion_btn">Delete Account &amp; Local Data</string>
+    <string name="data_deletion_title">Confirm Data Deletion</string>
+    <string name="data_deletion_desc">In accordance with Google Play data safety policies, this will permanently purge all stored operator credentials, company configurations, and local report cache from this device. Are you sure?</string>
+    <string name="data_deleted_success">Local data and credentials purged successfully</string>
+    <string name="close">Close</string>
+    <string name="confirm_delete">Delete Permanently</string>
+
+    <!-- On-Device Online Learning / Reaprendizaje en Caliente -->
+    <string name="online_learning_title">REAPRENDIZAJE EN CALIENTE</string>
+    <string name="online_learning_desc">Aprendizaje adaptativo continuo en el dispositivo. Valida piezas conformes en vivo para calibrar tolerancias sin necesidad de generar datasets externos.</string>
+    <string name="learn_current_piece">Aprender como Pieza Maestra</string>
+    <string name="learn_piece_btn">Aprender Pieza Conforme</string>
+    <string name="rollback_btn">Deshacer Última Muestra (Rollback)</string>
+    <string name="rollback_confirm_title">Confirmar Rollback</string>
+    <string name="rollback_confirm_desc">¿Deseas revertir y eliminar la última muestra aprendida para no descalibrar las tolerancias del sistema?</string>
+    <string name="reset_learning_btn">Restablecer Memoria (Reset)</string>
+    <string name="reset_learning_confirm_title">Confirmar Reset de Memoria</string>
+    <string name="reset_learning_confirm_desc">¿Estás seguro de que deseas reiniciar a cero todo el banco de muestras aprendidas en caliente?</string>
+    <string name="learned_samples_header">Muestras Aprendidas en Memoria</string>
+    <string name="no_learned_samples">No hay muestras aprendidas todavía. Valida piezas conformes en el dashboard para crear el patrón adaptativo.</string>
+    <string name="adaptive_profile_title">Perfil de Tolerancia Adaptativa</string>
+    <string name="undo_action">DESHACER</string>
+    <string name="learning_abbr">APRENDER</string>
 </resources>
