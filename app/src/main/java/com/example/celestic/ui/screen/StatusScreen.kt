@@ -99,12 +99,12 @@ fun StatusScreen(
                 textColor = colors.textColor
             ) {
                 StatusItem(
-                    label = "Device",
+                    label = stringResource(R.string.label_device),
                     value = sharedViewModel.deviceModel,
                     textColor = colors.textColor
                 )
                 StatusItem(
-                    label = "Hardware",
+                    label = stringResource(R.string.label_hardware),
                     value = sharedViewModel.hardwareInfo,
                     textColor = colors.textColor
                 )
@@ -116,7 +116,11 @@ fun StatusScreen(
                 surfaceColor = surfaceColor,
                 textColor = colors.textColor
             ) {
-                StatusItem(label = "App Version", value = "0.7.0-alpha", textColor = colors.textColor)
+                StatusItem(
+                    label = stringResource(R.string.label_app_version),
+                    value = "0.7.0-alpha",
+                    textColor = colors.textColor
+                )
                 StatusItem(label = "OpenCV", value = "4.9.0", textColor = colors.textColor)
                 StatusItem(label = "TensorFlow Lite", value = "2.14.0", textColor = colors.textColor)
             }
@@ -129,15 +133,25 @@ fun StatusScreen(
             ) {
                 val markerType by sharedViewModel.markerType.collectAsState()
                 val units =
-                    if (sharedViewModel.useInches.collectAsState().value) "Inches" else "Millimeters"
-                StatusItem(label = "Marker System", value = markerType.name, textColor = colors.textColor)
-                StatusItem(label = "Measurement Units", value = units, textColor = colors.textColor)
+                    if (sharedViewModel.useInches.collectAsState().value) stringResource(R.string.label_inches) else stringResource(
+                        R.string.label_millimeters
+                    )
+                StatusItem(
+                    label = stringResource(R.string.label_marker_system),
+                    value = markerType.name,
+                    textColor = colors.textColor
+                )
+                StatusItem(
+                    label = stringResource(R.string.label_measurement_units),
+                    value = units,
+                    textColor = colors.textColor
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Celestic High Precision Vision System",
+                text = stringResource(R.string.system_version),
                 fontSize = 12.sp,
                 color = Color.Gray,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -169,13 +183,13 @@ fun StatusHeader(isDarkMode: Boolean) {
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(
-                    "SYSTEM READY",
+                    stringResource(R.string.system_ready),
                     fontWeight = FontWeight.Black,
                     fontSize = 20.sp,
                     color = if (isDarkMode) Color.White else Color(0xFF0D47A1)
                 )
                 Text(
-                    "All modules initialized correctly",
+                    stringResource(R.string.all_modules_initialized),
                     fontSize = 14.sp,
                     color = if (isDarkMode) Color.White.copy(alpha = 0.7f) else Color(0xFF1976D2)
                 )

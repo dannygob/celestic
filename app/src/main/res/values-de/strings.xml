@@ -1,0 +1,359 @@
+<resources>
+
+    <!-- App Info -->
+    <string name="app_name">Celestic</string>
+
+    <!-- Common Actions -->
+    <string name="back">Zurück</string>
+    <string name="ok">OK</string>
+    <string name="login">Anmelden</string>
+    <string name="retry">Wiederholen</string>
+    <string name="capture">Erfassen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="save">Speichern</string>
+    <string name="reset">Zurücksetzen</string>
+    <string name="start">STARTEN</string>
+    <string name="stop">STOPPEN</string>
+
+    <!-- Auth -->
+    <string name="email">E-Mail</string>
+    <string name="password">Passwort</string>
+    <string name="fill_all_fields">Bitte füllen Sie alle Felder aus</string>
+    <string name="auth_error">Authentifizierungsfehler</string>
+    <string name="offline_mode">Offline-Modus / Firebase nicht initialisiert</string>
+    <string name="remember_user">Benutzer merken</string>
+
+    <!-- Permissions -->
+    <string name="camera_permission_denied">Kameraberechtigung nicht erteilt.</string>
+    <string name="permissions_required">Erforderliche Berechtigungen</string>
+    <string name="permissions_desc">Damit Celestic ordnungsgemäß funktioniert, benötigen wir Zugriff auf die folgenden Systemdienste.</string>
+    <string name="permissions_warning">Celestic funktioniert nicht ohne die erforderlichen Berechtigungen.</string>
+    <string name="grant_permissions">BERECHTIGUNGEN ERTEILEN</string>
+    <string name="permission_camera_title">Kamera</string>
+    <string name="permission_camera_desc">Erforderlich zum Erfassen und Analysieren von Bauteilen.</string>
+    <string name="permission_location_title">Werkstandort</string>
+    <string name="permission_location_desc">Wird verwendet, um die Prüfeinrichtung zu kennzeichnen und Chargen zu georeferenzieren.</string>
+
+    <!-- Technical Errors -->
+    <string name="error_opencv_init">OpenCV konnte nicht initialisiert werden</string>
+    <string name="error_inference">Inferenzfehler</string>
+    <string name="error_camera_init">Kamerainitialisierungsfehler</string>
+    <string name="error_inspection">Prüffehler</string>
+    <string name="error_initializing_model">Modellinitialisierungsfehler</string>
+
+    <!-- Details Screens -->
+    <string name="details_hole">Bohrungsdetails</string>
+    <string name="details_alodine">Alodine-Details</string>
+    <string name="details_countersink">Senkungsdetails</string>
+    <string name="detailed_analysis">Detaillierte Analyse</string>
+
+    <!-- Welcome / General -->
+    <string name="welcome_message">Willkommen bei Celestic Detector</string>
+    <string name="loading">Wird geladen...</string>
+    <string name="language_setting_hint">Die Sprache wird in den Systemeinstellungen geändert.</string>
+    <string name="system_version">Celestic Hochpräzisions-Visionssystem v2.0</string>
+    <string name="industrial_edition">v2.0 Industrie-Edition</string>
+    <string name="precision_vision_system">PRÄZISIONS-VISIONSSYSTEM</string>
+
+    <!-- Inspection Flow -->
+    <string name="inspection_start">Prüfung starten</string>
+    <string name="inspection_processing">Prüfung wird verarbeitet...</string>
+    <string name="analyzing">Wird analysiert...</string>
+    <string name="inspection_approved">Prüfung genehmigt</string>
+    <string name="inspection_redirecting">Weiterleitung zu Details...</string>
+    <string name="inspection_finished">Prüfung abgeschlossen</string>
+    <string name="inspection_failed">PRÜFUNG FEHLGESCHLAGEN</string>
+    <string name="inspection_approved_status">PRÜFUNG GENEHMIGT</string>
+    <string name="inspection_rejected_status">PRÜFUNG ABGELEHNT</string>
+    <string name="part_processed">Das Bauteil wurde verarbeitet. Was möchten Sie tun?</string>
+    <string name="new_inspection">Neue Prüfung</string>
+    <string name="new_inspection_btn">Neue Prüfung</string>
+
+    <!-- Component Scan -->
+    <string name="scan_component">Komponente scannen</string>
+
+    <!-- Issue Reporting -->
+    <string name="report_issue">Problem melden</string>
+    <string name="report_issue_sent">Problembericht gesendet</string>
+    <string name="report_anomaly">PRÜFABWEICHUNG MELDEN</string>
+
+    <!-- Status Labels -->
+    <string name="status_passed">Teil genehmigt</string>
+    <string name="status_warning">Überprüfung empfohlen</string>
+    <string name="status_failed">Kritischer Fehler</string>
+    <string name="status_label">STATUS: %1$s</string>
+    <string name="final_status">Endstatus</string>
+    <string name="standby">STANDBY</string>
+    <string name="success">ERFOLG</string>
+
+    <!-- Calibration -->
+    <string name="calibration_title">KALIBRIERUNG</string>
+    <string name="calibration_open">Kalibrierung öffnen</string>
+    <string name="calibration_section">Kalibrierung</string>
+    <string name="calibration_opening">Kalibrierung wird geöffnet...</string>
+    <string name="last_calibration">Zuletzt: %1$s</string>
+    <string name="pattern_detected">MUSTER ERKANNT</string>
+    <string name="pattern_not_visible">MUSTER NICHT SICHTBAR</string>
+    <string name="captures">ERFASSUNGEN</string>
+    <string name="rms_error">RMS-FEHLER</string>
+    <string name="calibrate">KALIBRIEREN</string>
+    <string name="calibration_instructions">Bewegen Sie das Muster in verschiedenen Winkeln.</string>
+    <string name="cal_abbr">KAL</string>
+
+    <!-- Reports -->
+    <string name="reports_title">BERICHTE</string>
+    <string name="report_generate">Bericht erstellen</string>
+    <string name="report_generate_confirm">Möchten Sie den Prüfbericht erstellen?</string>
+    <string name="report_requesting">Bericht wird angefordert...</string>
+    <string name="share_report">BERICHT TEILEN</string>
+    <string name="select_report_format">Berichtsformat auswählen</string>
+    <string name="rep_abbr">BER</string>
+    <string name="share_action">TEILEN</string>
+    <string name="reports_nav">Berichte</string>
+    <string name="details_nav">Details</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">Celestic Dashboard</string>
+    <string name="dashboard_open_details">Details werden geöffnet...</string>
+    <string name="view_history">Verlauf anzeigen</string>
+    <string name="hist_abbr">VERL</string>
+
+    <!-- Analysis Modes -->
+    <string name="analysis_modes">Analysemodi</string>
+    <string name="mode_bodywork">Karosserie</string>
+    <string name="mode_bodywork_activated">Karosseriemodus aktiviert</string>
+    <string name="mode_precision">Präzision</string>
+    <string name="mode_precision_activated">Präzisionsmodus aktiviert</string>
+    <string name="mode_metals">Metalle</string>
+    <string name="mode_metals_activated">Metallmodus aktiviert</string>
+    <string name="celestic_mode">Celestic</string>
+
+    <!-- Traceability & Batch -->
+    <string name="traceability_headline">RÜCKVERFOLGBARKEIT</string>
+    <string name="part_code">Teilecode</string>
+    <string name="model_type">Modell/Typ</string>
+    <string name="operator">Bediener</string>
+    <string name="inspection_date">Prüfdatum</string>
+    <string name="no_traceability">Keine Informationen zur Rückverfolgbarkeit verfügbar.</string>
+    <string name="batch_label">Charge: %1$s</string>
+    <string name="batch_id_label">Chargen-ID: %1$s</string>
+    <string name="assign_batch">Charge zuweisen</string>
+    <string name="enter_batch_prompt">Geben Sie die Chargen- oder Lieferscheinnummer ein:</string>
+    <string name="batch_number">Chargennummer</string>
+    <string name="batch_abbr">CHARGEN-NR.: %1$s</string>
+    <string name="operative_shift">Arbeitsschicht</string>
+    <string name="unknown_operator">Unbekannter Bediener</string>
+    <string name="unassigned_shift">Nicht zugewiesene Schicht</string>
+    <string name="general_batch">ALLGEMEIN</string>
+    <string name="operator_label">Bediener: %1$s</string>
+    <string name="shift_label">Schicht: %1$s</string>
+    <string name="date_label">Datum: %1$s</string>
+    <string name="report_header">Prüfbericht - Charge: %1$s</string>
+    <string name="export_report">BERICHT EXPORTIEREN</string>
+    <string name="share_report_subject">Industrieller Prüfbericht - Charge: %1$s</string>
+    <string name="share_report_body">Anbei finden Sie den von Celestic erstellten Bericht.\n\nFormat: %1$s</string>
+    <string name="share_report_title">Celestic-Bericht teilen</string>
+    <string name="error_preparing_file">Fehler beim Vorbereiten der Datei: %1$s</string>
+    <string name="error_generating_report">Fehler beim Erstellen des Berichts</string>
+
+    <!-- Settings -->
+    <string name="settings_title">EINSTELLUNGEN</string>
+    <string name="return_desc">Zurückgehen</string>
+    <string name="units_preferences">EINHEITEN UND EINSTELLUNGEN</string>
+    <string name="imperial_system">Imperiales System (Zoll)</string>
+    <string name="imperial_system_desc">Zwischen Millimetern und Zoll umschalten</string>
+    <string name="apriltag_detection">AprilTag-Erkennung</string>
+    <string name="apriltag_detection_desc">AprilTag anstelle von ArUco verwenden</string>
+    <string name="appearance">ERSCHEINUNGSBILD</string>
+    <string name="dark_mode">Dunkelmodus</string>
+    <string name="dark_mode_desc">Hohen Kontrast erzwingen</string>
+    <string name="hardware_optics">HARDWARE UND OPTIK</string>
+    <string name="optics_auto_adjust">Optische Spezifikationen werden automatisch basierend auf dem erkannten Hardwareprofil angepasst.</string>
+
+    <!-- System Info -->
+    <string name="system_status">SYSTEMSTATUS</string>
+    <string name="hardware_info">HARDWARE-INFO</string>
+    <string name="software_info">SOFTWARE-INFO</string>
+    <string name="configuration">KONFIGURATION</string>
+    <string name="go_to_technical_details">Zu technischen Details gehen</string>
+    <string name="no_records">Keine Datensätze gefunden.</string>
+
+    <!-- Golden Sample -->
+    <string name="golden_sample_title">Musterzeichnung (Golden Sample)</string>
+    <string name="blueprint_config">Zeichnungskonfiguration</string>
+    <string name="part_code_label">Teilecode (z. B. TUER-X1)</string>
+    <string name="has_two_faces_label">Hat das Teil Vorder- und Rückseite?</string>
+    <string name="capture_obverse">Vorderseite erfassen</string>
+    <string name="capture_reverse">Rückseite erfassen</string>
+    <string name="save_blueprint_btn">MUSTERZEICHNUNG SPEICHERN</string>
+    <string name="pts_abbr">%1$d Pkt</string>
+    <string name="plan_abbr">PLAN</string>
+    <string name="blueprint_desc">Zeichnungsbild</string>
+    <string name="camera_view_placeholder">camerapreviewPlaceHolder</string>
+
+    <!-- Detection Classes -->
+    <string name="unknown_class">Unbekannte Klasse</string>
+    <string name="surface_defect">Oberflächenfehler</string>
+    <string name="irregular_curvature">Unregelmäßige Krümmung</string>
+    <string name="no_defect_piece">Fehlerfreies Bauteil</string>
+
+    <!-- Camera Status -->
+    <string name="low_light">Wenig Licht</string>
+    <string name="too_much_light">Zu viel Licht / Reflexion</string>
+    <string name="focusing">Fokussierung...</string>
+
+    <!-- UI Specific -->
+    <string name="visual_analysis">VISUELLE ANALYSE</string>
+    <string name="detections_headline">ERKENNUNGEN</string>
+    <string name="force_approval">FREIGABE ERZWINGEN (FALSCH POSITIV)</string>
+    <string name="return_to_dashboard">Zurück zum Dashboard</string>
+    <string name="reset_system">SYSTEM ZURÜCKSETZEN</string>
+
+    <!-- Reports Connection -->
+    <string name="select_batch_report">Charge für Bericht auswählen</string>
+    <string name="report_overview">Berichtsübersicht</string>
+    <string name="report_summary_stats">%1$d Chargen | %2$d Erkennungen</string>
+    <string name="detections_count">%1$d Erkennungen</string>
+    <string name="no_history_reports">Keine Historie für Berichte verfügbar.</string>
+
+    <!-- CRUD Operations -->
+    <string name="delete_defect">FEHLERDATENSATZ LÖSCHEN</string>
+    <string name="delete_defect_success">Fehlerdatensatz erfolgreich gelöscht</string>
+
+    <!-- Company / Enterprise Data -->
+    <string name="company_settings_section">Unternehmensdaten</string>
+    <string name="company_settings_desc">Diese Informationen erscheinen in allen erstellten Berichten</string>
+    <string name="company_name_label">Unternehmensname</string>
+    <string name="company_name_hint">z. B. Aerospace Parts GmbH</string>
+    <string name="company_address_label">Adresse</string>
+    <string name="company_address_hint">z. B. Industriestraße 14, Berlin</string>
+    <string name="company_phone_label">Telefon / Kontakt</string>
+    <string name="company_phone_hint">z. B. +49 30 000 0000</string>
+    <string name="company_vat_label">USt-IdNr.</string>
+    <string name="company_vat_hint">z. B. DE123456789</string>
+    <string name="company_quality_mgr_label">Qualitätsleiter</string>
+    <string name="company_quality_mgr_hint">z. B. Thomas Müller</string>
+    <string name="company_data_saved">Unternehmensdaten gespeichert</string>
+
+    <!-- Privacy & Compliance -->
+    <string name="privacy_compliance_title">DATENSCHUTZ UND COMPLIANCE</string>
+    <string name="privacy_policy_btn">Datenschutzerklärung</string>
+    <string name="privacy_policy_title">Celestic Datenschutzerklärung</string>
+    <string name="privacy_policy_body">Celestic ist ein industrielles optisches Qualitätsprüfwerkzeug. Kamerastreams und Telemetrie werden lokal auf dem Gerät verarbeitet. Es werden keine biometrischen oder Werbedaten erfasst.</string>
+    <string name="data_deletion_btn">Konto und lokale Daten löschen</string>
+    <string name="data_deletion_title">Datenlöschung bestätigen</string>
+    <string name="data_deletion_desc">Gemäß den Datensicherheitsrichtlinien von Google Play werden alle gespeicherten Bedienerdaten und der lokale Cache gelöscht. Sind Sie sicher?</string>
+    <string name="data_deleted_success">Lokale Daten und Anmeldedaten erfolgreich gelöscht</string>
+    <string name="close">Schließen</string>
+    <string name="confirm_delete">Dauerhaft löschen</string>
+
+    <!-- On-Device Online Learning -->
+    <string name="online_learning_title">LIVE-NACHLERNEN</string>
+    <string name="online_learning_desc">Kontinuierliches adaptives Lernen auf dem Gerät. Validiert konforme Teile live zur Kalibrierung ohne externe Datensätze.</string>
+    <string name="learn_current_piece">Als Musterteil lernen</string>
+    <string name="learn_piece_btn">Konformes Teil lernen</string>
+    <string name="rollback_btn">Letzte Stichprobe rückgängig machen</string>
+    <string name="rollback_confirm_title">Rollback bestätigen</string>
+    <string name="rollback_confirm_desc">Möchten Sie die zuletzt gelernte Stichprobe zurücksetzen und löschen?</string>
+    <string name="reset_learning_btn">Speicher zurücksetzen</string>
+    <string name="reset_learning_confirm_title">Speicherzurücksetzung bestätigen</string>
+    <string name="reset_learning_confirm_desc">Sind Sie sicher, dass Sie alle gelernten Stichproben auf Null zurücksetzen möchten?</string>
+    <string name="learned_samples_header">Gelernte Stichproben im Speicher</string>
+    <string name="no_learned_samples">Noch keine gelernten Stichproben. Validieren Sie konforme Teile auf dem Dashboard.</string>
+    <string name="adaptive_profile_title">Adaptives Toleranzprofil</string>
+    <string name="undo_action">RÜCKGÄNGIG</string>
+    <string name="learning_abbr">LERNEN</string>
+
+    <!-- Additional UI & Notification Strings -->
+    <string name="piece_conforming_ok">Konformes Teil (OK)</string>
+    <string name="inspection_passed_desc">Visuelle und dimensionale Prüfung erfolgreich bestanden.</string>
+    <string name="sample_registered_live_desc">✔ Stichprobe im Live-Lernen registriert.</string>
+    <string name="validate_piece_question">Möchten Sie dieses Teil als Referenz für das adaptive Lernen validieren?</string>
+    <string name="reference_parts_in_memory">%1$d Referenzteile im Speicher</string>
+    <string name="sample_batch_info">Stichprobe #%1$d • Charge: %2$s</string>
+    <string name="sample_measurements">Ø: %1$.2f mm • Krs: %2$.2f</string>
+    <string name="delete_sample_desc">Stichprobe löschen</string>
+    <string name="confirm_rollback">Ja, Rückgängig</string>
+    <string name="clear_all">Alles löschen</string>
+    <string name="piece_registered_learning">✔ Teil im Lernen registriert</string>
+    <string name="sample_learned_toast">✔ Stichprobe #%1$d live gelernt.</string>
+    <string name="sample_learned_batch_toast">✔ Stichprobe #%1$d live gelernt (Charge: %2$s).</string>
+    <string name="rollback_success_toast">↩ Rollback erfolgreich: Stichprobe #%1$d entfernt.</string>
+    <string name="no_previous_samples_undo">Keine vorherigen Stichproben zum Rückgängigmachen.</string>
+    <string name="sample_deleted_memory_toast">Stichprobe #%1$d aus dem Speicher entfernt.</string>
+    <string name="learning_memory_reset_toast">↺ Lernspeicher auf Null zurückgesetzt.</string>
+    <string name="no_detections_to_learn">Keine Erkennungen in dieser Sitzung zum Lernen erfasst.</string>
+    <string name="ai_mode_slave_title">Smart Vision &amp; Live-Nachlernen</string>
+    <string name="ai_mode_active_title">Aktive KI-Engine &amp; Nachlernen</string>
+    <string name="ai_mode_slave_desc">Die Pipeline arbeitet mit intelligenter Bildverarbeitung und Lernen auf dem Gerät.</string>
+    <string name="ai_mode_active_desc">Das Deep-Learning-Modell \'defect_classifier.tflite\' ist geladen.</string>
+    <string name="ai_tag_slave">SLAVE KI</string>
+    <string name="ai_tag_tflite">TFLITE KI</string>
+
+    <!-- Status Screen Items -->
+    <string name="system_ready">SYSTEM BEREIT</string>
+    <string name="all_modules_initialized">Alle Module erfolgreich initialisiert</string>
+    <string name="label_device">Gerät</string>
+    <string name="label_hardware">Hardware</string>
+    <string name="label_app_version">App-Version</string>
+    <string name="label_inches">Zoll</string>
+    <string name="label_millimeters">Millimeter</string>
+    <string name="label_marker_system">Markersystem</string>
+    <string name="label_measurement_units">Messeinheiten</string>
+
+    <!-- Defect Classes -->
+    <string name="defect_class_hole_ok">Bohrung OK</string>
+    <string name="defect_class_hole_defective">Fehlerhafte Bohrung</string>
+    <string name="defect_class_countersink_ok">Senkung OK</string>
+    <string name="defect_class_countersink_defective">Fehlerhafte Senkung</string>
+    <string name="defect_class_scratch_none">Keine Kratzer</string>
+    <string name="defect_class_scratch_minor">Leichter Kratzer</string>
+    <string name="defect_class_scratch_severe">Schwerer Kratzer</string>
+    <string name="defect_class_deformation_ok">Keine Verformung</string>
+    <string name="defect_class_deformation_present">Verformt</string>
+    <string name="defect_class_alodine_ok">Alodine OK</string>
+    <string name="defect_class_alodine_absent">Alodine fehlt</string>
+    <string name="defect_class_alodine_irregular">Alodine unregelmäßig</string>
+
+    <!-- Violations & Notes -->
+    <string name="violation_semantic_ai">SEMANTISCHE KI: %1$s am Bauteil erkannt.</string>
+    <string name="violation_relearning_dev">NACHLERNEN: Abweichung vom gelernten Muster (%1$d%% Ähnlichkeit).</string>
+    <string name="violation_hole_count_mismatch">Bohrungsanzahl weicht ab: erwartet %1$d, gefunden %2$d</string>
+    <string name="violation_too_many_scratches">Zu viele Kratzer: erlaubt %1$d, gefunden %2$d</string>
+    <string name="violation_critical_defects">Kritische Fehler erkannt</string>
+    <string name="note_no_elements_detected">Keine Elemente zur Prüfung erkannt.</string>
+    <string name="note_manual_override_approved">MANUELLE FREIGABE: GENEHMIGT</string>
+    <string name="note_validated_from_details">In den Prüfdetails validiert</string>
+
+    <!-- Localized Report Generation Strings -->
+    <string name="report_cert_title">CHARGENFREIGABEZERTIFIKAT</string>
+    <string name="report_ncr_title">ABWEICHUNGSBERICHT (NCR)</string>
+    <string name="report_verdict_approved">CHARGE GENEHMIGT</string>
+    <string name="report_verdict_nonconforming">CHARGE MIT ABWEICHUNGEN</string>
+    <string name="report_field_batch">Charge / Lieferschein</string>
+    <string name="report_field_operator">Bediener</string>
+    <string name="report_field_shift">Schicht</string>
+    <string name="report_field_date">Datum</string>
+    <string name="report_field_quality_mgr">Qualitätsleiter</string>
+    <string name="report_field_company">Unternehmen</string>
+    <string name="report_field_address">Adresse</string>
+    <string name="report_field_phone">Telefon</string>
+    <string name="report_field_vat">USt-IdNr.</string>
+    <string name="report_summary_header">PRÜFZUSAMMENFASSUNG</string>
+    <string name="report_total_parts">Gesamtbauteile</string>
+    <string name="report_approved_count">Genehmigt</string>
+    <string name="report_warning_count">Warnung</string>
+    <string name="report_rejected_count">Abgelehnt</string>
+    <string name="report_pass_rate">Bestehensquote</string>
+    <string name="report_piece_detail_header">DETAIL PRO BAUTEIL</string>
+    <string name="report_signatures">Unterschrift Bediener: _______________________   Unterschrift Qualitätsleiter: _______________________</string>
+    <string name="report_defect_header">FEHLER #%1$d  —  %2$s</string>
+    <string name="report_defect_type">Fehlertyp</string>
+    <string name="report_status">Status</string>
+    <string name="report_ai_confidence">KI-Konfidenz</string>
+    <string name="report_calibrated_measure">Kalibriertes Maß</string>
+    <string name="report_affected_area">Betroffener Bereich (L,T,R,B)</string>
+    <string name="report_diagnosis_header">DIAGNOSE / AUSSCHUSS-SKIZZE</string>
+    <string name="report_image_header">PRÜFBILD MIT FEHLERSKIZZE</string>
+
+</resources>

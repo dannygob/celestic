@@ -3,6 +3,7 @@ package com.example.celestic.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Environment
+import androidx.core.content.edit
 import com.example.celestic.R
 import com.example.celestic.models.DetectionItem
 import com.example.celestic.models.enums.DetectionStatus
@@ -78,7 +79,7 @@ private fun getReportFilename(
         ReportMode.PIECE_REJECTION -> {
             val key = "ncr_count_${dateStr}_$albaran"
             val count = prefs.getInt(key, 0) + 1
-            prefs.edit().putInt(key, count).apply()
+            prefs.edit { putInt(key, count) }
             "NCR_${dateStr}_${albaran}_${"${count}".padStart(3, '0')}.$extension"
         }
     }
@@ -197,11 +198,14 @@ fun generatePdfReport(
             val rejected = detections.count { it.status == DetectionStatus.NOT_ACCEPTED }
             val total    = detections.size
             val passRate = if (total > 0) approved * 100 / total else 0
-            val verdict  = if (rejected == 0) "LOTE APROBADO" else "LOTE CON NO CONFORMIDADES"
+            val verdict =
+                if (rejected == 0) context.getString(R.string.report_verdict_approved) else context.getString(
+                    R.string.report_verdict_nonconforming
+                )
             val vColor   = if (rejected == 0) successColor else dangerColor
 
             document.add(
-                Paragraph("CERTIFICADO DE APROBACIÓN DE LOTE")
+                Paragraph(context.getString(R.string.report_cert_title))
                     .setBold().setFontSize(18f).setFontColor(accentColor)
             )
             document.add(Paragraph(" "))
@@ -209,11 +213,11 @@ fun generatePdfReport(
             // Metadata table
             val infoTable = Table(UnitValue.createPercentArray(floatArrayOf(25f, 75f))).useAllAvailableWidth()
             listOf(
-                "Lote / Albarán" to meta.albaran,
-                "Operario"       to meta.operator,
-                "Turno"          to meta.shift,
-                "Fecha"          to meta.date,
-                "Resp. Calidad"  to meta.qualityMgr
+                context.getString(R.string.report_field_batch) to meta.albaran,
+                context.getString(R.string.report_field_operator) to meta.operator,
+                context.getString(R.string.report_field_shift) to meta.shift,
+                context.getString(R.string.report_field_date) to meta.date,
+                context.getString(R.string.report_field_quality_mgr) to meta.qualityMgr
             ).forEach { (label, value) ->
                 infoTable.addCell(Cell().add(Paragraph(label).setBold().setFontSize(10f))
                     .setBackgroundColor(headerGray))
@@ -223,14 +227,17 @@ fun generatePdfReport(
             document.add(Paragraph(" "))
 
             // Summary totals
-            document.add(Paragraph("RESUMEN DE INSPECCIÓN").setBold().setFontSize(13f).setFontColor(accentColor))
+            document.add(
+                Paragraph(context.getString(R.string.report_summary_header)).setBold()
+                    .setFontSize(13f).setFontColor(accentColor)
+            )
             val summaryTable = Table(UnitValue.createPercentArray(floatArrayOf(50f, 50f))).useAllAvailableWidth()
             listOf(
-                "Total piezas" to total.toString(),
-                "✔ Aprobadas"  to approved.toString(),
-                "⚠ Advertencia" to warnings.toString(),
-                "✖ Rechazadas" to rejected.toString(),
-                "Tasa aprobación" to "$passRate %"
+                context.getString(R.string.report_total_parts) to total.toString(),
+                "✔ " + context.getString(R.string.report_approved_count) to approved.toString(),
+                "⚠ " + context.getString(R.string.report_warning_count) to warnings.toString(),
+                "✖ " + context.getString(R.string.report_rejected_count) to rejected.toString(),
+                context.getString(R.string.report_pass_rate) to "$passRate %"
             ).forEach { (k, v) ->
                 summaryTable.addCell(Cell().add(Paragraph(k).setBold().setFontSize(11f)).setBackgroundColor(headerGray))
                 summaryTable.addCell(Cell().add(Paragraph(v).setFontSize(11f)))
@@ -246,7 +253,10 @@ fun generatePdfReport(
             document.add(Paragraph(" "))
 
             // Detail table
-            document.add(Paragraph("DETALLE POR PIEZA").setBold().setFontSize(12f).setFontColor(accentColor))
+            document.add(
+                Paragraph(context.getString(R.string.report_piece_detail_header)).setBold()
+                    .setFontSize(12f).setFontColor(accentColor)
+            )
             val detailTable = Table(UnitValue.createPercentArray(floatArrayOf(8f, 22f, 15f, 20f, 18f, 17f))).useAllAvailableWidth()
             listOf("ID", "Tipo", "Confianza", "Status", "Medida (mm)", "Notas").forEach { h ->
                 detailTable.addHeaderCell(Cell().add(Paragraph(h).setBold().setFontSize(9f)).setBackgroundColor(accentColor).setFontColor(ColorConstants.WHITE))
@@ -272,14 +282,15 @@ fun generatePdfReport(
             document.add(Paragraph(" "))
 
             // Signature block
-            document.add(Paragraph("Firma Operario: _______________________   Firma Resp. Calidad: _______________________")
+            document.add(
+                Paragraph(context.getString(R.string.report_signatures))
                 .setFontSize(10f).setTextAlignment(TextAlignment.CENTER))
         }
 
         // ── PIECE REJECTION (NCR) ─────────────────────────────────────────────
         ReportMode.PIECE_REJECTION -> {
             document.add(
-                Paragraph("INFORME DE NO CONFORMIDAD  —  NCR")
+                Paragraph(context.getString(R.string.report_ncr_title))
                     .setBold().setFontSize(18f).setFontColor(dangerColor)
             )
             document.add(Paragraph(" "))
@@ -287,15 +298,15 @@ fun generatePdfReport(
             // NCR metadata table
             val ncrMeta = Table(UnitValue.createPercentArray(floatArrayOf(25f, 75f))).useAllAvailableWidth()
             listOf(
-                "Empresa"        to meta.companyName,
-                "Dirección"      to meta.companyAddr,
-                "Teléfono"       to meta.companyPhone,
-                "NIF/CIF"        to meta.companyVat,
-                "Lote / Albarán" to meta.albaran,
-                "Operario"       to meta.operator,
-                "Turno"          to meta.shift,
-                "Fecha"          to meta.date,
-                "Resp. Calidad"  to meta.qualityMgr
+                context.getString(R.string.report_field_company) to meta.companyName,
+                context.getString(R.string.report_field_address) to meta.companyAddr,
+                context.getString(R.string.report_field_phone) to meta.companyPhone,
+                context.getString(R.string.report_field_vat) to meta.companyVat,
+                context.getString(R.string.report_field_batch) to meta.albaran,
+                context.getString(R.string.report_field_operator) to meta.operator,
+                context.getString(R.string.report_field_shift) to meta.shift,
+                context.getString(R.string.report_field_date) to meta.date,
+                context.getString(R.string.report_field_quality_mgr) to meta.qualityMgr
             ).forEach { (label, value) ->
                 ncrMeta.addCell(Cell().add(Paragraph(label).setBold().setFontSize(10f)).setBackgroundColor(headerGray))
                 ncrMeta.addCell(Cell().add(Paragraph(value).setFontSize(10f)))
@@ -310,17 +321,23 @@ fun generatePdfReport(
                 val bbox    = item.boundingBox
 
                 document.add(
-                    Paragraph("DEFECTO #${item.id}  —  ${item.type}")
+                    Paragraph(
+                        context.getString(
+                            R.string.report_defect_header,
+                            item.id,
+                            item.type.toString()
+                        )
+                    )
                         .setBold().setFontSize(13f).setFontColor(dangerColor)
                 )
 
                 val defectTable = Table(UnitValue.createPercentArray(floatArrayOf(35f, 65f))).useAllAvailableWidth()
                 listOf(
-                    "Tipo de defecto"  to item.type.toString(),
-                    "Estado"           to item.status.toString(),
-                    "Confianza IA"     to conf,
-                    "Medida calibrada" to medida,
-                    "Área (L,T,R,B)"   to "%.0f, %.0f, %.0f, %.0f px (%.0f×%.0f)".format(
+                    context.getString(R.string.report_defect_type) to item.type.toString(),
+                    context.getString(R.string.report_status) to item.status.toString(),
+                    context.getString(R.string.report_ai_confidence) to conf,
+                    context.getString(R.string.report_calibrated_measure) to medida,
+                    context.getString(R.string.report_affected_area) to "%.0f, %.0f, %.0f, %.0f px (%.0f×%.0f)".format(
                         bbox.left, bbox.top, bbox.right, bbox.bottom, bbox.width(), bbox.height())
                 ).forEach { (k, v) ->
                     defectTable.addCell(Cell().add(Paragraph(k).setBold().setFontSize(10f)).setBackgroundColor(headerGray))
@@ -331,7 +348,10 @@ fun generatePdfReport(
                 // Diagnosis / Blueprint
                 if (item.notes.isNotBlank()) {
                     document.add(Paragraph(" "))
-                    document.add(Paragraph("DIAGNÓSTICO / BLUEPRINT DE RECHAZO").setBold().setFontSize(11f).setFontColor(dangerColor))
+                    document.add(
+                        Paragraph(context.getString(R.string.report_diagnosis_header)).setBold()
+                            .setFontSize(11f).setFontColor(dangerColor)
+                    )
                     val diagTable = Table(UnitValue.createPercentArray(floatArrayOf(100f))).useAllAvailableWidth()
                     item.notes.split("|").map { it.trim() }.filter { it.isNotBlank() }.forEach { line ->
                         diagTable.addCell(Cell().add(Paragraph("• $line").setFontSize(10f)).setBackgroundColor(DeviceRgb(255, 245, 245)))
@@ -343,7 +363,10 @@ fun generatePdfReport(
                 document.add(Paragraph(" "))
                 val annotated = ReportAnnotator.annotateFrame(context, item.frameId, listOf(item))
                 if (annotated != null) {
-                    document.add(Paragraph("IMAGEN DE INSPECCIÓN CON BLUEPRINT DE DEFECTO").setBold().setFontSize(10f))
+                    document.add(
+                        Paragraph(context.getString(R.string.report_image_header)).setBold()
+                            .setFontSize(10f)
+                    )
                     try {
                         val imgData  = ImageDataFactory.create(annotated.toJpegBytes())
                         val pdfImage = Image(imgData).setAutoScale(true)
@@ -356,8 +379,20 @@ fun generatePdfReport(
 
                 // Signature block
                 val sigTable = Table(UnitValue.createPercentArray(floatArrayOf(50f, 50f))).useAllAvailableWidth()
-                sigTable.addCell(Cell().add(Paragraph("Firma Operario:\n\n_______________________").setFontSize(10f)))
-                sigTable.addCell(Cell().add(Paragraph("Firma Resp. Calidad:\n\n_______________________").setFontSize(10f)))
+                sigTable.addCell(
+                    Cell().add(
+                        Paragraph("${context.getString(R.string.report_field_operator)}:\n\n_______________________").setFontSize(
+                            10f
+                        )
+                    )
+                )
+                sigTable.addCell(
+                    Cell().add(
+                        Paragraph("${context.getString(R.string.report_field_quality_mgr)}:\n\n_______________________").setFontSize(
+                            10f
+                        )
+                    )
+                )
                 document.add(sigTable)
                 document.add(Paragraph(" "))
             }
@@ -540,7 +575,7 @@ fun generateExcelFromDetections(
         fillForegroundColor = if (mode == ReportMode.BATCH_APPROVAL)
             IndexedColors.LIGHT_GREEN.index else IndexedColors.ROSE.index
         fillPattern = FillPatternType.SOLID_FOREGROUND
-        setFont(workbook.createFont().also { it.bold = true })
+        font = workbook.createFont().also { it.bold = true }
     }
 
     val sheet = workbook.createSheet(

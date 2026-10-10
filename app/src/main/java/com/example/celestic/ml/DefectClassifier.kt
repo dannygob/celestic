@@ -40,19 +40,23 @@ class DefectClassifier @Inject constructor(
     /**
      * Enumeration of all supported defect classes.
      */
-    enum class DefectClass(val id: Int, val label: String) {
-        HOLE_OK(0, "agujero_ok"),
-        HOLE_DEFECTIVE(1, "agujero_defectuoso"),
-        COUNTERSINK_OK(2, "avellanado_ok"),
-        COUNTERSINK_DEFECTIVE(3, "avellanado_defectuoso"),
-        SCRATCH_NONE(4, "sin_rayadura"),
-        SCRATCH_MINOR(5, "rayadura_leve"),
-        SCRATCH_SEVERE(6, "rayadura_severa"),
-        DEFORMATION_OK(7, "sin_deformacion"),
-        DEFORMATION_PRESENT(8, "deformado"),
-        ALODINE_OK(9, "alodine_ok"),
-        ALODINE_ABSENT(10, "alodine_ausente"),
-        ALODINE_IRREGULAR(11, "alodine_irregular")
+    enum class DefectClass(val id: Int, @androidx.annotation.StringRes val labelResId: Int) {
+        HOLE_OK(0, com.example.celestic.R.string.defect_class_hole_ok),
+        HOLE_DEFECTIVE(1, com.example.celestic.R.string.defect_class_hole_defective),
+        COUNTERSINK_OK(2, com.example.celestic.R.string.defect_class_countersink_ok),
+        COUNTERSINK_DEFECTIVE(3, com.example.celestic.R.string.defect_class_countersink_defective),
+        SCRATCH_NONE(4, com.example.celestic.R.string.defect_class_scratch_none),
+        SCRATCH_MINOR(5, com.example.celestic.R.string.defect_class_scratch_minor),
+        SCRATCH_SEVERE(6, com.example.celestic.R.string.defect_class_scratch_severe),
+        DEFORMATION_OK(7, com.example.celestic.R.string.defect_class_deformation_ok),
+        DEFORMATION_PRESENT(8, com.example.celestic.R.string.defect_class_deformation_present),
+        ALODINE_OK(9, com.example.celestic.R.string.defect_class_alodine_ok),
+        ALODINE_ABSENT(10, com.example.celestic.R.string.defect_class_alodine_absent),
+        ALODINE_IRREGULAR(11, com.example.celestic.R.string.defect_class_alodine_irregular);
+
+        fun getLocalizedLabel(context: Context): String {
+            return context.getString(labelResId)
+        }
     }
 
     /**

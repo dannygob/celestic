@@ -1,6 +1,7 @@
 <resources>
+
     <!-- App Info -->
-    <string name="app_name">سليستيك</string>
+    <string name="app_name">Celestic</string>
 
     <!-- Common Actions -->
     <string name="back">رجوع</string>
@@ -11,7 +12,7 @@
     <string name="cancel">إلغاء</string>
     <string name="save">حفظ</string>
     <string name="reset">إعادة ضبط</string>
-    <string name="start">ابدأ</string>
+    <string name="start">بدء</string>
     <string name="stop">إيقاف</string>
 
     <!-- Auth -->
@@ -26,66 +27,74 @@
     <string name="camera_permission_denied">لم يتم منح إذن الكاميرا.</string>
     <string name="permissions_required">الأذونات المطلوبة</string>
     <string name="permissions_desc">لكي يعمل Celestic بشكل صحيح، نحتاج إلى الوصول إلى خدمات النظام التالية.</string>
-    <string name="permissions_warning">لن يعمل Celestic إذا لم يتم منح الأذونات.</string>
+    <string name="permissions_warning">لن يعمل Celestic دون منح الأذونات.</string>
     <string name="grant_permissions">منح الأذونات</string>
+    <string name="permission_camera_title">الكاميرا</string>
+    <string name="permission_camera_desc">مطلوبة لالتقاط القطع وتحليلها.</string>
+    <string name="permission_location_title">موقع المصنع</string>
+    <string name="permission_location_desc">تُستخدم لتحديد منشأة الفحص وتحديد المجموعات جغرافياً.</string>
 
     <!-- Technical Errors -->
     <string name="error_opencv_init">فشل تهيئة OpenCV</string>
-    <string name="error_inference">خطأ في الاستدلال</string>
+    <string name="error_inference">خطأ في الاستنتاج</string>
     <string name="error_camera_init">خطأ في تهيئة الكاميرا</string>
     <string name="error_inspection">خطأ في الفحص</string>
     <string name="error_initializing_model">خطأ في تهيئة النموذج</string>
 
     <!-- Details Screens -->
     <string name="details_hole">تفاصيل الثقب</string>
-    <string name="details_alodine">تفاصيل ألودين</string>
-    <string name="details_countersink">تفاصيل الغاطس</string>
-    <string name="detailed_analysis">تحليل مفصل</string>
+    <string name="details_alodine">تفاصيل الألودين</string>
+    <string name="details_countersink">تفاصيل التخويق</string>
+    <string name="detailed_analysis">تحليل تفصيلي</string>
 
     <!-- Welcome / General -->
-    <string name="welcome_message">مرحباً بك في كاشف سليستيك</string>
-    <string name="loading">جاري التحميل...</string>
+    <string name="welcome_message">مرحباً بك في كاشف Celestic</string>
+    <string name="loading">جارٍ التحميل...</string>
     <string name="language_setting_hint">يتم تغيير اللغة في إعدادات النظام.</string>
-    <string name="system_version">نظام رؤية سليستيك عالي الدقة v2.0</string>
-    <string name="industrial_edition">v2.0 النسخة الصناعية</string>
+    <string name="system_version">نظام الرؤية عالية الدقة Celestic v2.0</string>
+    <string name="industrial_edition">الإصدار الصناعي v2.0</string>
     <string name="precision_vision_system">نظام الرؤية الدقيقة</string>
 
     <!-- Inspection Flow -->
     <string name="inspection_start">بدء الفحص</string>
-    <string name="inspection_processing">جاري معالجة الفحص...</string>
-    <string name="analyzing">جاري التحليل...</string>
+    <string name="inspection_processing">جارٍ معالجة الفحص...</string>
+    <string name="analyzing">جارٍ التحليل...</string>
     <string name="inspection_approved">تمت الموافقة على الفحص</string>
-    <string name="inspection_redirecting">جاري التوجيه إلى التفاصيل...</string>
-    <string name="inspection_finished">انتهى الفحص</string>
+    <string name="inspection_redirecting">جارٍ التوجيه إلى التفاصيل...</string>
+    <string name="inspection_finished">اكتمل الفحص</string>
     <string name="inspection_failed">فشل الفحص</string>
-    <string name="inspection_approved_status">تمت الموافقة على الفحص</string>
-    <string name="inspection_rejected_status">تم رفض الفحص</string>
+    <string name="inspection_approved_status">الفحص مقبول</string>
+    <string name="inspection_rejected_status">الفحص مرفوض</string>
+    <string name="part_processed">تمت معالجة القطعة. ماذا تريد أن تفعل؟</string>
+    <string name="new_inspection">فحص جديد</string>
+    <string name="new_inspection_btn">فحص جديد</string>
 
     <!-- Component Scan -->
-    <string name="scan_component">مسح المكون</string>
+    <string name="scan_component">مسح المكون ضوئياً</string>
 
     <!-- Issue Reporting -->
     <string name="report_issue">الإبلاغ عن مشكلة</string>
     <string name="report_issue_sent">تم إرسال بلاغ المشكلة</string>
+    <string name="report_anomaly">الإبلاغ عن خلل في الفحص</string>
 
     <!-- Status Labels -->
     <string name="status_passed">تمت الموافقة على القطعة</string>
-    <string name="status_warning">يوصى بالمراجعة</string>
-    <string name="status_failed">فشل حرج</string>
+    <string name="status_warning">يُوصى بالمراجعة</string>
+    <string name="status_failed">خلل حرج</string>
     <string name="status_label">الحالة: %1$s</string>
     <string name="final_status">الحالة النهائية</string>
-    <string name="standby">انتظار</string>
+    <string name="standby">قيد الانتظار</string>
     <string name="success">نجاح</string>
 
     <!-- Calibration -->
     <string name="calibration_title">المعايرة</string>
     <string name="calibration_open">فتح المعايرة</string>
     <string name="calibration_section">المعايرة</string>
-    <string name="calibration_opening">جاري فتح المعايرة...</string>
+    <string name="calibration_opening">جارٍ فتح المعايرة...</string>
     <string name="last_calibration">آخر معايرة: %1$s</string>
     <string name="pattern_detected">تم اكتشاف النمط</string>
     <string name="pattern_not_visible">النمط غير مرئي</string>
-    <string name="captures">اللقطات</string>
+    <string name="captures">الالتقاطات</string>
     <string name="rms_error">خطأ RMS</string>
     <string name="calibrate">معايرة</string>
     <string name="calibration_instructions">حرك النمط إلى زوايا مختلفة.</string>
@@ -93,40 +102,59 @@
 
     <!-- Reports -->
     <string name="reports_title">التقارير</string>
-    <string name="report_generate">إصدار تقرير</string>
-    <string name="report_generate_confirm">هل تريد إصدار تقرير الفحص؟</string>
-    <string name="report_requesting">جاري طلب التقرير...</string>
+    <string name="report_generate">إنشاء تقرير</string>
+    <string name="report_generate_confirm">هل ترغب في إنشاء تقرير الفحص؟</string>
+    <string name="report_requesting">جارٍ طلب التقرير...</string>
     <string name="share_report">مشاركة التقرير</string>
-    <string name="select_report_format">اختر تنسيق التقرير</string>
-    <string name="rep_abbr">تقارير</string>
+    <string name="select_report_format">حدد صيغة التقرير</string>
+    <string name="rep_abbr">تقرير</string>
+    <string name="share_action">مشاركة</string>
+    <string name="reports_nav">التقارير</string>
+    <string name="details_nav">التفاصيل</string>
 
     <!-- Dashboard -->
-    <string name="dashboard_title">لوحة تحكم سليستيك</string>
-    <string name="dashboard_open_details">جاري فتح التفاصيل...</string>
+    <string name="dashboard_title">لوحة تحكم Celestic</string>
+    <string name="dashboard_open_details">جارٍ فتح التفاصيل...</string>
     <string name="view_history">عرض السجل</string>
     <string name="hist_abbr">سجل</string>
 
     <!-- Analysis Modes -->
     <string name="analysis_modes">أوضاع التحليل</string>
-    <string name="mode_bodywork">هيكل السيارة</string>
-    <string name="mode_bodywork_activated">تم تفعيل وضع هيكل السيارة</string>
-    <string name="mode_precision">دقة</string>
+    <string name="mode_bodywork">الهيكل الخارجي</string>
+    <string name="mode_bodywork_activated">تم تفعيل وضع الهيكل الخارجي</string>
+    <string name="mode_precision">الدقة</string>
     <string name="mode_precision_activated">تم تفعيل وضع الدقة</string>
-    <string name="mode_metals">معادن</string>
+    <string name="mode_metals">المعادن</string>
     <string name="mode_metals_activated">تم تفعيل وضع المعادن</string>
-    <string name="celestic_mode">سليستيك</string>
+    <string name="celestic_mode">Celestic</string>
 
     <!-- Traceability & Batch -->
-    <string name="batch_label">الدفعة: %1$s</string>
-    <string name="batch_id_label">معرف الدفعة: %1$s</string>
-    <string name="assign_batch">تعيين الدفعة</string>
-    <string name="enter_batch_prompt">أدخل رقم الدفعة أو الإرسالية لهذا الفحص:</string>
-    <string name="batch_number">رقم الدفعة</string>
-    <string name="batch_abbr">N°BATCH: %1$s</string>
-    <string name="operative_shift">الوردية التشغيلية</string>
-    <string name="unknown_operator">مشغل غير معروف</string>
+    <string name="traceability_headline">التتبع</string>
+    <string name="part_code">رمز القطعة</string>
+    <string name="model_type">النموذج/النوع</string>
+    <string name="operator">الفني</string>
+    <string name="inspection_date">تاريخ الفحص</string>
+    <string name="no_traceability">لا تتوفر معلومات التتبع.</string>
+    <string name="batch_label">المجموعة: %1$s</string>
+    <string name="batch_id_label">معرف المجموعة: %1$s</string>
+    <string name="assign_batch">تعيين مجموعة</string>
+    <string name="enter_batch_prompt">أدخل رقم المجموعة أو الإرسالية لهذا الفحص:</string>
+    <string name="batch_number">رقم المجموعة</string>
+    <string name="batch_abbr">رقم المجموعة: %1$s</string>
+    <string name="operative_shift">ورقية العمل</string>
+    <string name="unknown_operator">فني غير معروف</string>
     <string name="unassigned_shift">وردية غير معينة</string>
     <string name="general_batch">عام</string>
+    <string name="operator_label">الفني: %1$s</string>
+    <string name="shift_label">الوردية: %1$s</string>
+    <string name="date_label">التاريخ: %1$s</string>
+    <string name="report_header">تقرير الفحص - المجموعة: %1$s</string>
+    <string name="export_report">تصدير التقرير</string>
+    <string name="share_report_subject">تقرير الفحص الصناعي - المجموعة: %1$s</string>
+    <string name="share_report_body">مرفق التقرير المُنشي بواسطة Celestic.\n\nالصيغة: %1$s</string>
+    <string name="share_report_title">مشاركة تقرير Celestic</string>
+    <string name="error_preparing_file">خطأ في إعداد الملف: %1$s</string>
+    <string name="error_generating_report">خطأ في إنشاء التقرير</string>
 
     <!-- Settings -->
     <string name="settings_title">الإعدادات</string>
@@ -140,28 +168,192 @@
     <string name="dark_mode">الوضع الداكن</string>
     <string name="dark_mode_desc">فرض واجهة عالية التباين</string>
     <string name="hardware_optics">الأجهزة والبصريات</string>
-    <string name="optics_auto_adjust">يتم ضبط المواصفات البصرية تلقائيًا بناءً على ملف تعريف الأجهزة المكتشف لتحسين دقة القياس.</string>
+    <string name="optics_auto_adjust">يتم ضبط المواصفات البصرية تلقائياً بناءً على ملف الأجهزة المكتشف.</string>
 
     <!-- System Info -->
     <string name="system_status">حالة النظام</string>
     <string name="hardware_info">معلومات الأجهزة</string>
     <string name="software_info">معلومات البرامج</string>
     <string name="configuration">التكوين</string>
+    <string name="go_to_technical_details">الانتقال إلى التفاصيل الفنية</string>
+    <string name="no_records">لم يتم العثور على سجلات.</string>
 
     <!-- Golden Sample -->
+    <string name="golden_sample_title">المخطط الرئيسي (العينة النموذجية)</string>
+    <string name="blueprint_config">تكوين المخطط</string>
+    <string name="part_code_label">رمز القطعة (مثل PUERTA-X1)</string>
+    <string name="has_two_faces_label">هل تحتوي القطعة على وجه وظهر؟</string>
+    <string name="capture_obverse">التقاط الوجه</string>
+    <string name="capture_reverse">التقاط الظهر</string>
+    <string name="save_blueprint_btn">حفظ المخطط الرئيسي</string>
+    <string name="pts_abbr">%1$d نقطة</string>
     <string name="plan_abbr">مخطط</string>
     <string name="blueprint_desc">صورة المخطط</string>
     <string name="camera_view_placeholder">camerapreviewPlaceHolder</string>
 
+    <!-- Detection Classes -->
+    <string name="unknown_class">فئة غير معروفة</string>
+    <string name="surface_defect">عيب سطحي</string>
+    <string name="irregular_curvature">انحناء غير منتظم</string>
+    <string name="no_defect_piece">قطعة خالية من العيوب</string>
+
     <!-- Camera Status -->
     <string name="low_light">إضاءة منخفضة</string>
     <string name="too_much_light">إضاءة زائدة / انعكاس</string>
-    <string name="focusing">جاري التركيز...</string>
+    <string name="focusing">جارٍ التركيز...</string>
+
+    <!-- UI Specific -->
+    <string name="visual_analysis">التحليل البصري</string>
+    <string name="detections_headline">الاكتشافات</string>
+    <string name="force_approval">فرض الموافقة (إيجابي كاذب)</string>
+    <string name="return_to_dashboard">العودة إلى لوحة التحكم</string>
+    <string name="reset_system">إعادة ضبط النظام</string>
 
     <!-- Reports Connection -->
-    <string name="select_batch_report">حدد الدفعة للتقرير</string>
+    <string name="select_batch_report">حدد المجموعة للتقرير</string>
     <string name="report_overview">نظرة عامة على التقرير</string>
-    <string name="report_summary_stats">%1$d دفعات | %2$d كشف</string>
-    <string name="detections_count">%1$d كشف</string>
+    <string name="report_summary_stats">%1$d مجموعات | %2$d اكتشافات</string>
+    <string name="detections_count">%1$d اكتشافات</string>
     <string name="no_history_reports">لا يوجد سجل متاح لإنشاء التقارير.</string>
+
+    <!-- CRUD Operations -->
+    <string name="delete_defect">حذف سجل العيب</string>
+    <string name="delete_defect_success">تم حذف سجل العيب بنجاح</string>
+
+    <!-- Company / Enterprise Data -->
+    <string name="company_settings_section">بيانات الشركة</string>
+    <string name="company_settings_desc">ستظهر هذه المعلومات في جميع التقارير المنشأة</string>
+    <string name="company_name_label">اسم الشركة</string>
+    <string name="company_name_hint">مثل Aerospace Parts S.A.</string>
+    <string name="company_address_label">العنوان</string>
+    <string name="company_address_hint">مثل الشارع الصناعي 14، مدريد</string>
+    <string name="company_phone_label">الهاتف / الاتصال</string>
+    <string name="company_phone_hint">مثل +34 91 000 0000</string>
+    <string name="company_vat_label">الرقم الضريبي</string>
+    <string name="company_vat_hint">مثل B12345678</string>
+    <string name="company_quality_mgr_label">مدير الجودة</string>
+    <string name="company_quality_mgr_hint">مثل ماريا غارسيا</string>
+    <string name="company_data_saved">تم حفظ بيانات الشركة</string>
+
+    <!-- Privacy & Compliance -->
+    <string name="privacy_compliance_title">الخصوصية والامتثال</string>
+    <string name="privacy_policy_btn">سياسة الخصوصية</string>
+    <string name="privacy_policy_title">سياسة خصوصية Celestic</string>
+    <string name="privacy_policy_body">Celestic هي أداة فحص جودة بصرية صناعية. يتم معالجة تغذية الكاميرا محلياً على الجهاز. لا يتم جمع أي بيانات بيومترية أو إعلانية.</string>
+    <string name="data_deletion_btn">حذف الحساب والبيانات المحلية</string>
+    <string name="data_deletion_title">تأكيد حذف البيانات</string>
+    <string name="data_deletion_desc">وفقاً وسياسات أمان بيانات Google Play، سيتم مسح جميع بيانات الاعتماد المخزنة نهائياً. هل أنت تأكد؟</string>
+    <string name="data_deleted_success">تم مسح البيانات المحلية والاعتمادات بنجاح</string>
+    <string name="close">إغلاق</string>
+    <string name="confirm_delete">حذف نهائي</string>
+
+    <!-- On-Device Online Learning -->
+    <string name="online_learning_title">إعادة التعلم المباشر</string>
+    <string name="online_learning_desc">تعلم تكيفي مستمر على الجهاز. يتحقق من القطع المطابقة مباشرة لمعايرة التفاوتات.</string>
+    <string name="learn_current_piece">التعلم كقطعة نموذجية</string>
+    <string name="learn_piece_btn">تعلم قطعة مطابقة</string>
+    <string name="rollback_btn">التراجع عن العينة الأخيرة</string>
+    <string name="rollback_confirm_title">تأكيد التراجع</string>
+    <string name="rollback_confirm_desc">هل ترغب في التراجع وحذف العينة الأخيرة المتعلمة؟</string>
+    <string name="reset_learning_btn">إعادة ضبط الذاكرة</string>
+    <string name="reset_learning_confirm_title">تأكيد إعادة ضبط الذاكرة</string>
+    <string name="reset_learning_confirm_desc">هل أنت تأكد من إعادة ضبط بنك العينات المتعلمة إلى الصفر؟</string>
+    <string name="learned_samples_header">العينات المتعلمة في الذاكرة</string>
+    <string name="no_learned_samples">لا توجد عينات متعلمة بعد. قم بالتحقق من القطع المطابقة في لوحة التحكم.</string>
+    <string name="adaptive_profile_title">ملف التفاوت التكيفي</string>
+    <string name="undo_action">تراجع</string>
+    <string name="learning_abbr">تعلم</string>
+
+    <!-- Additional UI & Notification Strings -->
+    <string name="piece_conforming_ok">قطعة مطابقة (OK)</string>
+    <string name="inspection_passed_desc">تم اجتياز الفحص البصري والأبعادي بنجاح.</string>
+    <string name="sample_registered_live_desc">✔ تم تسجيل العينة في التعلم المباشر.</string>
+    <string name="validate_piece_question">هل ترغب في التحقق من هذه القطعة كمرجع للتعلم التكيفي؟</string>
+    <string name="reference_parts_in_memory">%1$d قطع مرجعية في الذاكرة</string>
+    <string name="sample_batch_info">العينة #%1$d • المجموعة: %2$s</string>
+    <string name="sample_measurements">Ø: %1$.2f مم • الدائرية: %2$.2f</string>
+    <string name="delete_sample_desc">حذف العينة</string>
+    <string name="confirm_rollback">نعم، تراجع</string>
+    <string name="clear_all">حذف الكل</string>
+    <string name="piece_registered_learning">✔ تم تسجيل القطعة في التعلم</string>
+    <string name="sample_learned_toast">✔ العينة #%1$d متعلمة مباشرة.</string>
+    <string name="sample_learned_batch_toast">✔ العينة #%1$d متعلمة مباشرة (المجموعة: %2$s).</string>
+    <string name="rollback_success_toast">↩ اكتمل التراجع: تم إزالة العينة #%1$d من التعلم.</string>
+    <string name="no_previous_samples_undo">لا توجد عينات سابقة للتراجع عنها.</string>
+    <string name="sample_deleted_memory_toast">تم إزالة العينة #%1$d من الذاكرة.</string>
+    <string name="learning_memory_reset_toast">↺ تم إعادة ضبط ذاكرة التعلم إلى الصفر.</string>
+    <string name="no_detections_to_learn">لا توجد اكتشافات ملتقطة في هذه الجلسة للتعلم.</string>
+    <string name="ai_mode_slave_title">الرؤية الذكية وإعادة التعلم المباشر</string>
+    <string name="ai_mode_active_title">محرك الذكاء الاصطناعي النشط وإعادة التعلم</string>
+    <string name="ai_mode_slave_desc">يعمل النظام برؤية حاسوبية ذكية وتعلم مستمر على الجهاز.</string>
+    <string name="ai_mode_active_desc">نموذج التعلم العميق \'defect_classifier.tflite\' محمل مع الذاكرة التكيفية.</string>
+    <string name="ai_tag_slave">ذكاء تابع</string>
+    <string name="ai_tag_tflite">ذكاء TFLITE</string>
+
+    <!-- Status Screen Items -->
+    <string name="system_ready">النظام جاهز</string>
+    <string name="all_modules_initialized">تم تهيئة جميع الوحدات بنجاح</string>
+    <string name="label_device">الجهاز</string>
+    <string name="label_hardware">الأجهزة</string>
+    <string name="label_app_version">إصدار التطبيق</string>
+    <string name="label_inches">بوصة</string>
+    <string name="label_millimeters">مليمتر</string>
+    <string name="label_marker_system">نظام العلامات</string>
+    <string name="label_measurement_units">وحدات القياس</string>
+
+    <!-- Defect Classes -->
+    <string name="defect_class_hole_ok">الثقب سليم</string>
+    <string name="defect_class_hole_defective">ثقب معيب</string>
+    <string name="defect_class_countersink_ok">التخويق سليم</string>
+    <string name="defect_class_countersink_defective">تخويق معيب</string>
+    <string name="defect_class_scratch_none">لا توجد خدوش</string>
+    <string name="defect_class_scratch_minor">خدش طفيف</string>
+    <string name="defect_class_scratch_severe">خدش شديد</string>
+    <string name="defect_class_deformation_ok">لا يوجد تشوه</string>
+    <string name="defect_class_deformation_present">تشوه موجود</string>
+    <string name="defect_class_alodine_ok">الألودين سليم</string>
+    <string name="defect_class_alodine_absent">الألودين مفقود</string>
+    <string name="defect_class_alodine_irregular">ألودين غير منتظم</string>
+
+    <!-- Violations & Notes -->
+    <string name="violation_semantic_ai">الذكاء الاصطناعي الدلالي: تم كشف %1$s على القطعة.</string>
+    <string name="violation_relearning_dev">إعادة التعلم: انحراف عن النمط المتعلم (%1$d%% تشابه).</string>
+    <string name="violation_hole_count_mismatch">عدم تطابق عدد الثقوب: المتوقع %1$d، الموجود %2$d</string>
+    <string name="violation_too_many_scratches">خدوش كثيرة جداً: المسموح %1$d، الموجود %2$d</string>
+    <string name="violation_critical_defects">تم كشف عيوب حرجة</string>
+    <string name="note_no_elements_detected">لم يتم كشف أي عناصر للفحص.</string>
+    <string name="note_manual_override_approved">الموافقة اليدوية: مقبول</string>
+    <string name="note_validated_from_details">تم التحقق من تفاصيل الفحص</string>
+
+    <!-- Localized Report Generation Strings -->
+    <string name="report_cert_title">شهادة الموافقة على المجموعة</string>
+    <string name="report_ncr_title">تقرير عدم المطابقة (NCR)</string>
+    <string name="report_verdict_approved">المجموعة مقبولة</string>
+    <string name="report_verdict_nonconforming">المجموعة بها حالات عدم مطابقة</string>
+    <string name="report_field_batch">المجموعة / الإرسالية</string>
+    <string name="report_field_operator">الفني</string>
+    <string name="report_field_shift">الوردية</string>
+    <string name="report_field_date">التاريخ</string>
+    <string name="report_field_quality_mgr">مدير الجودة</string>
+    <string name="report_field_company">الشركة</string>
+    <string name="report_field_address">العنوان</string>
+    <string name="report_field_phone">الهاتف</string>
+    <string name="report_field_vat">الرقم الضريبي</string>
+    <string name="report_summary_header">ملخص الفحص</string>
+    <string name="report_total_parts">إجمالي القطع</string>
+    <string name="report_approved_count">المقبولة</string>
+    <string name="report_warning_count">تحذير</string>
+    <string name="report_rejected_count">المرفوضة</string>
+    <string name="report_pass_rate">نسبة النجاح</string>
+    <string name="report_piece_detail_header">تفاصيل كل قطعة</string>
+    <string name="report_signatures">توقيع الفني: _______________________   توقيع مدير الجودة: _______________________</string>
+    <string name="report_defect_header">عيب رقم #%1$d  —  %2$s</string>
+    <string name="report_defect_type">نوع العيب</string>
+    <string name="report_status">الحالة</string>
+    <string name="report_ai_confidence">ثقة الذكاء الاصطناعي</string>
+    <string name="report_calibrated_measure">القياس المعاير</string>
+    <string name="report_affected_area">المنطقة المتأثرة</string>
+    <string name="report_diagnosis_header">التشخيص / مخطط الرفض</string>
+    <string name="report_image_header">صورة الفحص مع مخطط العيب</string>
+
 </resources>

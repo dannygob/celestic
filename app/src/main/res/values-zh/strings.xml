@@ -1,4 +1,5 @@
 <resources>
+
     <!-- App Info -->
     <string name="app_name">Celestic</string>
 
@@ -19,47 +20,54 @@
     <string name="password">密码</string>
     <string name="fill_all_fields">请填写所有字段</string>
     <string name="auth_error">身份验证错误</string>
-    <string name="offline_mode">离线模式 / Firebase 未初始化</string>
+    <string name="offline_mode">离线模式 / Firebase未初始化</string>
     <string name="remember_user">记住用户</string>
 
     <!-- Permissions -->
     <string name="camera_permission_denied">未授予相机权限。</string>
     <string name="permissions_required">需要权限</string>
-    <string name="permissions_desc">为了让 Celestic 正常运行，我们需要访问以下系统服务。</string>
-    <string name="permissions_warning">如果未授予权限，Celestic 将无法运行。</string>
+    <string name="permissions_desc">为了使Celestic正常工作，我们需要访问以下系统服务。</string>
+    <string name="permissions_warning">如果未授予权限，Celestic将无法工作。</string>
     <string name="grant_permissions">授予权限</string>
+    <string name="permission_camera_title">相机</string>
+    <string name="permission_camera_desc">捕获和分析零件所必需。</string>
+    <string name="permission_location_title">厂区位置</string>
+    <string name="permission_location_desc">用于标记检测设施并对批次进行地理引用。</string>
 
     <!-- Technical Errors -->
-    <string name="error_opencv_init">OpenCV 初始化失败</string>
+    <string name="error_opencv_init">初始化OpenCV失败</string>
     <string name="error_inference">推理错误</string>
     <string name="error_camera_init">相机初始化错误</string>
-    <string name="error_inspection">检查错误</string>
+    <string name="error_inspection">检测错误</string>
     <string name="error_initializing_model">模型初始化错误</string>
 
     <!-- Details Screens -->
     <string name="details_hole">孔详情</string>
     <string name="details_alodine">阿洛丁详情</string>
-    <string name="details_countersink">埋头孔详情</string>
+    <string name="details_countersink">沉头孔详情</string>
     <string name="detailed_analysis">详细分析</string>
 
     <!-- Welcome / General -->
-    <string name="welcome_message">欢迎使用 Celestic 检测器</string>
+    <string name="welcome_message">欢迎使用Celestic检测仪</string>
     <string name="loading">加载中...</string>
     <string name="language_setting_hint">语言在系统设置中更改。</string>
-    <string name="system_version">Celestic 高精度视觉系统 v2.0</string>
+    <string name="system_version">Celestic高精度视觉系统 v2.0</string>
     <string name="industrial_edition">v2.0 工业版</string>
-    <string name="precision_vision_system">高精度视觉系统</string>
+    <string name="precision_vision_system">精密视觉系统</string>
 
     <!-- Inspection Flow -->
-    <string name="inspection_start">开始检查</string>
-    <string name="inspection_processing">正在处理检查...</string>
-    <string name="analyzing">正在分析...</string>
-    <string name="inspection_approved">检查通过</string>
-    <string name="inspection_redirecting">正在重定向到详情...</string>
-    <string name="inspection_finished">检查完成</string>
-    <string name="inspection_failed">检查失败</string>
-    <string name="inspection_approved_status">检查已通过</string>
-    <string name="inspection_rejected_status">检查已拒绝</string>
+    <string name="inspection_start">开始检测</string>
+    <string name="inspection_processing">正在处理检测...</string>
+    <string name="analyzing">分析中...</string>
+    <string name="inspection_approved">检测通过</string>
+    <string name="inspection_redirecting">正在跳转至详情...</string>
+    <string name="inspection_finished">检测完成</string>
+    <string name="inspection_failed">检测失败</string>
+    <string name="inspection_approved_status">检测合格</string>
+    <string name="inspection_rejected_status">检测不合格</string>
+    <string name="part_processed">零件已处理完成。您想要做什么？</string>
+    <string name="new_inspection">新检测</string>
+    <string name="new_inspection_btn">新检测</string>
 
     <!-- Component Scan -->
     <string name="scan_component">扫描组件</string>
@@ -67,10 +75,11 @@
     <!-- Issue Reporting -->
     <string name="report_issue">报告问题</string>
     <string name="report_issue_sent">问题报告已发送</string>
+    <string name="report_anomaly">报告检测异常</string>
 
     <!-- Status Labels -->
-    <string name="status_passed">零件已批准</string>
-    <string name="status_warning">建议审查</string>
+    <string name="status_passed">零件合格</string>
+    <string name="status_warning">建议复核</string>
     <string name="status_failed">严重故障</string>
     <string name="status_label">状态: %1$s</string>
     <string name="final_status">最终状态</string>
@@ -83,25 +92,28 @@
     <string name="calibration_section">校准</string>
     <string name="calibration_opening">正在打开校准...</string>
     <string name="last_calibration">上次校准: %1$s</string>
-    <string name="pattern_detected">检测到图案</string>
-    <string name="pattern_not_visible">图案不可见</string>
-    <string name="captures">捕获次数</string>
-    <string name="rms_error">RMS 误差</string>
+    <string name="pattern_detected">检测到标定板</string>
+    <string name="pattern_not_visible">标定板不可见</string>
+    <string name="captures">采集数</string>
+    <string name="rms_error">RMS误差</string>
     <string name="calibrate">校准</string>
-    <string name="calibration_instructions">将图案移动到不同角度。</string>
+    <string name="calibration_instructions">请将标定板移动至不同角度。</string>
     <string name="cal_abbr">校准</string>
 
     <!-- Reports -->
     <string name="reports_title">报告</string>
     <string name="report_generate">生成报告</string>
-    <string name="report_generate_confirm">您要生成检查报告吗？</string>
+    <string name="report_generate_confirm">您要生成检测报告吗？</string>
     <string name="report_requesting">正在请求报告...</string>
     <string name="share_report">分享报告</string>
     <string name="select_report_format">选择报告格式</string>
     <string name="rep_abbr">报告</string>
+    <string name="share_action">分享</string>
+    <string name="reports_nav">报告</string>
+    <string name="details_nav">详情</string>
 
     <!-- Dashboard -->
-    <string name="dashboard_title">Celestic 仪表板</string>
+    <string name="dashboard_title">Celestic仪表板</string>
     <string name="dashboard_open_details">正在打开详情...</string>
     <string name="view_history">查看历史记录</string>
     <string name="hist_abbr">历史</string>
@@ -109,24 +121,40 @@
     <!-- Analysis Modes -->
     <string name="analysis_modes">分析模式</string>
     <string name="mode_bodywork">车身</string>
-    <string name="mode_bodywork_activated">车身模式已激活</string>
+    <string name="mode_bodywork_activated">已激活车身模式</string>
     <string name="mode_precision">精密</string>
-    <string name="mode_precision_activated">精密模式已激活</string>
+    <string name="mode_precision_activated">已激活精密模式</string>
     <string name="mode_metals">金属</string>
-    <string name="mode_metals_activated">金属模式已激活</string>
+    <string name="mode_metals_activated">已激活金属模式</string>
     <string name="celestic_mode">Celestic</string>
 
     <!-- Traceability & Batch -->
+    <string name="traceability_headline">追溯信息</string>
+    <string name="part_code">零件代码</string>
+    <string name="model_type">型号/类型</string>
+    <string name="operator">操作员</string>
+    <string name="inspection_date">检测日期</string>
+    <string name="no_traceability">无可用追溯信息。</string>
     <string name="batch_label">批次: %1$s</string>
-    <string name="batch_id_label">批次 ID: %1$s</string>
+    <string name="batch_id_label">批次ID: %1$s</string>
     <string name="assign_batch">分配批次</string>
-    <string name="enter_batch_prompt">输入此检查的批次或送货单号:</string>
-    <string name="batch_number">批次编号</string>
-    <string name="batch_abbr">N°批次: %1$s</string>
-    <string name="operative_shift">班次</string>
+    <string name="enter_batch_prompt">请输入本次检测的批次号或送货单号:</string>
+    <string name="batch_number">批次号</string>
+    <string name="batch_abbr">批号: %1$s</string>
+    <string name="operative_shift">工作班次</string>
     <string name="unknown_operator">未知操作员</string>
     <string name="unassigned_shift">未分配班次</string>
     <string name="general_batch">通用</string>
+    <string name="operator_label">操作员: %1$s</string>
+    <string name="shift_label">班次: %1$s</string>
+    <string name="date_label">日期: %1$s</string>
+    <string name="report_header">检测报告 - 批次: %1$s</string>
+    <string name="export_report">导出报告</string>
+    <string name="share_report_subject">工业检测报告 - 批次: %1$s</string>
+    <string name="share_report_body">附上Celestic生成的报告。\n\n格式: %1$s</string>
+    <string name="share_report_title">分享Celestic报告</string>
+    <string name="error_preparing_file">准备文件错误: %1$s</string>
+    <string name="error_generating_report">生成报告时出错</string>
 
     <!-- Settings -->
     <string name="settings_title">设置</string>
@@ -134,29 +162,198 @@
     <string name="units_preferences">单位与偏好</string>
     <string name="imperial_system">英制系统（英寸）</string>
     <string name="imperial_system_desc">在毫米和英寸之间切换</string>
-    <string name="apriltag_detection">AprilTag 检测</string>
-    <string name="apriltag_detection_desc">使用 AprilTag 代替 ArUco</string>
+    <string name="apriltag_detection">AprilTag检测</string>
+    <string name="apriltag_detection_desc">使用AprilTag替代ArUco</string>
     <string name="appearance">外观</string>
     <string name="dark_mode">深色模式</string>
-    <string name="dark_mode_desc">强制使用高对比度界面</string>
+    <string name="dark_mode_desc">强制高对比度界面</string>
     <string name="hardware_optics">硬件与光学</string>
-    <string name="optics_auto_adjust">光学规格根据检测到的硬件配置自动调整，以优化测量精度。</string>
+    <string name="optics_auto_adjust">光学规格根据检测到的硬件配置文件自动调整，以优化测量精度。</string>
 
     <!-- System Info -->
     <string name="system_status">系统状态</string>
     <string name="hardware_info">硬件信息</string>
     <string name="software_info">软件信息</string>
     <string name="configuration">配置</string>
+    <string name="go_to_technical_details">查看技术详情</string>
+    <string name="no_records">未找到记录。</string>
 
     <!-- Golden Sample -->
-    <string name="plan_abbr">计划</string>
-    <string name="blueprint_desc">蓝图图像</string>
+    <string name="golden_sample_title">主图纸 (黄金样品)</string>
+    <string name="blueprint_config">图纸配置</string>
+    <string name="part_code_label">零件代码 (如 PUERTA-X1)</string>
+    <string name="has_two_faces_label">零件是否有正面和反面？</string>
+    <string name="capture_obverse">拍摄正面</string>
+    <string name="capture_reverse">拍摄反面</string>
+    <string name="save_blueprint_btn">保存主图纸</string>
+    <string name="pts_abbr">%1$d点</string>
+    <string name="plan_abbr">图纸</string>
+    <string name="blueprint_desc">图纸图像</string>
     <string name="camera_view_placeholder">camerapreviewPlaceHolder</string>
 
+    <!-- Detection Classes -->
+    <string name="unknown_class">未知类别</string>
+    <string name="surface_defect">表面缺陷</string>
+    <string name="irregular_curvature">曲率异常</string>
+    <string name="no_defect_piece">无缺陷零件</string>
+
+    <!-- Camera Status -->
+    <string name="low_light">光线不足</string>
+    <string name="too_much_light">光线过强 / 反光</string>
+    <string name="focusing">对焦中...</string>
+
+    <!-- UI Specific -->
+    <string name="visual_analysis">视觉分析</string>
+    <string name="detections_headline">检测项</string>
+    <string name="force_approval">强制通过 (误报)</string>
+    <string name="return_to_dashboard">返回仪表板</string>
+    <string name="reset_system">重置系统</string>
+
     <!-- Reports Connection -->
-    <string name="select_batch_report">选择报告批次</string>
+    <string name="select_batch_report">选择要生成报告的批次</string>
     <string name="report_overview">报告概览</string>
     <string name="report_summary_stats">%1$d 批次 | %2$d 检测</string>
-    <string name="detections_count">%1$d 检测</string>
-    <string name="no_history_reports">没有可用于生成报告的历史记录。</string>
+    <string name="detections_count">%1$d 次检测</string>
+    <string name="no_history_reports">无可用历史记录以生成报告。</string>
+
+    <!-- CRUD Operations -->
+    <string name="delete_defect">删除缺陷记录</string>
+    <string name="delete_defect_success">缺陷记录删除成功</string>
+
+    <!-- Company / Enterprise Data -->
+    <string name="company_settings_section">公司数据</string>
+    <string name="company_settings_desc">此信息将显示在所有生成的报告中</string>
+    <string name="company_name_label">公司名称</string>
+    <string name="company_name_hint">例如: 航空零部件股份有限公司</string>
+    <string name="company_address_label">地址</string>
+    <string name="company_address_hint">例如: 马德里工业路14号</string>
+    <string name="company_phone_label">电话 / 联系方式</string>
+    <string name="company_phone_hint">例如: +34 91 000 0000</string>
+    <string name="company_vat_label">税号 / 组织机构代码</string>
+    <string name="company_vat_hint">例如: B12345678</string>
+    <string name="company_quality_mgr_label">质量主管</string>
+    <string name="company_quality_mgr_hint">例如: 张华</string>
+    <string name="company_data_saved">公司数据已保存</string>
+
+    <!-- Privacy & Compliance -->
+    <string name="privacy_compliance_title">隐私与合规</string>
+    <string name="privacy_policy_btn">隐私政策</string>
+    <string name="privacy_policy_title">Celestic 隐私政策</string>
+    <string name="privacy_policy_body">Celestic 是一款工业光学质量检测工具。相机画面和遥测数据使用OpenCV和设备端模型在本地处理。不收集生物识别或广告数据。</string>
+    <string name="data_deletion_btn">删除账户与本地数据</string>
+    <string name="data_deletion_title">确认数据删除</string>
+    <string name="data_deletion_desc">根据Google Play数据安全政策，这将永久清除所有本地凭据和缓存。您确定吗？</string>
+    <string name="data_deleted_success">本地数据与凭据清除成功</string>
+    <string name="close">关闭</string>
+    <string name="confirm_delete">永久删除</string>
+
+    <!-- On-Device Online Learning -->
+    <string name="online_learning_title">实时重新学习</string>
+    <string name="online_learning_desc">设备端持续自适应学习。实时验证合格零件以校准公差，无需外部数据集。</string>
+    <string name="learn_current_piece">作为主零件学习</string>
+    <string name="learn_piece_btn">学习合格零件</string>
+    <string name="rollback_btn">撤销上一样本 (Rollback)</string>
+    <string name="rollback_confirm_title">确认撤销</string>
+    <string name="rollback_confirm_desc">您要撤销并删除上次学习的样本以防公差失准吗？</string>
+    <string name="reset_learning_btn">重置内存</string>
+    <string name="reset_learning_confirm_title">确认重置内存</string>
+    <string name="reset_learning_confirm_desc">您确定要将设备上所有已学习的样本库归零吗？</string>
+    <string name="learned_samples_header">内存中已学习的样本</string>
+    <string name="no_learned_samples">尚无已学习样本。请在仪表板上验证合格零件以创建自适应模式。</string>
+    <string name="adaptive_profile_title">自适应公差配置文件</string>
+    <string name="undo_action">撤销</string>
+    <string name="learning_abbr">学习</string>
+
+    <!-- Additional UI & Notification Strings -->
+    <string name="piece_conforming_ok">合格零件 (OK)</string>
+    <string name="inspection_passed_desc">外观与尺寸检测已成功通过。</string>
+    <string name="sample_registered_live_desc">✔ 样本已注册至实时学习中。</string>
+    <string name="validate_piece_question">您要验证此零件作为自适应学习的参考吗？</string>
+    <string name="reference_parts_in_memory">内存中有 %1$d 个参考零件</string>
+    <string name="sample_batch_info">样本 #%1$d • 批次: %2$s</string>
+    <string name="sample_measurements">Ø: %1$.2f mm • 圆度: %2$.2f</string>
+    <string name="delete_sample_desc">删除样本</string>
+    <string name="confirm_rollback">是的，撤销</string>
+    <string name="clear_all">删除全部</string>
+    <string name="piece_registered_learning">✔ 零件已在学习库中注册</string>
+    <string name="sample_learned_toast">✔ 样本 #%1$d 实时学习完成。</string>
+    <string name="sample_learned_batch_toast">✔ 样本 #%1$d 实时学习完成 (批次: %2$s)。</string>
+    <string name="rollback_success_toast">↩ 撤销成功: 样本 #%1$d 已从学习库移除。</string>
+    <string name="no_previous_samples_undo">没有可撤销的上一样本。</string>
+    <string name="sample_deleted_memory_toast">样本 #%1$d 已从内存库中删除。</string>
+    <string name="learning_memory_reset_toast">↺ 学习内存已重置为零。</string>
+    <string name="no_detections_to_learn">本会话中未捕获到可学习的检测项。</string>
+    <string name="ai_mode_slave_title">智能视觉与实时重新学习</string>
+    <string name="ai_mode_active_title">活性AI引擎与重新学习</string>
+    <string name="ai_mode_slave_desc">流水线使用智能计算机视觉和设备端自适应学习工作。</string>
+    <string name="ai_mode_active_desc">深度学习模型 \'defect_classifier.tflite\' 已与自适应内存一同加载。</string>
+    <string name="ai_tag_slave">从属AI</string>
+    <string name="ai_tag_tflite">TFLITE AI</string>
+
+    <!-- Status Screen Items -->
+    <string name="system_ready">系统就绪</string>
+    <string name="all_modules_initialized">所有模块均已正常初始化</string>
+    <string name="label_device">设备</string>
+    <string name="label_hardware">硬件</string>
+    <string name="label_app_version">应用版本</string>
+    <string name="label_inches">英寸</string>
+    <string name="label_millimeters">毫米</string>
+    <string name="label_marker_system">标记系统</string>
+    <string name="label_measurement_units">测量单位</string>
+
+    <!-- Defect Classes -->
+    <string name="defect_class_hole_ok">孔正常</string>
+    <string name="defect_class_hole_defective">孔缺陷</string>
+    <string name="defect_class_countersink_ok">沉头孔正常</string>
+    <string name="defect_class_countersink_defective">沉头孔缺陷</string>
+    <string name="defect_class_scratch_none">无划痕</string>
+    <string name="defect_class_scratch_minor">轻微划痕</string>
+    <string name="defect_class_scratch_severe">严重划痕</string>
+    <string name="defect_class_deformation_ok">无变形</string>
+    <string name="defect_class_deformation_present">有变形</string>
+    <string name="defect_class_alodine_ok">阿洛丁正常</string>
+    <string name="defect_class_alodine_absent">缺失阿洛丁</string>
+    <string name="defect_class_alodine_irregular">阿洛丁不均匀</string>
+
+    <!-- Violations & Notes -->
+    <string name="violation_semantic_ai">语义AI: 在零件上检测到 %1$s。</string>
+    <string name="violation_relearning_dev">重新学习: 偏离已学习模式 (%1$d%% 相似度)。</string>
+    <string name="violation_hole_count_mismatch">孔数量不匹配: 预期 %1$d, 实际发现 %2$d</string>
+    <string name="violation_too_many_scratches">划痕过多: 允许 %1$d, 实际发现 %2$d</string>
+    <string name="violation_critical_defects">检测到严重缺陷</string>
+    <string name="note_no_elements_detected">未检测到可供检测的元素。</string>
+    <string name="note_manual_override_approved">手动通过: 已批准</string>
+    <string name="note_validated_from_details">已从检测详情中验证</string>
+
+    <!-- Localized Report Generation Strings -->
+    <string name="report_cert_title">批次合格证书</string>
+    <string name="report_ncr_title">不合格报告 (NCR)</string>
+    <string name="report_verdict_approved">批次合格</string>
+    <string name="report_verdict_nonconforming">批次存在不不合格项</string>
+    <string name="report_field_batch">批次 / 送货单</string>
+    <string name="report_field_operator">操作员</string>
+    <string name="report_field_shift">班次</string>
+    <string name="report_field_date">日期</string>
+    <string name="report_field_quality_mgr">质量主管</string>
+    <string name="report_field_company">公司</string>
+    <string name="report_field_address">地址</string>
+    <string name="report_field_phone">电话</string>
+    <string name="report_field_vat">税号</string>
+    <string name="report_summary_header">检测摘要</string>
+    <string name="report_total_parts">零件总数</string>
+    <string name="report_approved_count">合格数</string>
+    <string name="report_warning_count">警告数</string>
+    <string name="report_rejected_count">不合格数</string>
+    <string name="report_pass_rate">合格率</string>
+    <string name="report_piece_detail_header">零件明细</string>
+    <string name="report_signatures">操作员签名: _______________________   质量主管签名: _______________________</string>
+    <string name="report_defect_header">缺陷 #%1$d  —  %2$s</string>
+    <string name="report_defect_type">缺陷类型</string>
+    <string name="report_status">状态</string>
+    <string name="report_ai_confidence">AI置信度</string>
+    <string name="report_calibrated_measure">校准测量值</string>
+    <string name="report_affected_area">受影响区域 (左,上,右,下)</string>
+    <string name="report_diagnosis_header">诊断 / 报废图纸</string>
+    <string name="report_image_header">带有缺陷图纸的检测图像</string>
+
 </resources>

@@ -94,15 +94,15 @@ fun PermissionsScreen(onGrantPermissions: () -> Unit) {
 
         // Permission items list
         PermissionItem(
-            title = "Camera",
-            description = "Required for capturing and analyzing parts.",
+            title = stringResource(R.string.permission_camera_title),
+            description = stringResource(R.string.permission_camera_desc),
             icon = Icons.Default.CameraAlt,
             accentColor = colors.accentColor,
             textColor = colors.textColor
         )
         PermissionItem(
-            title = "Plant Location",
-            description = "Used to tag the inspection facility and geo-reference batches.",
+            title = stringResource(R.string.permission_location_title),
+            description = stringResource(R.string.permission_location_desc),
             icon = Icons.Default.Settings,
             accentColor = colors.accentColor,
             textColor = colors.textColor

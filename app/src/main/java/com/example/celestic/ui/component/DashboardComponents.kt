@@ -1,7 +1,6 @@
 package com.example.celestic.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,12 +17,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.RestartAlt
-import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -80,7 +78,7 @@ fun ApprovedResultDialog(
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Pieza Conforme (OK)",
+                    text = stringResource(R.string.piece_conforming_ok),
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
@@ -89,7 +87,7 @@ fun ApprovedResultDialog(
         text = {
             Column {
                 Text(
-                    text = "La inspección visual y dimensional ha sido superada satisfactoriamente.",
+                    text = stringResource(R.string.inspection_passed_desc),
                     fontSize = 14.sp,
                     lineHeight = 20.sp
                 )
@@ -113,9 +111,9 @@ fun ApprovedResultDialog(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = if (isLearned)
-                                    "✔ Muestra registrada en el aprendizaje en caliente."
+                                    stringResource(R.string.sample_registered_live_desc)
                                 else
-                                    "¿Deseas validar esta pieza como referencia para el reaprendizaje adaptativo?",
+                                    stringResource(R.string.validate_piece_question),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = if (isLearned) Color(0xFF2E7D32) else Color(0xFF01579B)
@@ -153,7 +151,10 @@ fun ApprovedResultDialog(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text("Nueva inspección", fontWeight = FontWeight.SemiBold)
+                    Text(
+                        stringResource(R.string.new_inspection_btn),
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
@@ -165,14 +166,14 @@ fun ApprovedResultDialog(
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("Reportes", fontSize = 12.sp)
+                        Text(stringResource(R.string.reports_nav), fontSize = 12.sp)
                     }
                     OutlinedButton(
                         onClick = onGoToDetail,
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("Detalles", fontSize = 12.sp)
+                        Text(stringResource(R.string.details_nav), fontSize = 12.sp)
                     }
                 }
             }
@@ -212,7 +213,7 @@ fun OnlineLearningDialog(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F))
                 ) {
-                    Text("Sí, Revertir")
+                    Text(stringResource(R.string.confirm_rollback))
                 }
             },
             dismissButton = {
@@ -237,7 +238,7 @@ fun OnlineLearningDialog(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB71C1C))
                 ) {
-                    Text("Borrar Todo")
+                    Text(stringResource(R.string.clear_all))
                 }
             },
             dismissButton = {
@@ -278,7 +279,7 @@ fun OnlineLearningDialog(
                         fontSize = 16.sp
                     )
                     Text(
-                        "${learnedSamples.size} piezas de referencia en memoria",
+                        stringResource(R.string.reference_parts_in_memory, learnedSamples.size),
                         fontSize = 11.sp,
                         color = Color.Gray
                     )
@@ -307,9 +308,13 @@ fun OnlineLearningDialog(
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE65100)),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Icon(Icons.Default.Undo, null, modifier = Modifier.size(16.dp))
+                        Icon(Icons.AutoMirrored.Filled.Undo, null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Rollback", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            stringResource(R.string.rollback_btn),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
 
                     OutlinedButton(
@@ -321,7 +326,11 @@ fun OnlineLearningDialog(
                     ) {
                         Icon(Icons.Default.RestartAlt, null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Reset", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            stringResource(R.string.reset_learning_btn),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
 
@@ -370,12 +379,20 @@ fun OnlineLearningDialog(
                                 ) {
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
-                                            "Muestra #${sample.id} • Lote: ${sample.batchNumber}",
+                                            stringResource(
+                                                R.string.sample_batch_info,
+                                                sample.id,
+                                                sample.batchNumber
+                                            ),
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 12.sp
                                         )
                                         Text(
-                                            "Ø: ${String.format(Locale.US, "%.2f", sample.avgHoleDiameterMm)} mm • Circ: ${String.format(Locale.US, "%.2f", sample.avgCircularityRatio)} • Feat: ${sample.featureCount}",
+                                            stringResource(
+                                                R.string.sample_measurements,
+                                                sample.avgHoleDiameterMm,
+                                                sample.avgCircularityRatio
+                                            ) + " • Feat: ${sample.featureCount}",
                                             fontSize = 10.sp,
                                             color = Color.DarkGray
                                         )
@@ -392,7 +409,7 @@ fun OnlineLearningDialog(
                                     ) {
                                         Icon(
                                             Icons.Default.Delete,
-                                            contentDescription = "Borrar muestra",
+                                            contentDescription = stringResource(R.string.delete_sample_desc),
                                             tint = Color(0xFFB71C1C),
                                             modifier = Modifier.size(16.dp)
                                         )

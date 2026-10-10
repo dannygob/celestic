@@ -1,6 +1,7 @@
 package com.example.celestic.ui.screen
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -34,7 +35,6 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PrecisionManufacturing
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Stop
-import android.widget.Toast
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -191,24 +191,24 @@ private fun DashboardTopBar(
     viewModel: DashboardViewModel
 ) {
     var showAlbaranDialog by androidx.compose.runtime.remember {
-        androidx.compose.runtime.mutableStateOf(
+        mutableStateOf(
             false
         )
     }
     val context = androidx.compose.ui.platform.LocalContext.current
     val isAiSlaveMode by viewModel.isAiSlaveMode.collectAsState()
     var showAiInfoDialog by androidx.compose.runtime.remember {
-        androidx.compose.runtime.mutableStateOf(false)
+        mutableStateOf(false)
     }
     var currentAlbaran by androidx.compose.runtime.remember {
-        androidx.compose.runtime.mutableStateOf(
+        mutableStateOf(
             context.getSharedPreferences("celestic_prefs", android.content.Context.MODE_PRIVATE)
                 .getString("current_albaran", "GENERAL") ?: "GENERAL"
         )
     }
-    var albaranText by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf("") }
+    var albaranText by androidx.compose.runtime.remember { mutableStateOf("") }
     var showOnlineLearningDialog by androidx.compose.runtime.remember {
-        androidx.compose.runtime.mutableStateOf(false)
+        mutableStateOf(false)
     }
     val learnedSamplesCount by viewModel.learnedSamplesCount.collectAsState()
     val learnedSamples by viewModel.learnedSamples.collectAsState()
@@ -268,24 +268,25 @@ private fun DashboardTopBar(
             onDismissRequest = { showAiInfoDialog = false },
             title = {
                 Text(
-                    text = if (isAiSlaveMode) "Visión Inteligente & Reaprendizaje en Caliente" else "Motor de IA Activo (TFLite)",
+                    text = if (isAiSlaveMode) stringResource(R.string.ai_mode_slave_title) else stringResource(
+                        R.string.ai_mode_active_title
+                    ),
                     fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 Column {
                     Text(
-                        if (isAiSlaveMode)
-                            "El pipeline opera con Visión Artificial Inteligente y Aprendizaje en Caliente (On-Device Continual Learning).\n\n¡Ya NO necesitas generar datasets sintéticos!\n\nEl sistema aprende directamente de las piezas que validas como conformes en vivo ('Aprender en caliente'), ajustando dinámicamente sus tolerancias adaptativas. Si por descuido se ingresa una pieza en mal estado, dispones de la opción 'Rollback' para deshacer la última muestra o 'Reset' para reiniciar la memoria en cualquier momento.\n\nOpcionalmente, si deseas incorporar una red neuronal TFLite externa, puedes compilarla con 'train_defect_classifier.py' y colocar 'defect_classifier.tflite' en 'assets/models/'."
-                        else
-                            "El modelo de Deep Learning 'defect_classifier.tflite' está cargado junto con la memoria adaptativa de reaprendizaje en caliente.",
+                        if (isAiSlaveMode) stringResource(R.string.ai_mode_slave_desc) else stringResource(
+                            R.string.ai_mode_active_desc
+                        ),
                         fontSize = 14.sp,
                         lineHeight = 20.sp
                     )
                 }
             },
             confirmButton = {
-                androidx.compose.material3.TextButton(onClick = { showAiInfoDialog = false }) {
+                TextButton(onClick = { showAiInfoDialog = false }) {
                     Text(stringResource(R.string.ok))
                 }
             }
@@ -379,11 +380,17 @@ private fun DashboardTopBar(
                                     modifier = Modifier
                                         .size(6.dp)
                                         .clip(CircleShape)
-                                        .background(if (isAiSlaveMode) Color(0xFFFF9800) else Color(0xFF4CAF50))
+                                        .background(
+                                            if (isAiSlaveMode) Color(0xFFFF9800) else Color(
+                                                0xFF4CAF50
+                                            )
+                                        )
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = if (isAiSlaveMode) "IA ESCLAVO" else "IA TFLITE",
+                                    text = if (isAiSlaveMode) stringResource(R.string.ai_tag_slave) else stringResource(
+                                        R.string.ai_tag_tflite
+                                    ),
                                     fontSize = 9.sp,
                                     fontWeight = FontWeight.Black,
                                     color = if (isAiSlaveMode) Color(0xFFFFB74D) else Color(0xFF81C784)

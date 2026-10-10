@@ -298,19 +298,23 @@ fun ReportsScreen(
                             } else {
                                 Toast.makeText(
                                     context,
-                                    "Error generating report",
+                                    context.getString(R.string.error_generating_report),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
                             showFormatDialog = false
                         }
                     ) {
-                        Text("SHARE", color = colors.accentColor, fontWeight = FontWeight.Bold)
+                        Text(
+                            stringResource(R.string.share_action),
+                            color = colors.accentColor,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showFormatDialog = false }) {
-                        Text("CANCEL", color = Color.Gray)
+                        Text(stringResource(R.string.cancel), color = Color.Gray)
                     }
                 },
                 containerColor = if (isDarkMode) Color(0xFF1E1E1E) else Color.White

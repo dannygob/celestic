@@ -1,52 +1,57 @@
 <resources>
+
     <!-- App Info -->
     <string name="app_name">Celestic</string>
 
     <!-- Common Actions -->
-    <string name="back">Volver</string>
+    <string name="back">Atrás</string>
     <string name="ok">Aceptar</string>
-    <string name="login">Iniciar Sesión</string>
+    <string name="login">Iniciar sesión</string>
     <string name="retry">Reintentar</string>
     <string name="capture">Capturar</string>
     <string name="cancel">Cancelar</string>
     <string name="save">Guardar</string>
-    <string name="reset">Reiniciar</string>
+    <string name="reset">Restablecer</string>
     <string name="start">INICIAR</string>
-    <string name="stop">PARAR</string>
+    <string name="stop">DETENER</string>
 
     <!-- Auth -->
     <string name="email">Correo electrónico</string>
     <string name="password">Contraseña</string>
-    <string name="fill_all_fields">Por favor, rellene todos los campos</string>
+    <string name="fill_all_fields">Por favor complete todos los campos</string>
     <string name="auth_error">Error de autenticación</string>
-    <string name="offline_mode">Modo Offline / Firebase no inicializado</string>
+    <string name="offline_mode">Modo sin conexión / Firebase no inicializado</string>
     <string name="remember_user">Recordar usuario</string>
 
     <!-- Permissions -->
-    <string name="camera_permission_denied">Permiso de cámara denegado.</string>
-    <string name="permissions_required">Permisos Requeridos</string>
+    <string name="camera_permission_denied">Permiso de cámara no concedido.</string>
+    <string name="permissions_required">Permisos requeridos</string>
     <string name="permissions_desc">Para que Celestic funcione correctamente, necesitamos acceso a los siguientes servicios del sistema.</string>
     <string name="permissions_warning">Celestic no funcionará si no se conceden los permisos.</string>
     <string name="grant_permissions">CONCEDER PERMISOS</string>
+    <string name="permission_camera_title">Cámara</string>
+    <string name="permission_camera_desc">Requerida para capturar y analizar piezas.</string>
+    <string name="permission_location_title">Ubicación de Planta</string>
+    <string name="permission_location_desc">Utilizada para etiquetar la instalación y georreferenciar lotes.</string>
 
     <!-- Technical Errors -->
     <string name="error_opencv_init">Error al inicializar OpenCV</string>
     <string name="error_inference">Error de inferencia</string>
     <string name="error_camera_init">Error de inicialización de cámara</string>
     <string name="error_inspection">Error de inspección</string>
-    <string name="error_initializing_model">Error al inicializar modelo</string>
+    <string name="error_initializing_model">Error de inicialización del modelo</string>
 
     <!-- Details Screens -->
-    <string name="details_hole">Detalles del Agujero</string>
+    <string name="details_hole">Detalles de Agujero</string>
     <string name="details_alodine">Detalles de Alodine</string>
-    <string name="details_countersink">Detalles del Avellanado</string>
+    <string name="details_countersink">Detalles de Avellanado</string>
     <string name="detailed_analysis">Análisis Detallado</string>
 
     <!-- Welcome / General -->
     <string name="welcome_message">Bienvenido a Celestic Detector</string>
     <string name="loading">Cargando...</string>
     <string name="language_setting_hint">El idioma se cambia en los ajustes del sistema.</string>
-    <string name="system_version">Sistema de Visión Celestic v2.0</string>
+    <string name="system_version">Sistema de Visión de Alta Precisión Celestic v2.0</string>
     <string name="industrial_edition">v2.0 Edición Industrial</string>
     <string name="precision_vision_system">SISTEMA DE VISIÓN DE PRECISIÓN</string>
 
@@ -62,14 +67,15 @@
     <string name="inspection_rejected_status">INSPECCIÓN RECHAZADA</string>
     <string name="part_processed">La pieza ha sido procesada. ¿Qué desea hacer?</string>
     <string name="new_inspection">Nueva inspección</string>
+    <string name="new_inspection_btn">Nueva inspección</string>
 
     <!-- Component Scan -->
     <string name="scan_component">Escanear componente</string>
 
     <!-- Issue Reporting -->
-    <string name="report_issue">Informar problema</string>
+    <string name="report_issue">Reportar incidencia</string>
     <string name="report_issue_sent">Reporte de incidencia enviado</string>
-    <string name="report_anomaly">INFORMAR ANOMALÍA DE INSPECCIÓN</string>
+    <string name="report_anomaly">REPORTAR ANOMALÍA DE INSPECCIÓN</string>
 
     <!-- Status Labels -->
     <string name="status_passed">Pieza aprobada</string>
@@ -77,7 +83,7 @@
     <string name="status_failed">Fallo crítico</string>
     <string name="status_label">ESTADO: %1$s</string>
     <string name="final_status">Estado Final</string>
-    <string name="standby">ESPERA</string>
+    <string name="standby">EN ESPERA</string>
     <string name="success">ÉXITO</string>
 
     <!-- Calibration -->
@@ -95,13 +101,16 @@
     <string name="cal_abbr">CAL</string>
 
     <!-- Reports -->
-    <string name="reports_title">INFORMES</string>
-    <string name="report_generate">Generar Informe</string>
-    <string name="report_generate_confirm">¿Desea generar el informe de inspección?</string>
-    <string name="report_requesting">Solicitando informe...</string>
-    <string name="share_report">COMPARTIR INFORME</string>
-    <string name="select_report_format">Seleccionar formato de informe</string>
-    <string name="rep_abbr">INF</string>
+    <string name="reports_title">REPORTES</string>
+    <string name="report_generate">Generar Reporte</string>
+    <string name="report_generate_confirm">¿Desea generar el reporte de inspección?</string>
+    <string name="report_requesting">Solicitando reporte...</string>
+    <string name="share_report">COMPARTIR REPORTE</string>
+    <string name="select_report_format">Seleccionar formato de reporte</string>
+    <string name="rep_abbr">REP</string>
+    <string name="share_action">COMPARTIR</string>
+    <string name="reports_nav">Reportes</string>
+    <string name="details_nav">Detalles</string>
 
     <!-- Dashboard -->
     <string name="dashboard_title">Panel Celestic</string>
@@ -110,46 +119,46 @@
     <string name="hist_abbr">HIST</string>
 
     <!-- Analysis Modes -->
-    <string name="analysis_modes">Modos de Análisis</string>
+    <string name="analysis_modes">Modos de Inspección</string>
     <string name="mode_bodywork">Carrocería</string>
-    <string name="mode_bodywork_activated">Modo carrocería activado</string>
+    <string name="mode_bodywork_activated">Modo Carrocería activado</string>
     <string name="mode_precision">Precisión</string>
-    <string name="mode_precision_activated">Modo precisión activado</string>
+    <string name="mode_precision_activated">Modo Precisión activado</string>
     <string name="mode_metals">Metales</string>
-    <string name="mode_metals_activated">Modo metales activado</string>
+    <string name="mode_metals_activated">Modo Metales activado</string>
     <string name="celestic_mode">Celestic</string>
 
     <!-- Traceability & Batch -->
     <string name="traceability_headline">TRAZABILIDAD</string>
-    <string name="part_code">Código Pieza</string>
+    <string name="part_code">Código de Pieza</string>
     <string name="model_type">Modelo/Tipo</string>
     <string name="operator">Operario</string>
-    <string name="inspection_date">Fecha Inspección</string>
+    <string name="inspection_date">Fecha de Inspección</string>
     <string name="no_traceability">Sin información de trazabilidad disponible.</string>
     <string name="batch_label">Lote: %1$s</string>
-    <string name="batch_id_label">ID de Lote: %1$s</string>
+    <string name="batch_id_label">ID Lote: %1$s</string>
     <string name="assign_batch">Asignar Lote</string>
     <string name="enter_batch_prompt">Ingrese el número de lote o albarán para esta inspección:</string>
     <string name="batch_number">Número de Lote</string>
-    <string name="batch_abbr">N°BATCH: %1$s</string>
+    <string name="batch_abbr">N°LOTE: %1$s</string>
     <string name="operative_shift">Turno Operativo</string>
-    <string name="unknown_operator">Operador Desconocido</string>
-    <string name="unassigned_shift">Turno no asignado</string>
+    <string name="unknown_operator">Operario Desconocido</string>
+    <string name="unassigned_shift">Turno No Asignado</string>
     <string name="general_batch">GENERAL</string>
-    <string name="operator_label">Operador: %1$s</string>
+    <string name="operator_label">Operario: %1$s</string>
     <string name="shift_label">Turno: %1$s</string>
     <string name="date_label">Fecha: %1$s</string>
     <string name="report_header">Reporte de Inspección - Lote: %1$s</string>
-    <string name="export_report">EXPORTAR INFORME</string>
+    <string name="export_report">EXPORTAR REPORTE</string>
     <string name="share_report_subject">Reporte de Inspección Industrial - Lote: %1$s</string>
-    <string name="share_report_body">Adjunto reporte generado por Celestic.\n\nFormato: %1$s</string>
-    <string name="share_report_title">Compartir Informe Celestic</string>
-    <string name="error_preparing_file">Error al preparar archivo: %1$s</string>
-    <string name="error_generating_report">Error al generar informe</string>
+    <string name="share_report_body">Se adjunta el reporte generado por Celestic.\n\nFormato: %1$s</string>
+    <string name="share_report_title">Compartir Reporte Celestic</string>
+    <string name="error_preparing_file">Error preparando archivo: %1$s</string>
+    <string name="error_generating_report">Error generando reporte</string>
 
     <!-- Settings -->
     <string name="settings_title">CONFIGURACIÓN</string>
-    <string name="return_desc">Regresar</string>
+    <string name="return_desc">Volver</string>
     <string name="units_preferences">UNIDADES Y PREFERENCIAS</string>
     <string name="imperial_system">Sistema Imperial (Pulgadas)</string>
     <string name="imperial_system_desc">Alternar entre milímetros y pulgadas</string>
@@ -159,18 +168,18 @@
     <string name="dark_mode">Modo Oscuro</string>
     <string name="dark_mode_desc">Forzar interfaz de alto contraste</string>
     <string name="hardware_optics">HARDWARE Y ÓPTICA</string>
-    <string name="optics_auto_adjust">Las especificaciones ópticas se ajustan automáticamente según el perfil del hardware detectado para optimizar la precisión.</string>
+    <string name="optics_auto_adjust">Las especificaciones ópticas se ajustan automáticamente según el perfil de hardware detectado para optimizar la precisión.</string>
 
     <!-- System Info -->
     <string name="system_status">ESTADO DEL SISTEMA</string>
-    <string name="hardware_info">INFO DE HARDWARE</string>
-    <string name="software_info">INFO DE SOFTWARE</string>
+    <string name="hardware_info">INFORMACIÓN DE HARDWARE</string>
+    <string name="software_info">INFORMACIÓN DE SOFTWARE</string>
     <string name="configuration">CONFIGURACIÓN</string>
     <string name="go_to_technical_details">Ir a detalle técnico</string>
     <string name="no_records">No se encontraron registros.</string>
 
     <!-- Golden Sample -->
-    <string name="golden_sample_title">Plano Maestro (Golden Sample)</string>
+    <string name="golden_sample_title">Plano Maestro (Pieza Patrón)</string>
     <string name="blueprint_config">Configuración del Plano</string>
     <string name="part_code_label">Código de Pieza (ej. PUERTA-X1)</string>
     <string name="has_two_faces_label">¿La pieza tiene Anverso y Reverso?</string>
@@ -189,26 +198,162 @@
     <string name="no_defect_piece">Pieza sin defecto</string>
 
     <!-- Camera Status -->
-    <string name="low_light">Luz insuficiente</string>
-    <string name="too_much_light">Exceso de luz / Reflejo</string>
+    <string name="low_light">Poca luz</string>
+    <string name="too_much_light">Demasiada luz / Reflejo</string>
     <string name="focusing">Enfocando...</string>
 
-    <!-- UI Specific (Internal) -->
-    <string name="visual_analysis" translatable="false">VISUALIZACIÓN TÉCNICA</string>
-    <string name="detections_headline" translatable="false">DETECCIONES</string>
+    <!-- UI Specific -->
+    <string name="visual_analysis">ANÁLISIS VISUAL</string>
+    <string name="detections_headline">DETECCIONES</string>
     <string name="force_approval">FORZAR APROBACIÓN (FALSO POSITIVO)</string>
     <string name="return_to_dashboard">Volver al Panel</string>
-    <string name="reset_system">REINICIAR SISTEMA</string>
+    <string name="reset_system">RESTABLECER SISTEMA</string>
 
     <!-- Reports Connection -->
-    <string name="select_batch_report">Seleccionar Lote para Informe</string>
-    <string name="report_overview">Vista General de Informes</string>
+    <string name="select_batch_report">Seleccionar Lote para Reporte</string>
+    <string name="report_overview">Resumen del Reporte</string>
     <string name="report_summary_stats">%1$d Lotes | %2$d Detecciones</string>
     <string name="detections_count">%1$d Detecciones</string>
-    <string name="no_history_reports">No hay historial disponible para generar informes.</string>
+    <string name="no_history_reports">Sin historial disponible para generar reportes.</string>
 
     <!-- CRUD Operations -->
     <string name="delete_defect">ELIMINAR REGISTRO DE DEFECTO</string>
-    <string name="delete_defect_success">Registro de defecto eliminado correctamente</string>
+    <string name="delete_defect_success">Registro de defecto eliminado exitosamente</string>
+
+    <!-- Company / Enterprise Data -->
+    <string name="company_settings_section">Datos de Empresa</string>
+    <string name="company_settings_desc">Esta información aparecerá en todos los reportes generados</string>
+    <string name="company_name_label">Nombre de Empresa</string>
+    <string name="company_name_hint">ej. Piezas Aeroespaciales S.A.</string>
+    <string name="company_address_label">Dirección</string>
+    <string name="company_address_hint">ej. Calle Industrial 14, Madrid</string>
+    <string name="company_phone_label">Teléfono / Contacto</string>
+    <string name="company_phone_hint">ej. +34 91 000 0000</string>
+    <string name="company_vat_label">NIF / CIF</string>
+    <string name="company_vat_hint">ej. B12345678</string>
+    <string name="company_quality_mgr_label">Resp. Calidad</string>
+    <string name="company_quality_mgr_hint">ej. María García</string>
+    <string name="company_data_saved">Datos de empresa guardados</string>
+
+    <!-- Privacy & Compliance -->
+    <string name="privacy_compliance_title">PRIVACIDAD Y CUMPLIMIENTO</string>
+    <string name="privacy_policy_btn">Política de Privacidad</string>
+    <string name="privacy_policy_title">Política de Privacidad de Celestic</string>
+    <string name="privacy_policy_body">Celestic es una herramienta de inspección óptica industrial. El flujo de cámara y la telemetría se procesan localmente en el dispositivo utilizando OpenCV y modelos en el dispositivo. No se recopilan datos biométricos, de seguimiento ni publicitarios.</string>
+    <string name="data_deletion_btn">Eliminar Cuenta y Datos Locales</string>
+    <string name="data_deletion_title">Confirmar Eliminación de Datos</string>
+    <string name="data_deletion_desc">De acuerdo con las políticas de seguridad de datos de Google Play, esto purgará permanentemente todas las credenciales y el caché local. ¿Está seguro?</string>
+    <string name="data_deleted_success">Datos locales y credenciales purgados con éxito</string>
+    <string name="close">Cerrar</string>
+    <string name="confirm_delete">Eliminar Permanente</string>
+
+    <!-- On-Device Online Learning -->
+    <string name="online_learning_title">REAPRENDIZAJE EN CALIENTE</string>
+    <string name="online_learning_desc">Aprendizaje adaptativo continuo en el dispositivo. Valida piezas conformes en vivo para calibrar tolerancias sin datasets externos.</string>
+    <string name="learn_current_piece">Aprender como Pieza Maestra</string>
+    <string name="learn_piece_btn">Aprender Pieza Conforme</string>
+    <string name="rollback_btn">Deshacer Última Muestra (Rollback)</string>
+    <string name="rollback_confirm_title">Confirmar Rollback</string>
+    <string name="rollback_confirm_desc">¿Deseas revertir y eliminar la última muestra aprendida para no descalibrar las tolerancias del sistema?</string>
+    <string name="reset_learning_btn">Restablecer Memoria</string>
+    <string name="reset_learning_confirm_title">Confirmar Reset de Memoria</string>
+    <string name="reset_learning_confirm_desc">¿Estás seguro de que deseas reiniciar a cero todo el banco de muestras aprendidas en caliente?</string>
+    <string name="learned_samples_header">Muestras Aprendidas en Memoria</string>
+    <string name="no_learned_samples">No hay muestras aprendidas todavía. Valida piezas conformes en el dashboard para crear el patrón adaptativo.</string>
+    <string name="adaptive_profile_title">Perfil de Tolerancia Adaptativa</string>
+    <string name="undo_action">DESHACER</string>
+    <string name="learning_abbr">APRENDER</string>
+
+    <!-- Additional UI & Notification Strings -->
+    <string name="piece_conforming_ok">Pieza Conforme (OK)</string>
+    <string name="inspection_passed_desc">La inspección visual y dimensional ha sido superada satisfactoriamente.</string>
+    <string name="sample_registered_live_desc">✔ Muestra registrada en el aprendizaje en caliente.</string>
+    <string name="validate_piece_question">¿Deseas validar esta pieza como referencia para el reaprendizaje adaptativo?</string>
+    <string name="reference_parts_in_memory">%1$d piezas de referencia en memoria</string>
+    <string name="sample_batch_info">Muestra #%1$d • Lote: %2$s</string>
+    <string name="sample_measurements">Ø: %1$.2f mm • Circ: %2$.2f</string>
+    <string name="delete_sample_desc">Borrar muestra</string>
+    <string name="confirm_rollback">Sí, Revertir</string>
+    <string name="clear_all">Borrar Todo</string>
+    <string name="piece_registered_learning">✔ Pieza Registrada en Aprendizaje</string>
+    <string name="sample_learned_toast">✔ Muestra #%1$d aprendida en caliente.</string>
+    <string name="sample_learned_batch_toast">✔ Muestra #%1$d aprendida en caliente (Lote: %2$s).</string>
+    <string name="rollback_success_toast">↩ Rollback exitoso: Muestra #%1$d eliminada del aprendizaje.</string>
+    <string name="no_previous_samples_undo">No hay muestras previas para deshacer.</string>
+    <string name="sample_deleted_memory_toast">Muestra #%1$d eliminada del banco de memoria.</string>
+    <string name="learning_memory_reset_toast">↺ Memoria de reaprendizaje restablecida a cero.</string>
+    <string name="no_detections_to_learn">No hay detecciones capturadas en esta sesión para aprender.</string>
+    <string name="ai_mode_slave_title">Visión Inteligente y Reaprendizaje en Caliente</string>
+    <string name="ai_mode_active_title">Motor de IA Activo y Reaprendizaje</string>
+    <string name="ai_mode_slave_desc">El pipeline opera con Visión Artificial Inteligente y Aprendizaje en Caliente en el dispositivo.</string>
+    <string name="ai_mode_active_desc">El modelo de Deep Learning \'defect_classifier.tflite\' está cargado junto con la memoria adaptativa.</string>
+    <string name="ai_tag_slave">IA ESCLAVO</string>
+    <string name="ai_tag_tflite">IA TFLITE</string>
+
+    <!-- Status Screen Items -->
+    <string name="system_ready">SISTEMA LISTO</string>
+    <string name="all_modules_initialized">Todos los módulos inicializados correctamente</string>
+    <string name="label_device">Dispositivo</string>
+    <string name="label_hardware">Hardware</string>
+    <string name="label_app_version">Versión de la App</string>
+    <string name="label_inches">Pulgadas</string>
+    <string name="label_millimeters">Milímetros</string>
+    <string name="label_marker_system">Sistema de Marcadores</string>
+    <string name="label_measurement_units">Unidades de Medida</string>
+
+    <!-- Defect Classes -->
+    <string name="defect_class_hole_ok">Agujero OK</string>
+    <string name="defect_class_hole_defective">Agujero Defectuoso</string>
+    <string name="defect_class_countersink_ok">Avellanado OK</string>
+    <string name="defect_class_countersink_defective">Avellanado Defectuoso</string>
+    <string name="defect_class_scratch_none">Sin Rayaduras</string>
+    <string name="defect_class_scratch_minor">Rayadura Leve</string>
+    <string name="defect_class_scratch_severe">Rayadura Severa</string>
+    <string name="defect_class_deformation_ok">Sin Deformación</string>
+    <string name="defect_class_deformation_present">Deformado</string>
+    <string name="defect_class_alodine_ok">Alodine OK</string>
+    <string name="defect_class_alodine_absent">Alodine Ausente</string>
+    <string name="defect_class_alodine_irregular">Alodine Irregular</string>
+
+    <!-- Violations & Notes -->
+    <string name="violation_semantic_ai">IA SEMÁNTICA: %1$s detectado en la pieza.</string>
+    <string name="violation_relearning_dev">REAPRENDIZAJE: Desviación respecto al patrón aprendido (%1$d%% de similitud).</string>
+    <string name="violation_hole_count_mismatch">Discrepancia en cantidad de agujeros: esperados %1$d, encontrados %2$d</string>
+    <string name="violation_too_many_scratches">Demasiadas rayaduras: permitidas %1$d, encontradas %2$d</string>
+    <string name="violation_critical_defects">Defectos críticos detectados</string>
+    <string name="note_no_elements_detected">No se detectó ningún elemento a inspeccionar.</string>
+    <string name="note_manual_override_approved">APROBACIÓN MANUAL: APROBADO</string>
+    <string name="note_validated_from_details">Validada desde Detalles de Inspección</string>
+
+    <!-- Localized Report Generation Strings -->
+    <string name="report_cert_title">CERTIFICADO DE APROBACIÓN DE LOTE</string>
+    <string name="report_ncr_title">INFORME DE NO CONFORMIDAD (NCR)</string>
+    <string name="report_verdict_approved">LOTE APROBADO</string>
+    <string name="report_verdict_nonconforming">LOTE CON NO CONFORMIDADES</string>
+    <string name="report_field_batch">Lote / Albarán</string>
+    <string name="report_field_operator">Operario</string>
+    <string name="report_field_shift">Turno</string>
+    <string name="report_field_date">Fecha</string>
+    <string name="report_field_quality_mgr">Resp. Calidad</string>
+    <string name="report_field_company">Empresa</string>
+    <string name="report_field_address">Dirección</string>
+    <string name="report_field_phone">Teléfono</string>
+    <string name="report_field_vat">NIF / CIF</string>
+    <string name="report_summary_header">RESUMEN DE INSPECCIÓN</string>
+    <string name="report_total_parts">Total Piezas</string>
+    <string name="report_approved_count">Aprobadas</string>
+    <string name="report_warning_count">Advertencia</string>
+    <string name="report_rejected_count">Rechazadas</string>
+    <string name="report_pass_rate">Tasa de Aprobación</string>
+    <string name="report_piece_detail_header">DETALLE POR PIEZA</string>
+    <string name="report_signatures">Firma Operario: _______________________   Firma Resp. Calidad: _______________________</string>
+    <string name="report_defect_header">DEFECTO #%1$d  —  %2$s</string>
+    <string name="report_defect_type">Tipo de Defecto</string>
+    <string name="report_status">Estado</string>
+    <string name="report_ai_confidence">Confianza IA</string>
+    <string name="report_calibrated_measure">Medida Calibrada</string>
+    <string name="report_affected_area">Área Afectada (I,S,D,I)</string>
+    <string name="report_diagnosis_header">DIAGNÓSTICO / PLANO DE RECHAZO</string>
+    <string name="report_image_header">IMAGEN DE INSPECCIÓN CON PLANO DE DEFECTO</string>
 
 </resources>

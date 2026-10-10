@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.celestic.R
 import com.example.celestic.data.repository.DetectionRepository
 import com.example.celestic.data.repository.SharedDataRepository
 import com.example.celestic.manager.CalibrationManager
@@ -183,8 +184,14 @@ class DashboardViewModel @Inject constructor(
                             val classResult = defectClassifier.classify(roi, dnnClass)
                             roi.recycle()
 
-                            val modeTag = if (classResult.isSlaveMode) "[IA Esclavo]" else "[IA TFLite]"
-                            val updatedNotes = "$modeTag ${classResult.defectClass.label} (${(classResult.confidence * 100).toInt()}%) | ${detection.notes}"
+                            val modeTag =
+                                if (classResult.isSlaveMode) "[${context.getString(R.string.ai_tag_slave)}]" else "[${
+                                    context.getString(R.string.ai_tag_tflite)
+                                }]"
+                            val localizedDefectLabel =
+                                classResult.defectClass.getLocalizedLabel(context)
+                            val updatedNotes =
+                                "$modeTag $localizedDefectLabel (${(classResult.confidence * 100).toInt()}%) | ${detection.notes}"
 
                             val isDefective = classResult.defectClass == com.example.celestic.ml.DefectClassifier.DefectClass.HOLE_DEFECTIVE ||
                                 classResult.defectClass == com.example.celestic.ml.DefectClassifier.DefectClass.COUNTERSINK_DEFECTIVE ||
@@ -310,14 +317,19 @@ class DashboardViewModel @Inject constructor(
         var overallStatus = DetectionStatus.OK
 
         if (aiDefectAdded) {
-            violations.add("IA SEMÁNTICA: $aiResultLabel detectado en la pieza.")
+            violations.add(context.getString(R.string.violation_semantic_ai, aiResultLabel))
             overallStatus = DetectionStatus.NOT_ACCEPTED
         }
 
         // Evaluación de Reaprendizaje en Caliente (Perfil adaptativo)
         val (simScore, isCompliant) = onlineLearningManager.evaluateAgainstLearnedProfile(detections)
         if (!isCompliant) {
-            violations.add("REAPRENDIZAJE: Desviación respecto al patrón aprendido (${(simScore * 100).toInt()}% conformidad).")
+            violations.add(
+                context.getString(
+                    R.string.violation_relearning_dev,
+                    (simScore * 100).toInt()
+                )
+            )
             overallStatus = DetectionStatus.NOT_ACCEPTED
         }
 
@@ -332,14 +344,26 @@ class DashboardViewModel @Inject constructor(
             val expectedHoles = expectedFeatures.count { it.type == DetectionType.HOLE }
             val detectedHoles = detections.count { it.type == DetectionType.HOLE }
             if (expectedHoles > 0 && detectedHoles != expectedHoles) {
-                violations.add("Hole count mismatch (Golden Sample): expected $expectedHoles, found $detectedHoles")
+                violations.add(
+                    context.getString(
+                        R.string.violation_hole_count_mismatch,
+                        expectedHoles,
+                        detectedHoles
+                    )
+                )
                 overallStatus = DetectionStatus.NOT_ACCEPTED
             }
         } else {
             // Fallback to general specification
             val holesCount = detections.count { it.type == DetectionType.HOLE }
             if (holesCount != specification.expectedHoleCount) {
-                violations.add("Hole count mismatch: expected ${specification.expectedHoleCount}, found $holesCount")
+                violations.add(
+                    context.getString(
+                        R.string.violation_hole_count_mismatch,
+                        specification.expectedHoleCount,
+                        holesCount
+                    )
+                )
                 overallStatus = DetectionStatus.NOT_ACCEPTED
             }
         }
@@ -347,7 +371,13 @@ class DashboardViewModel @Inject constructor(
         // Validate scratches (Surface Quality)
         val scratchesCount = detections.count { it.type == DetectionType.SCRATCH }
         if (scratchesCount > specification.maxAllowedScratches) {
-            violations.add("Too many scratches: allowed ${specification.maxAllowedScratches}, found $scratchesCount")
+            violations.add(
+                context.getString(
+                    R.string.violation_too_many_scratches,
+                    specification.maxAllowedScratches,
+                    scratchesCount
+                )
+            )
             overallStatus = DetectionStatus.NOT_ACCEPTED
         }
 
@@ -429,18 +459,23 @@ class DashboardViewModel @Inject constructor(
             if (hasCriticalDefects) DetectionStatus.NOT_ACCEPTED else DetectionStatus.OK
 
         if (hasCriticalDefects) {
-            violations.add("Critical defects detected")
+            violations.add(context.getString(R.string.violation_critical_defects))
         }
 
         if (aiDefectAdded) {
-            violations.add("IA SEMÁNTICA: $aiResultLabel detectado en la pieza.")
+            violations.add(context.getString(R.string.violation_semantic_ai, aiResultLabel))
             overallStatus = DetectionStatus.NOT_ACCEPTED
         }
 
         // Evaluación de Reaprendizaje en Caliente (Perfil adaptativo)
         val (simScore, isCompliant) = onlineLearningManager.evaluateAgainstLearnedProfile(detections)
         if (!isCompliant) {
-            violations.add("REAPRENDIZAJE: Desviación respecto al patrón aprendido (${(simScore * 100).toInt()}% conformidad).")
+            violations.add(
+                context.getString(
+                    R.string.violation_relearning_dev,
+                    (simScore * 100).toInt()
+                )
+            )
             overallStatus = DetectionStatus.NOT_ACCEPTED
         }
 
@@ -486,7 +521,7 @@ class DashboardViewModel @Inject constructor(
                 confidence = 0f,
                 status = DetectionStatus.NOT_ACCEPTED,
                 timestamp = System.currentTimeMillis(),
-                notes = "No se detectó ningún elemento a inspeccionar.",
+                notes = context.getString(R.string.note_no_elements_detected),
                 linkedQrCode = activeBatch
             )
             val id = repository.insertDetection(emptyDetection)
@@ -574,7 +609,7 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             val detections = lastProcessedDetections
             if (detections.isEmpty()) {
-                _onlineLearningMessage.value = "No hay detecciones capturadas en esta sesión para aprender."
+                _onlineLearningMessage.value = context.getString(R.string.no_detections_to_learn)
                 return@launch
             }
             val prefs = context.getSharedPreferences("celestic_prefs", Context.MODE_PRIVATE)
@@ -585,7 +620,8 @@ class DashboardViewModel @Inject constructor(
                 detections = detections,
                 notes = notes
             )
-            _onlineLearningMessage.value = "✔ Muestra #$id aprendida en caliente (Lote: $batch)."
+            _onlineLearningMessage.value =
+                context.getString(R.string.sample_learned_batch_toast, id, batch)
         }
     }
 
@@ -593,9 +629,10 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             val sample = onlineLearningManager.rollbackLastSample()
             if (sample != null) {
-                _onlineLearningMessage.value = "↩ Rollback exitoso: Muestra #${sample.id} eliminada del aprendizaje."
+                _onlineLearningMessage.value =
+                    context.getString(R.string.rollback_success_toast, sample.id)
             } else {
-                _onlineLearningMessage.value = "No hay muestras previas para deshacer."
+                _onlineLearningMessage.value = context.getString(R.string.no_previous_samples_undo)
             }
         }
     }
@@ -603,14 +640,15 @@ class DashboardViewModel @Inject constructor(
     fun deleteLearnedSample(id: Long) {
         viewModelScope.launch {
             onlineLearningManager.deleteSampleById(id)
-            _onlineLearningMessage.value = "Muestra #$id eliminada del banco de memoria."
+            _onlineLearningMessage.value =
+                context.getString(R.string.sample_deleted_memory_toast, id)
         }
     }
 
     fun resetAllLearning() {
         viewModelScope.launch {
             onlineLearningManager.resetAllLearning()
-            _onlineLearningMessage.value = "↺ Memoria de reaprendizaje restablecida a cero."
+            _onlineLearningMessage.value = context.getString(R.string.learning_memory_reset_toast)
         }
     }
 }

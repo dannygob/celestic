@@ -97,7 +97,7 @@ fun DetailsScreen(
     // Observer estados del ViewModel
     val detectionItem by detailsViewModel.detectionItem.collectAsState()
     val traceabilityResult by detailsViewModel.traceabilityItem.collectAsState()
-    val features = detailsViewModel.features.collectAsState().value ?: emptyList()
+    val features = detailsViewModel.features.collectAsState().value
     val useInches = sharedViewModel.useInches.collectAsState().value
 
     var imageBitmap by remember { mutableStateOf<android.graphics.Bitmap?>(null) }
@@ -547,7 +547,11 @@ fun DetailsScreen(
                     onClick = {
                         detailsViewModel.learnCurrentDetectionAsApproved { id ->
                             isLearnedInDetails = true
-                            Toast.makeText(context, "✔ Muestra #$id aprendida en caliente.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.sample_learned_toast, id),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -557,7 +561,9 @@ fun DetailsScreen(
                     Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = Color.White)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        if (isLearnedInDetails) "✔ Pieza Registrada en Aprendizaje" else stringResource(R.string.learn_piece_btn),
+                        if (isLearnedInDetails) stringResource(R.string.piece_registered_learning) else stringResource(
+                            R.string.learn_piece_btn
+                        ),
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
