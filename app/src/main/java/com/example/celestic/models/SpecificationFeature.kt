@@ -74,5 +74,8 @@ data class SpecificationFeature(
     val requireAlodine: Boolean = false,
 
     /** Whether a countersink is required for this feature. */
-    val requireCountersink: Boolean = false
+    val requireCountersink: Boolean = false,
+
+    /** Optional descriptive technical label (e.g., COTA_ANCHO, ESPESOR_2MM, MARGEN_BORDE). */
+    val label: String = ""
 )

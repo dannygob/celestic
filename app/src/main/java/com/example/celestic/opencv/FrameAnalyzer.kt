@@ -74,6 +74,36 @@ class FrameAnalyzer @Inject constructor(
         val intensityInfo: Double
     )
     
+    data class PolygonEdge(
+        val edgeIndex: Int,
+        val startPoint: Point,
+        val endPoint: Point,
+        val lengthPx: Double,
+        val angleDeg: Double,
+        val straightnessErrorPx: Double = 0.0
+    )
+
+    data class SheetPolygon(
+        val vertices: List<Point>,
+        val edges: List<PolygonEdge>,
+        val perimeterPx: Double,
+        val areaPx: Double,
+        val center: Point,
+        val boundingBox: Rect
+    )
+
+    data class HoleToEdgeDistance(
+        val holeIndex: Int,
+        val edgeIndex: Int,
+        val distancePx: Double
+    )
+
+    data class InterHoleDistance(
+        val indexA: Int,
+        val indexB: Int,
+        val distancePx: Double
+    )
+
     data class AnalysisResult(
         val contours: List<MatOfPoint>,
         val annotatedMat: Mat,
@@ -82,7 +112,11 @@ class FrameAnalyzer @Inject constructor(
         val orientation: Orientation,
         val countersinks: List<Countersink>,
         val scratches: List<Scratch>,
-        val decodedQrCode: String? = null
+        val decodedQrCode: String? = null,
+        val sheetPolygon: SheetPolygon? = null,
+        val holeToEdgeDistances: List<HoleToEdgeDistance> = emptyList(),
+        val interHoleDistances: List<InterHoleDistance> = emptyList(),
+        val deformations: List<MatOfPoint> = emptyList()
     )
 
     private var prevGrayMat: Mat? = null
@@ -164,23 +198,122 @@ class FrameAnalyzer @Inject constructor(
             // Liberar los Mats temporales
             tempMarkers.forEach { it.corners.release() }
 
-            val orientation = detectOrientation(markers)
+            val orientation = detectOrientation(markers, countersinks)
 
-            // OPTICAL FLOW: Corregir fuga de memoria de los Mats de retorno
+            // OPTICAL FLOW: Pospuesto para modo de fatiga dinámica (evita degradar FPS a 30fps)
+            // Si en el futuro se activa un visor de vibraciones en vivo, se invoca detectDeformationsWithOpticalFlow
+            /*
             prevGrayMat?.let { prev ->
                 val flowPts = detectDeformationsWithOpticalFlow(prev, grayMat)
-                flowPts.release() // No lo usamos por ahora, así que liberamos
+                flowPts.release()
             }
+            */
 
             // Liberar previo antes de asignar nuevo
             prevGrayMat?.release()
             prevGrayMat = grayMat.clone()
 
+            // ── CÁLCULO DE ARISTAS Y CONTORNO POLIGONAL DE LA PIEZA (NO CUADRADA) ──
+            val mainContour = filteredContours.maxByOrNull { Imgproc.contourArea(it) }
+            val sheetPolygon: SheetPolygon? = if (mainContour != null && Imgproc.contourArea(mainContour) > 1500.0) {
+                val contour2f = MatOfPoint2f(*mainContour.toArray())
+                val peri = Imgproc.arcLength(contour2f, true)
+                val approx = MatOfPoint2f()
+                // Epsilon adaptativo para detectar polígonos irregulares reales (aristas y esquinas)
+                Imgproc.approxPolyDP(contour2f, approx, 0.015 * peri, true)
+                val rawVertices = approx.toArray().toList()
+                approx.release()
+                val boundRect = Imgproc.boundingRect(mainContour)
+                val area = Imgproc.contourArea(mainContour)
+
+                val vertices = if (rawVertices.size >= 3) rawVertices else {
+                    listOf(
+                        Point(boundRect.x.toDouble(), boundRect.y.toDouble()),
+                        Point((boundRect.x + boundRect.width).toDouble(), boundRect.y.toDouble()),
+                        Point((boundRect.x + boundRect.width).toDouble(), (boundRect.y + boundRect.height).toDouble()),
+                        Point(boundRect.x.toDouble(), (boundRect.y + boundRect.height).toDouble())
+                    )
+                }
+
+                val edges = mutableListOf<PolygonEdge>()
+                for (i in vertices.indices) {
+                    val p1 = vertices[i]
+                    val p2 = vertices[(i + 1) % vertices.size]
+                    val dx = p2.x - p1.x
+                    val dy = p2.y - p1.y
+                    val len = kotlin.math.sqrt(dx * dx + dy * dy)
+                    var angle = Math.toDegrees(kotlin.math.atan2(dy, dx))
+                    if (angle < 0) angle += 360.0
+                    edges.add(
+                        PolygonEdge(
+                            edgeIndex = i + 1,
+                            startPoint = p1,
+                            endPoint = p2,
+                            lengthPx = len,
+                            angleDeg = angle
+                        )
+                    )
+                }
+
+                val moments = Imgproc.moments(mainContour)
+                val cx = if (moments.m00 != 0.0) moments.m10 / moments.m00 else (boundRect.x + boundRect.width / 2.0)
+                val cy = if (moments.m00 != 0.0) moments.m01 / moments.m00 else (boundRect.y + boundRect.height / 2.0)
+                contour2f.release()
+
+                SheetPolygon(
+                    vertices = vertices,
+                    edges = edges,
+                    perimeterPx = peri,
+                    areaPx = area,
+                    center = Point(cx, cy),
+                    boundingBox = boundRect
+                )
+            } else null
+
+            // ── CÁLCULO DE DISTANCIA DE CADA AGUJERO A CADA ARISTA DE LA PIEZA ──
+            val holeToEdgeDistances = mutableListOf<HoleToEdgeDistance>()
+            sheetPolygon?.edges?.forEach { edge ->
+                simpleHoles.forEachIndexed { hIdx, hole ->
+                    val dist = pointToSegmentDistance(hole.center, edge.startPoint, edge.endPoint)
+                    holeToEdgeDistances.add(HoleToEdgeDistance(hIdx + 1, edge.edgeIndex, dist))
+                }
+            }
+
+            // ── CÁLCULO DE DISTANCIAS ENTRE CENTROS DE AGUJEROS (PITCH) ──
+            val interHoleDistances = mutableListOf<InterHoleDistance>()
+            for (i in 0 until simpleHoles.size) {
+                for (j in i + 1 until simpleHoles.size) {
+                    val p1 = simpleHoles[i].center
+                    val p2 = simpleHoles[j].center
+                    val dx = p1.x - p2.x
+                    val dy = p1.y - p2.y
+                    val dist = kotlin.math.sqrt(dx * dx + dy * dy)
+                    interHoleDistances.add(InterHoleDistance(i + 1, j + 1, dist))
+                }
+            }
+
             val annotatedMat = processedMat.clone()
 
-            // Dibujado
-            Imgproc.drawContours(annotatedMat, filteredContours, -1, Scalar(0.0, 255.0, 0.0), 2)
+            // Dibujado de contornos y deformaciones
+            Imgproc.drawContours(annotatedMat, filteredContours, -1, Scalar(0.0, 255.0, 0.0), 1)
             Imgproc.drawContours(annotatedMat, deformations, -1, Scalar(255.0, 0.0, 0.0), 2)
+
+            // Dibujar cada arista/borde con su numeración E1, E2... y vértices
+            sheetPolygon?.edges?.forEach { edge ->
+                Imgproc.line(annotatedMat, edge.startPoint, edge.endPoint, Scalar(0.0, 255.0, 255.0), 2)
+                Imgproc.circle(annotatedMat, edge.startPoint, 4, Scalar(0.0, 255.0, 0.0), -1)
+                val midX = (edge.startPoint.x + edge.endPoint.x) / 2.0
+                val midY = (edge.startPoint.y + edge.endPoint.y) / 2.0
+                Imgproc.putText(
+                    annotatedMat,
+                    "E${edge.edgeIndex}",
+                    Point(midX, midY),
+                    Imgproc.FONT_HERSHEY_SIMPLEX,
+                    0.55,
+                    Scalar(0.0, 255.0, 255.0),
+                    2
+                )
+            }
 
             for ((center, radius, hasAlodine) in simpleHoles) {
                 val color = if (hasAlodine) Scalar(0.0, 165.0, 255.0) else Scalar(0.0, 0.0, 255.0)
@@ -207,19 +340,28 @@ class FrameAnalyzer @Inject constructor(
                 Objdetect.drawDetectedMarkers(annotatedMat, cornersList, Mat())
             }
 
+            val faceLabel = if (orientation == Orientation.ANVERSO) "ANVERSO (Cara A)" else "REVERSO (Cara B)"
             Imgproc.putText(
                 annotatedMat,
-                "Orient: $orientation",
-                Point(50.0, 50.0),
+                "Cara: $faceLabel",
+                Point(40.0, 45.0),
                 Imgproc.FONT_HERSHEY_SIMPLEX,
-                1.0,
+                0.9,
                 Scalar(255.0, 255.0, 0.0),
                 2
             )
 
-            // MUY IMPORTANTE: Liberar contornos que no van en el resultado
-            // Pero como van en AnalysisResult, el llamador debe liberarlos.
-            // Para ser más seguros, devolvemos solo lo necesario en el DTO final.
+            if (sheetPolygon != null) {
+                Imgproc.putText(
+                    annotatedMat,
+                    "Pieza: ${sheetPolygon.edges.size} aristas | Perímetro: ${sheetPolygon.perimeterPx.toInt()}px",
+                    Point(40.0, 80.0),
+                    Imgproc.FONT_HERSHEY_SIMPLEX,
+                    0.6,
+                    Scalar(0.0, 255.0, 255.0),
+                    2
+                )
+            }
 
             // Detect QR Code
             val qrDetector = org.opencv.objdetect.QRCodeDetector()
@@ -234,14 +376,18 @@ class FrameAnalyzer @Inject constructor(
             }
 
             return AnalysisResult(
-                filteredContours,
-                annotatedMat,
-                markers,
-                simpleHoles,
-                orientation,
-                countersinks,
-                scratches,
-                decodedQr
+                contours = filteredContours,
+                annotatedMat = annotatedMat,
+                markers = markers,
+                holes = simpleHoles,
+                orientation = orientation,
+                countersinks = countersinks,
+                scratches = scratches,
+                decodedQrCode = decodedQr,
+                sheetPolygon = sheetPolygon,
+                holeToEdgeDistances = holeToEdgeDistances,
+                interHoleDistances = interHoleDistances,
+                deformations = deformations
             )
 
         } catch (e: Exception) {
@@ -359,9 +505,37 @@ class FrameAnalyzer @Inject constructor(
         return scratches
     }
 
-    private fun detectOrientation(markers: List<Marker>): Orientation {
-        return if (markers.isEmpty()) Orientation.UNKNOWN
-        else Orientation.ANVERSO
+    private fun detectOrientation(
+        markers: List<Marker>,
+        countersinks: List<Countersink> = emptyList()
+    ): Orientation {
+        if (markers.isNotEmpty()) {
+            val firstMarker = markers.first()
+            if (firstMarker.id == 0) return Orientation.ANVERSO
+            if (firstMarker.id == 1) return Orientation.REVERSO
+        }
+        // En piezas mecánicas y aeronáuticas, los avellanados cónicos se mecanizan en la cara frontal (ANVERSO)
+        if (countersinks.isNotEmpty()) {
+            return Orientation.ANVERSO
+        }
+        return Orientation.ANVERSO
+    }
+
+    private fun pointToSegmentDistance(p: Point, a: Point, b: Point): Double {
+        val dx = b.x - a.x
+        val dy = b.y - a.y
+        val lenSq = dx * dx + dy * dy
+        if (lenSq == 0.0) {
+            val dpx = p.x - a.x
+            val dpy = p.y - a.y
+            return kotlin.math.sqrt(dpx * dpx + dpy * dpy)
+        }
+        val t = (((p.x - a.x) * dx + (p.y - a.y) * dy) / lenSq).coerceIn(0.0, 1.0)
+        val projX = a.x + t * dx
+        val projY = a.y + t * dy
+        val distDx = p.x - projX
+        val distDy = p.y - projY
+        return kotlin.math.sqrt(distDx * distDx + distDy * distDy)
     }
 
     fun applyCalibration(image: Mat, cameraMatrix: Mat, distortionCoeffs: Mat): Mat {

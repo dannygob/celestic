@@ -1,0 +1,51 @@
+{
+  "id": "PIEZA_IRREGULAR_001",
+  "name": "Pieza Conformada Irregular",
+  "description": "Lámina con geometría poligonal no cuadrada, bordes biselados, múltiples aristas y taladros de montaje",
+  "dimensions": {
+    "width_mm": 210.0,
+    "height_mm": 160.0,
+    "thickness_mm": 0.0
+  },
+  "is_irregular_polygon": true,
+  "polygon_vertices": [
+    { "x": 15.0, "y": 10.0 },
+    { "x": 150.0, "y": 10.0 },
+    { "x": 200.0, "y": 45.0 },
+    { "x": 200.0, "y": 135.0 },
+    { "x": 165.0, "y": 155.0 },
+    { "x": 40.0, "y": 155.0 },
+    { "x": 10.0, "y": 120.0 },
+    { "x": 10.0, "y": 35.0 }
+  ],
+  "expected_edges": [
+    { "id": "E1", "edge_index": 1, "length_mm": 135.0, "angle_deg": 0.0, "start_x": 15.0, "start_y": 10.0, "end_x": 150.0, "end_y": 10.0, "tolerance_mm": 0.8 },
+    { "id": "E2", "edge_index": 2, "length_mm": 61.0, "angle_deg": 35.0, "start_x": 150.0, "start_y": 10.0, "end_x": 200.0, "end_y": 45.0, "tolerance_mm": 0.8 },
+    { "id": "E3", "edge_index": 3, "length_mm": 90.0, "angle_deg": 90.0, "start_x": 200.0, "start_y": 45.0, "end_x": 200.0, "end_y": 135.0, "tolerance_mm": 0.8 },
+    { "id": "E4", "edge_index": 4, "length_mm": 40.3, "angle_deg": 150.0, "start_x": 200.0, "start_y": 135.0, "end_x": 165.0, "end_y": 155.0, "tolerance_mm": 0.8 },
+    { "id": "E5", "edge_index": 5, "length_mm": 125.0, "angle_deg": 180.0, "start_x": 165.0, "start_y": 155.0, "end_x": 40.0, "end_y": 155.0, "tolerance_mm": 0.8 },
+    { "id": "E6", "edge_index": 6, "length_mm": 46.1, "angle_deg": 229.0, "start_x": 40.0, "start_y": 155.0, "end_x": 10.0, "end_y": 120.0, "tolerance_mm": 0.8 },
+    { "id": "E7", "edge_index": 7, "length_mm": 85.0, "angle_deg": 270.0, "start_x": 10.0, "start_y": 120.0, "end_x": 10.0, "end_y": 35.0, "tolerance_mm": 0.8 },
+    { "id": "E8", "edge_index": 8, "length_mm": 25.5, "angle_deg": 307.0, "start_x": 10.0, "start_y": 35.0, "end_x": 15.0, "end_y": 10.0, "tolerance_mm": 0.8 }
+  ],
+  "expected_hole_count": 4,
+  "expected_holes": [
+    { "id": "H1", "x": 40.0, "y": 40.0, "diameter_mm": 6.0, "tolerance_mm": 0.1 },
+    { "id": "H2", "x": 160.0, "y": 40.0, "diameter_mm": 6.0, "tolerance_mm": 0.1 },
+    { "id": "H3", "x": 40.0, "y": 120.0, "diameter_mm": 6.0, "tolerance_mm": 0.1 },
+    { "id": "H4", "x": 160.0, "y": 120.0, "diameter_mm": 6.0, "tolerance_mm": 0.1 }
+  ],
+  "expected_countersinks": [
+    { "id": "CS1", "x": 100.0, "y": 50.0, "outer_diameter_mm": 10.0, "inner_diameter_mm": 6.0, "tolerance_mm": 0.15 },
+    { "id": "CS2", "x": 100.0, "y": 110.0, "outer_diameter_mm": 10.0, "inner_diameter_mm": 6.0, "tolerance_mm": 0.15 }
+  ],
+  "tolerances": {
+    "dimension_tolerance_mm": 0.8,
+    "hole_diameter_tolerance_mm": 0.1,
+    "max_scratch_length_mm": 5.0,
+    "max_allowed_scratches": 2,
+    "max_deformation_mm": 0.5
+  },
+  "position_tolerance": 3.0,
+  "requires_alodine": true
+}

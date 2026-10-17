@@ -95,6 +95,7 @@ dependencies {
     // Core & Lifecycle
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.firebase.auth)
 
@@ -160,7 +161,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.play.services.location)
-    implementation(libs.transportation.consumer)
+    // implementation(libs.transportation.consumer) // Unused: optimized out for faster build and APK size
 
     // Local Unit Testing
     testImplementation("junit:junit:4.13.2")

@@ -37,7 +37,7 @@ import com.example.celestic.models.report.ReportConfig
         TraceabilityItem::class,
         LearnedSample::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

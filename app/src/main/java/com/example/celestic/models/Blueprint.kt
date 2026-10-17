@@ -46,7 +46,36 @@ data class Blueprint(
 
     /** Whether the part requires alodine coating. */
     @SerializedName("requires_alodine")
-    val requiresAlodine: Boolean = false
+    val requiresAlodine: Boolean = false,
+
+    /** Whether the part is an irregular polygon (not a simple rectangle). */
+    @SerializedName("is_irregular_polygon")
+    val isIrregularPolygon: Boolean = false,
+
+    /** Sequence of 2D vertices defining the outer irregular boundary of the part in mm. */
+    @SerializedName("polygon_vertices")
+    val polygonVertices: List<BlueprintVertex> = emptyList(),
+
+    /** Explicit definitions of each edge/arista of the part with nominal length and angle. */
+    @SerializedName("expected_edges")
+    val expectedEdges: List<BlueprintEdge> = emptyList()
+)
+
+data class BlueprintVertex(
+    @SerializedName("x") val x: Double,
+    @SerializedName("y") val y: Double
+)
+
+data class BlueprintEdge(
+    @SerializedName("id") val id: String,
+    @SerializedName("edge_index") val edgeIndex: Int,
+    @SerializedName("length_mm") val lengthMm: Double,
+    @SerializedName("angle_deg") val angleDeg: Double = 0.0,
+    @SerializedName("start_x") val startX: Double = 0.0,
+    @SerializedName("start_y") val startY: Double = 0.0,
+    @SerializedName("end_x") val endX: Double = 0.0,
+    @SerializedName("end_y") val endY: Double = 0.0,
+    @SerializedName("tolerance_mm") val toleranceMm: Double = 0.8
 )
 
 /**

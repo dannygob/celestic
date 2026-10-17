@@ -1,5 +1,6 @@
 package com.example.celestic.ui.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -54,7 +55,6 @@ fun StatusScreen(
 ) {
     val isDarkMode by sharedViewModel.isDarkMode.collectAsState()
     val colors = rememberScreenColors(isDarkMode)
-    val surfaceColor = if (isDarkMode) Color(0xFF1B263B) else Color.White
 
     Scaffold(
         topBar = {
@@ -62,19 +62,21 @@ fun StatusScreen(
                 title = {
                     Text(
                         stringResource(R.string.system_status),
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = colors.textColor
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
+                            contentDescription = stringResource(R.string.back),
+                            tint = colors.textColor
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = colors.background,
+                    containerColor = colors.topBarBg,
                     titleContentColor = colors.textColor,
                     navigationIconContentColor = colors.textColor
                 )
@@ -95,41 +97,50 @@ fun StatusScreen(
             StatusSection(
                 title = stringResource(R.string.hardware_info),
                 icon = Icons.Default.Memory,
-                surfaceColor = surfaceColor,
-                textColor = colors.textColor
+                surfaceColor = colors.cardBackground,
+                borderColor = colors.cardBorder,
+                textColor = colors.textColor,
+                textSecondary = colors.textSecondary
             ) {
                 StatusItem(
                     label = stringResource(R.string.label_device),
                     value = sharedViewModel.deviceModel,
-                    textColor = colors.textColor
+                    textColor = colors.textColor,
+                    textSecondary = colors.textSecondary
                 )
                 StatusItem(
                     label = stringResource(R.string.label_hardware),
                     value = sharedViewModel.hardwareInfo,
-                    textColor = colors.textColor
+                    textColor = colors.textColor,
+                    textSecondary = colors.textSecondary
                 )
             }
 
             StatusSection(
                 title = stringResource(R.string.software_info),
                 icon = Icons.Default.Dns,
-                surfaceColor = surfaceColor,
-                textColor = colors.textColor
+                surfaceColor = colors.cardBackground,
+                borderColor = colors.cardBorder,
+                textColor = colors.textColor,
+                textSecondary = colors.textSecondary
             ) {
                 StatusItem(
                     label = stringResource(R.string.label_app_version),
                     value = "0.7.0-alpha",
-                    textColor = colors.textColor
+                    textColor = colors.textColor,
+                    textSecondary = colors.textSecondary
                 )
-                StatusItem(label = "OpenCV", value = "4.9.0", textColor = colors.textColor)
-                StatusItem(label = "TensorFlow Lite", value = "2.14.0", textColor = colors.textColor)
+                StatusItem(label = "OpenCV", value = "4.9.0", textColor = colors.textColor, textSecondary = colors.textSecondary)
+                StatusItem(label = "TensorFlow Lite", value = "2.14.0", textColor = colors.textColor, textSecondary = colors.textSecondary)
             }
 
             StatusSection(
                 title = stringResource(R.string.configuration),
                 icon = Icons.Default.SettingsSuggest,
-                surfaceColor = surfaceColor,
-                textColor = colors.textColor
+                surfaceColor = colors.cardBackground,
+                borderColor = colors.cardBorder,
+                textColor = colors.textColor,
+                textSecondary = colors.textSecondary
             ) {
                 val markerType by sharedViewModel.markerType.collectAsState()
                 val units =
@@ -139,12 +150,14 @@ fun StatusScreen(
                 StatusItem(
                     label = stringResource(R.string.label_marker_system),
                     value = markerType.name,
-                    textColor = colors.textColor
+                    textColor = colors.textColor,
+                    textSecondary = colors.textSecondary
                 )
                 StatusItem(
                     label = stringResource(R.string.label_measurement_units),
                     value = units,
-                    textColor = colors.textColor
+                    textColor = colors.textColor,
+                    textSecondary = colors.textSecondary
                 )
             }
 
@@ -153,7 +166,7 @@ fun StatusScreen(
             Text(
                 text = stringResource(R.string.system_version),
                 fontSize = 12.sp,
-                color = Color.Gray,
+                color = colors.textTertiary,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
@@ -161,37 +174,37 @@ fun StatusScreen(
 }
 
 @Composable
-
 fun StatusHeader(isDarkMode: Boolean) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isDarkMode) Color(0xFF0D47A1) else Color(0xFFE3F2FD)
-        )
+            containerColor = if (isDarkMode) Color(0xFF0C4A6E) else Color(0xFFE0F2FE)
+        ),
+        border = BorderStroke(1.dp, if (isDarkMode) Color(0xFF0284C7) else Color(0xFFBAE6FD))
     ) {
         Row(
-            modifier = Modifier.padding(24.dp),
+            modifier = Modifier.padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 Icons.Default.Info,
                 contentDescription = null,
-                modifier = Modifier.size(48.dp),
-                tint = if (isDarkMode) Color.White else Color(0xFF1976D2)
+                modifier = Modifier.size(40.dp),
+                tint = if (isDarkMode) Color(0xFF38BDF8) else Color(0xFF0284C7)
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(
                     stringResource(R.string.system_ready),
                     fontWeight = FontWeight.Black,
-                    fontSize = 20.sp,
-                    color = if (isDarkMode) Color.White else Color(0xFF0D47A1)
+                    fontSize = 18.sp,
+                    color = if (isDarkMode) Color(0xFFF0F4F8) else Color(0xFF0369A1)
                 )
                 Text(
                     stringResource(R.string.all_modules_initialized),
-                    fontSize = 14.sp,
-                    color = if (isDarkMode) Color.White.copy(alpha = 0.7f) else Color(0xFF1976D2)
+                    fontSize = 13.sp,
+                    color = if (isDarkMode) Color(0xFF94A3B8) else Color(0xFF0284C7)
                 )
             }
         }
@@ -199,12 +212,13 @@ fun StatusHeader(isDarkMode: Boolean) {
 }
 
 @Composable
-
 fun StatusSection(
     title: String,
     icon: ImageVector,
     surfaceColor: Color,
+    borderColor: Color,
     textColor: Color,
+    textSecondary: Color,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column {
@@ -212,17 +226,18 @@ fun StatusSection(
             Icon(
                 icon,
                 contentDescription = null,
-                tint = Color.Gray,
+                tint = textSecondary,
                 modifier = Modifier.size(18.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(title, fontWeight = FontWeight.Bold, color = Color.Gray, fontSize = 14.sp)
+            Text(title, fontWeight = FontWeight.Bold, color = textSecondary, fontSize = 13.sp)
         }
         Spacer(modifier = Modifier.height(8.dp))
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = surfaceColor)
+            colors = CardDefaults.cardColors(containerColor = surfaceColor),
+            border = BorderStroke(1.dp, borderColor)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 content()
@@ -232,16 +247,21 @@ fun StatusSection(
 }
 
 @Composable
-
-fun StatusItem(label: String, value: String, textColor: Color) {
+fun StatusItem(label: String, value: String, textColor: Color, textSecondary: Color) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(vertical = 6.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label, color = Color.Gray, fontSize = 14.sp)
-        Text(value, color = textColor, fontWeight = FontWeight.Medium, fontSize = 14.sp)
+        Text(label, color = textSecondary, fontSize = 14.sp)
+        Text(
+            value,
+            color = textColor,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp
+        )
     }
 }
 

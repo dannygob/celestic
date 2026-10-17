@@ -98,5 +98,15 @@ data class Specification(
     val minAlodineUniformity: Double,
 
     /** ID of the associated technical blueprint (if any) for geometric matching. */
-    val linkedBlueprintId: String? = null
+    val linkedBlueprintId: String? = null,
+
+    // ───────────────────────────────────────────────
+    // Thickness (Vernier / Caliper reference)
+    // ───────────────────────────────────────────────
+
+    /** Nominal thickness of the sheet in millimeters (default 2.0 mm vernier). */
+    val nominalThicknessMm: Double = 2.0,
+
+    /** Allowed tolerance for sheet thickness in millimeters. */
+    val thicknessToleranceMm: Double = 0.2
 )

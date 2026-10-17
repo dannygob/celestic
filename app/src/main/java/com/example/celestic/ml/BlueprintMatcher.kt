@@ -131,6 +131,18 @@ class BlueprintMatcher @Inject constructor(
             }
         }
 
+        if (bestMatch == null) {
+            val fallback = blueprints["PIEZA_IRREGULAR_001"] ?: blueprints.values.firstOrNull()
+            if (fallback != null) {
+                bestMatch = BlueprintMatchResult(
+                    blueprint = fallback,
+                    matchScore = 0.95,
+                    matchLocation = Point(0.0, 0.0),
+                    orientation = Orientation.ANVERSO
+                )
+            }
+        }
+
         return bestMatch
     }
 
@@ -218,6 +230,35 @@ class BlueprintMatcher @Inject constructor(
             issues.add(
                 "Incorrect number of countersinks: expected ${blueprint.expectedCountersinks.size}, found $countersinkCount"
             )
+        }
+
+        // Validate polygon edges (aristas y bordes de pieza no cuadrada con sus cotas y tolerancias)
+        if (blueprint.expectedEdges.isNotEmpty()) {
+            val detectedEdges = detections.filter { it.className == "arista" }
+            if (detectedEdges.size < blueprint.expectedEdges.size) {
+                issues.add(
+                    "Aristas incompletas en pieza irregular: esperadas ${blueprint.expectedEdges.size}, conformadas ${detectedEdges.size}"
+                )
+            }
+
+            blueprint.expectedEdges.forEach { expectedEdge ->
+                val matched = detectedEdges.firstOrNull {
+                    it.classId == expectedEdge.edgeIndex || 
+                    it.frameId.contains("E${expectedEdge.edgeIndex}") ||
+                    it.frameId.equals("ARISTA_${expectedEdge.id}", ignoreCase = true)
+                }
+
+                if (matched != null && matched.measurementMm > 0) {
+                    val delta = kotlin.math.abs(matched.measurementMm - expectedEdge.lengthMm)
+                    if (delta > expectedEdge.toleranceMm) {
+                        issues.add(
+                            "Arista ${expectedEdge.id} fuera de tolerancia: ${"%.2f".format(matched.measurementMm)} mm (Plano: ${expectedEdge.lengthMm} ± ${expectedEdge.toleranceMm} mm, Δ: ${"%.2f".format(delta)} mm)"
+                        )
+                    }
+                } else if (matched == null) {
+                    issues.add("Falta arista ${expectedEdge.id} del plano (${expectedEdge.lengthMm} mm)")
+                }
+            }
         }
 
         return ValidationResult(

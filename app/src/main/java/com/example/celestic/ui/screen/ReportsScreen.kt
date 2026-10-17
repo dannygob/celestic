@@ -25,12 +25,16 @@ import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -106,7 +110,7 @@ fun ReportsScreen(
                     IconButton(onClick = { navController.navigate("detection_list") }) {
                         Icon(
                             Icons.Default.History,
-                            contentDescription = "History",
+                            contentDescription = stringResource(R.string.view_history),
                             tint = colors.accentColor
                         )
                     }
@@ -330,13 +334,17 @@ fun ReportStatsCard(
     accentColor: Color,
     isDarkMode: Boolean
 ) {
+    val cardBg = if (isDarkMode) Color(0xFF131C2E) else Color.White
+    val cardBorder = if (isDarkMode) Color(0xFF26354D) else Color(0xFFE2E8F0)
+    val textPrimary = if (isDarkMode) Color(0xFFF0F4F8) else Color(0xFF0F172A)
+    val textSecondary = if (isDarkMode) Color(0xFF94A3B8) else Color(0xFF475569)
+
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isDarkMode) Color(0xFF1E1E1E) else Color.White
-        ),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+        colors = CardDefaults.cardColors(containerColor = cardBg),
+        shape = RoundedCornerShape(18.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, cardBorder),
+        elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Row(
             modifier = Modifier.padding(20.dp),
@@ -344,19 +352,25 @@ fun ReportStatsCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(50.dp)
+                    .size(52.dp)
                     .clip(CircleShape)
-                    .background(accentColor.copy(alpha = 0.1f)),
+                    .background(accentColor.copy(alpha = 0.15f)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Default.Assessment, contentDescription = null, tint = accentColor)
+                Icon(
+                    Icons.Default.Assessment,
+                    contentDescription = null,
+                    tint = accentColor,
+                    modifier = Modifier.size(28.dp)
+                )
             }
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(
                     stringResource(R.string.report_overview),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    fontSize = 17.sp,
+                    color = textPrimary
                 )
                 Text(
                     stringResource(
@@ -364,8 +378,9 @@ fun ReportStatsCard(
                         totalInspections,
                         totalDetections
                     ),
-                    fontSize = 12.sp,
-                    color = Color.Gray
+                    fontSize = 13.sp,
+                    color = textSecondary,
+                    fontWeight = FontWeight.Medium
                 )
             }
         }
@@ -380,35 +395,73 @@ fun BatchReportItem(
     isDarkMode: Boolean,
     onGenerate: () -> Unit
 ) {
+    val cardBg = if (isDarkMode) Color(0xFF131C2E) else Color.White
+    val cardBorder = if (isDarkMode) Color(0xFF26354D) else Color(0xFFE2E8F0)
+    val textPrimary = if (isDarkMode) Color(0xFFF0F4F8) else Color(0xFF0F172A)
+    val textSecondary = if (isDarkMode) Color(0xFF94A3B8) else Color(0xFF64748B)
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         onClick = onGenerate,
-        colors = CardDefaults.cardColors(
-            containerColor = if (isDarkMode) Color(0xFF161616) else Color(0xFFF9F9F9)
-        ),
-        shape = RoundedCornerShape(12.dp)
+        colors = CardDefaults.cardColors(containerColor = cardBg),
+        shape = RoundedCornerShape(14.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, cardBorder)
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                Icons.Default.Description,
-                contentDescription = null,
-                tint = Color.Gray,
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(modifier = Modifier.width(12.dp))
+            Surface(
+                shape = RoundedCornerShape(10.dp),
+                color = accentColor.copy(alpha = 0.12f),
+                modifier = Modifier.size(42.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        Icons.Default.Description,
+                        contentDescription = null,
+                        tint = accentColor,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(batchCode, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(
+                    batchCode,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp,
+                    color = textPrimary
+                )
                 Text(
                     stringResource(R.string.detections_count, count),
-                    fontSize = 11.sp,
-                    color = Color.Gray
+                    fontSize = 12.sp,
+                    color = textSecondary,
+                    fontWeight = FontWeight.Medium
                 )
             }
-            IconButton(onClick = onGenerate) {
-                Icon(Icons.Default.PictureAsPdf, contentDescription = null, tint = accentColor)
+            FilledTonalButton(
+                onClick = onGenerate,
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    containerColor = accentColor.copy(alpha = 0.15f),
+                    contentColor = accentColor
+                ),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Default.PictureAsPdf,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        stringResource(R.string.export_report).uppercase(),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }

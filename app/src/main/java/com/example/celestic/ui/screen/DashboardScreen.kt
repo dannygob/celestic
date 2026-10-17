@@ -22,13 +22,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.example.celestic.models.enums.Orientation
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Architecture
 import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.ModelTraining
 import androidx.compose.material.icons.filled.PlayArrow
@@ -121,26 +124,40 @@ fun DashboardScreen(
         }
     }
     
-    // Colores
-    val accentColor = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
-    val frameBorder = if (isDarkMode) Color(0xFF1B263B) else Color(0xFFD1D9E6)
-    val textPrimary = if (isDarkMode) Color.White else Color.Black
-    val textSecondary = if (isDarkMode) Color.Gray else Color.DarkGray
+    // Colores de alto contraste técnico
+    val accentColor = if (isDarkMode) Color(0xFF38BDF8) else Color(0xFF0284C7)
+    val frameBorder = if (isDarkMode) Color(0xFF26354D) else Color(0xFFCBD5E1)
+    val textPrimary = if (isDarkMode) Color(0xFFF0F4F8) else Color(0xFF0F172A)
+    val textSecondary = if (isDarkMode) Color(0xFF94A3B8) else Color(0xFF475569)
 
     val mainBackground = Brush.verticalGradient(
         colors = if (isDarkMode) {
-            listOf(Color(0xFF0A0E14), Color.Black)
+            listOf(Color(0xFF070B11), Color(0xFF0F172A))
         } else {
-            listOf(Color(0xFFF2F2F2), Color(0xFFE0E0E0))
+            listOf(Color(0xFFF8FAFC), Color(0xFFE2E8F0))
         }
     )
+
+    val editableEdges by viewModel.editableEdges.collectAsState()
+    val blueprintName by viewModel.blueprintNameDisplay.collectAsState()
+    var showEdgeAdjustDialog by remember { mutableStateOf(false) }
+
+    if (showEdgeAdjustDialog) {
+        com.example.celestic.ui.component.EdgeAdjustDialog(
+            blueprintName = blueprintName,
+            edges = editableEdges,
+            onUpdateEdge = { edgeIndex, nom, tol -> viewModel.updateEdgeCota(edgeIndex, nom, tol) },
+            onSave = { viewModel.saveAdjustedEdgesToBlueprint() },
+            onReset = { viewModel.resetEdgesToBlueprint() },
+            onAdjustToBlueprint = { viewModel.adjustAllEdgesToBlueprint() },
+            onDismiss = { showEdgeAdjustDialog = false },
+            isDarkMode = isDarkMode
+        )
+    }
 
     CompositionLocalProvider(com.example.celestic.ui.component.LocalCameraCaptureController provides cameraController) {
         Scaffold(
             topBar = {
-                dashboardState is DashboardState.Idle || dashboardState is DashboardState.NavigateToDetails
-                dashboardState is DashboardState.Idle || dashboardState is DashboardState.NavigateToDetails
-                dashboardState is DashboardState.Idle || dashboardState is DashboardState.NavigateToDetails
                 DashboardTopBar(
                     state = dashboardState,
                     isLandscape = isLandscape,
@@ -149,7 +166,8 @@ fun DashboardScreen(
                     textPrimary = textPrimary,
                     textSecondary = textSecondary,
                     navController = navController,
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    onOpenEdgeAdjust = { showEdgeAdjustDialog = true }
                 )
             },
             containerColor = Color.Transparent
@@ -166,7 +184,8 @@ fun DashboardScreen(
                 mainBackground = mainBackground,
                 viewModel = viewModel,
                 navController = navController,
-                cameraController = cameraController
+                cameraController = cameraController,
+                onOpenEdgeAdjust = { showEdgeAdjustDialog = true }
             )
         }
         DashboardModals(
@@ -188,7 +207,8 @@ private fun DashboardTopBar(
     textPrimary: Color,
     textSecondary: Color,
     navController: NavController,
-    viewModel: DashboardViewModel
+    viewModel: DashboardViewModel,
+    onOpenEdgeAdjust: () -> Unit
 ) {
     var showAlbaranDialog by androidx.compose.runtime.remember {
         mutableStateOf(
@@ -210,8 +230,19 @@ private fun DashboardTopBar(
     var showOnlineLearningDialog by androidx.compose.runtime.remember {
         mutableStateOf(false)
     }
+    var showInspectionWizardDialog by androidx.compose.runtime.remember {
+        mutableStateOf(false)
+    }
     val learnedSamplesCount by viewModel.learnedSamplesCount.collectAsState()
     val learnedSamples by viewModel.learnedSamples.collectAsState()
+
+    if (showInspectionWizardDialog) {
+        com.example.celestic.ui.component.InspectionWizardDialog(
+            onDismiss = { showInspectionWizardDialog = false },
+            onNavigateToCalibration = { navController.navigate("calibration") },
+            isDarkMode = isDarkMode
+        )
+    }
 
     if (showOnlineLearningDialog) {
         com.example.celestic.ui.component.OnlineLearningDialog(
@@ -345,6 +376,13 @@ private fun DashboardTopBar(
                         ) { navController.navigate("golden_sample") }
 
                         NavIconBtn(
+                            Icons.Default.Architecture,
+                            "ARISTAS",
+                            isLandscape,
+                            isDarkMode
+                        ) { onOpenEdgeAdjust() }
+
+                        NavIconBtn(
                             Icons.Default.History,
                             stringResource(R.string.hist_abbr),
                             isLandscape,
@@ -357,6 +395,13 @@ private fun DashboardTopBar(
                             isLandscape,
                             isDarkMode
                         ) { navController.navigate("reports") }
+
+                        NavIconBtn(
+                            Icons.Default.HelpOutline,
+                            stringResource(R.string.guide_abbr),
+                            isLandscape,
+                            isDarkMode
+                        ) { showInspectionWizardDialog = true }
 
                         NavIconBtn(
                             Icons.Default.AutoAwesome,
@@ -449,7 +494,8 @@ private fun DashboardMainContent(
     mainBackground: Brush,
     viewModel: DashboardViewModel,
     navController: NavController,
-    cameraController: com.example.celestic.ui.component.CameraCaptureController
+    cameraController: com.example.celestic.ui.component.CameraCaptureController,
+    onOpenEdgeAdjust: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -462,6 +508,91 @@ private fun DashboardMainContent(
                 .fillMaxSize()
                 .padding(if (isLandscape) 12.dp else 8.dp)
         ) {
+            // Barra Técnica de Metrología: Cara de Inspección (Anverso/Reverso) y Cotas
+            val currentFace by viewModel.currentInspectionFace.collectAsState()
+            val editableEdges by viewModel.editableEdges.collectAsState()
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 6.dp),
+                shape = RoundedCornerShape(12.dp),
+                color = if (isDarkMode) Color(0xFF1E293B) else Color(0xFFF1F5F9),
+                border = BorderStroke(1.dp, frameBorder)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            "Cara:",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = textSecondary
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Surface(
+                            onClick = { viewModel.setInspectionFace(Orientation.ANVERSO) },
+                            shape = RoundedCornerShape(8.dp),
+                            color = if (currentFace == Orientation.ANVERSO) Color(0xFF0284C7) else Color.Transparent,
+                            border = if (currentFace == Orientation.ANVERSO) null else BorderStroke(1.dp, frameBorder)
+                        ) {
+                            Text(
+                                "ANVERSO (Cara A)",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (currentFace == Orientation.ANVERSO) Color.White else textSecondary,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Surface(
+                            onClick = { viewModel.setInspectionFace(Orientation.REVERSO) },
+                            shape = RoundedCornerShape(8.dp),
+                            color = if (currentFace == Orientation.REVERSO) Color(0xFFEA580C) else Color.Transparent,
+                            border = if (currentFace == Orientation.REVERSO) null else BorderStroke(1.dp, frameBorder)
+                        ) {
+                            Text(
+                                "REVERSO (Cara B)",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (currentFace == Orientation.REVERSO) Color.White else textSecondary,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                            )
+                        }
+                    }
+
+                    Surface(
+                        onClick = onOpenEdgeAdjust,
+                        shape = RoundedCornerShape(8.dp),
+                        color = Color(0xFF0284C7).copy(alpha = 0.15f),
+                        border = BorderStroke(1.dp, Color(0xFF0284C7))
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Architecture,
+                                contentDescription = null,
+                                tint = Color(0xFF0284C7),
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                "ARISTAS PLANO: ${editableEdges.size} BORDES (AJUSTAR)",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF0284C7)
+                            )
+                        }
+                    }
+                }
+            }
+
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -504,26 +635,33 @@ private fun DashboardMainContent(
                         },
                         modifier = Modifier
                             .height(if (isLandscape) 56.dp else 64.dp)
-                            .width(if (isLandscape) 140.dp else 180.dp),
+                            .width(if (isLandscape) 160.dp else 200.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isIdle) Color(0xFF00695C) else Color(0xFFB71C1C)
+                            containerColor = if (isIdle) Color(0xFF059669) else Color(0xFFDC2626)
                         ),
-                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 12.dp),
-                        shape = RoundedCornerShape(if (isLandscape) 28.dp else 32.dp)
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 8.dp,
+                            pressedElevation = 2.dp
+                        ),
+                        shape = RoundedCornerShape(if (isLandscape) 28.dp else 32.dp),
+                        border = BorderStroke(
+                            2.dp,
+                            if (isIdle) Color(0xFF34D399) else Color(0xFFF87171)
+                        )
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 imageVector = if (isIdle) Icons.Default.PlayArrow else Icons.Default.Stop,
                                 contentDescription = null,
                                 tint = Color.White,
-                                modifier = Modifier.size(if (isLandscape) 20.dp else 24.dp)
+                                modifier = Modifier.size(if (isLandscape) 22.dp else 26.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 if (isIdle) stringResource(R.string.start).uppercase()
                                 else stringResource(R.string.stop).uppercase(),
                                 fontWeight = FontWeight.Black,
-                                fontSize = if (isLandscape) 14.sp else 16.sp,
+                                fontSize = if (isLandscape) 15.sp else 17.sp,
                                 letterSpacing = 2.sp,
                                 color = Color.White
                             )
@@ -560,30 +698,57 @@ fun NavIconBtn(
     isDarkMode: Boolean,
     onClick: () -> Unit
 ) {
+    val buttonBg = if (isDarkMode) Color(0xFF1E293B) else Color.White
+    val buttonBorder = if (isDarkMode) Color(0xFF334155) else Color(0xFFCBD5E1)
+    val iconColor = if (isDarkMode) Color(0xFF38BDF8) else Color(0xFF0284C7)
+    val textColor = if (isDarkMode) Color(0xFFE2E8F0) else Color(0xFF1E293B)
+
     if (isLandscape) {
-        TextButton(onClick = onClick, contentPadding = PaddingValues(horizontal = 8.dp)) {
-            Icon(
-                icon,
-                null,
-                modifier = Modifier.size(16.dp),
-                tint = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                label,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                color = if (isDarkMode) Color.LightGray else Color.DarkGray
-            )
+        Surface(
+            onClick = onClick,
+            shape = RoundedCornerShape(10.dp),
+            color = buttonBg,
+            border = BorderStroke(1.dp, buttonBorder),
+            modifier = Modifier.padding(horizontal = 2.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
+            ) {
+                Icon(
+                    icon,
+                    null,
+                    modifier = Modifier.size(16.dp),
+                    tint = iconColor
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    label,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = textColor
+                )
+            }
         }
     } else {
-        IconButton(onClick = onClick, modifier = Modifier.size(32.dp)) {
-            Icon(
-                icon,
-                null,
-                modifier = Modifier.size(18.dp),
-                tint = if (isDarkMode) Color(0xFF4FC3F7) else Color(0xFF3366CC)
-            )
+        Surface(
+            onClick = onClick,
+            shape = RoundedCornerShape(10.dp),
+            color = buttonBg,
+            border = BorderStroke(1.dp, buttonBorder),
+            modifier = Modifier.padding(horizontal = 2.dp)
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.size(36.dp)
+            ) {
+                Icon(
+                    icon,
+                    null,
+                    modifier = Modifier.size(18.dp),
+                    tint = iconColor
+                )
+            }
         }
     }
 }
@@ -616,6 +781,7 @@ fun DashboardCameraView(
     viewModel: DashboardViewModel,
     cameraController: com.example.celestic.ui.component.CameraCaptureController
 ) {
+    val editableEdges by viewModel.editableEdges.collectAsState()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -625,7 +791,7 @@ fun DashboardCameraView(
             onFrameCaptured = { bitmap -> viewModel.onFrameCaptured(bitmap) },
             controller = cameraController
         )
-        HUDOverlay(isLandscape)
+        HUDOverlay(isLandscape, editableEdges)
 
         Box(
             modifier = Modifier
@@ -825,65 +991,106 @@ fun CornerDecorations(color: Color) {
 }
 
 @Composable
-fun HUDOverlay(isLandscape: Boolean) {
+fun HUDOverlay(isLandscape: Boolean, edges: List<DashboardViewModel.EditableEdge> = emptyList()) {
     val paddingDp = if (isLandscape) 80.dp else 40.dp
     val strokeWidthDp = 1.dp
 
-    Canvas(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingDp)
-    ) {
-        val color = Color(0xFF4FC3F7).copy(alpha = 0.15f)
-        val strokeWidth = strokeWidthDp.toPx()
+    Box(modifier = Modifier.fillMaxSize()) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingDp)
+        ) {
+            val color = Color(0xFF4FC3F7).copy(alpha = 0.15f)
+            val strokeWidth = strokeWidthDp.toPx()
 
-        drawLine(
-            color,
-            Offset(size.width / 2 - 15, size.height / 2),
-            Offset(size.width / 2 + 15, size.height / 2),
-            strokeWidth
-        )
-        drawLine(
-            color,
-            Offset(size.width / 2, size.height / 2 - 15),
-            Offset(size.width / 2, size.height / 2 + 20),
-            strokeWidth
-        )
-
-        val bSize = 60f
-
-        drawArc(
-            color, 180f, 90f, false, Offset(0f, 0f), Size(bSize, bSize), style = Stroke(
+            drawLine(
+                color,
+                Offset(size.width / 2 - 15, size.height / 2),
+                Offset(size.width / 2 + 15, size.height / 2),
                 strokeWidth
-        )
-        )
-        drawArc(
-            color,
-            270f,
-            90f,
-            false,
-            Offset(size.width - bSize, 0f),
-            Size(bSize, bSize),
-            style = Stroke(strokeWidth)
-        )
-        drawArc(
-            color,
-            90f,
-            90f,
-            false,
-            Offset(0f, size.height - bSize),
-            Size(bSize, bSize),
-            style = Stroke(strokeWidth)
-        )
-        drawArc(
-            color,
-            0f,
-            90f,
-            false,
-            Offset(size.width - bSize, size.height - bSize),
-            Size(bSize, bSize),
-            style = Stroke(strokeWidth)
-        )
+            )
+            drawLine(
+                color,
+                Offset(size.width / 2, size.height / 2 - 15),
+                Offset(size.width / 2, size.height / 2 + 20),
+                strokeWidth
+            )
+
+            val bSize = 60f
+
+            drawArc(
+                color, 180f, 90f, false, Offset(0f, 0f), Size(bSize, bSize), style = Stroke(
+                    strokeWidth
+                )
+            )
+            drawArc(
+                color,
+                270f,
+                90f,
+                false,
+                Offset(size.width - bSize, 0f),
+                Size(bSize, bSize),
+                style = Stroke(strokeWidth)
+            )
+            drawArc(
+                color,
+                90f,
+                90f,
+                false,
+                Offset(0f, size.height - bSize),
+                Size(bSize, bSize),
+                style = Stroke(strokeWidth)
+            )
+            drawArc(
+                color,
+                0f,
+                90f,
+                false,
+                Offset(size.width - bSize, size.height - bSize),
+                Size(bSize, bSize),
+                style = Stroke(strokeWidth)
+            )
+        }
+
+        if (edges.isNotEmpty()) {
+            Surface(
+                shape = RoundedCornerShape(10.dp),
+                color = Color.Black.copy(alpha = 0.70f),
+                border = BorderStroke(1.dp, Color(0xFF0284C7).copy(alpha = 0.8f)),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 10.dp, start = 12.dp, end = 12.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.Architecture,
+                            contentDescription = null,
+                            tint = Color(0xFF38BDF8),
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            "COTAS TÉCNICAS DEL PLANO (TOLERANCIA: ±0.8 mm)",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF38BDF8)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        edges.joinToString(" • ") { "${it.id}: ${"%.1f".format(it.nominalMm)}mm" },
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White
+                    )
+                }
+            }
+        }
     }
 }
 

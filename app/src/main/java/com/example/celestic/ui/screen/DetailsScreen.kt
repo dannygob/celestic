@@ -37,6 +37,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -259,7 +260,7 @@ fun DetailsScreen(
                         imageBitmap?.let { bitmap ->
                             androidx.compose.foundation.Image(
                                 bitmap = bitmap.asImageBitmap(),
-                                contentDescription = "Technical Image",
+                                contentDescription = stringResource(R.string.blueprint_prefix),
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Fit,
                                 alpha = 0.4f
@@ -276,29 +277,76 @@ fun DetailsScreen(
             }
 
             items(features) { feature ->
+                val measured = feature.measurements["measured"] ?: feature.measurements["diameter"] ?: 0f
+                val nominal = feature.measurements["nominal"] ?: 0f
+                val tol = feature.measurements["tolerance"] ?: 0.1f
+                val err = feature.measurements["error_mm"] ?: 0f
+                val isDefect = feature.measurements["is_defect"] == 1.0f
+
                 Card(
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = cardBg)
+                    colors = CardDefaults.cardColors(containerColor = cardBg),
+                    border = BorderStroke(1.dp, if (isDefect) Color.Red else colors.cardBorder)
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(14.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Info, contentDescription = null, tint = colors.accentColor)
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column {
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = when {
+                                isDefect -> Color(0xFFDC2626).copy(alpha = 0.15f)
+                                feature.featureType.contains("thickness") -> Color(0xFF059669).copy(alpha = 0.15f)
+                                feature.featureType.contains("dimension") -> Color(0xFF0284C7).copy(alpha = 0.15f)
+                                else -> colors.accentColor.copy(alpha = 0.15f)
+                            },
+                            modifier = Modifier.size(42.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = if (isDefect) Icons.Default.Cancel else Icons.Default.CheckCircle,
+                                    contentDescription = null,
+                                    tint = if (isDefect) Color.Red else Color(0xFF059669),
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(14.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = when (feature.featureType.lowercase()) {
+                                        "edge" -> "ARISTA / BORDE DE PIEZA"
+                                        "dimension" -> "CONTORNO POLIGONAL"
+                                        "thickness" -> "ESPESOR (OMITIDO)"
+                                        "countersink" -> "AVELLANADO CÓNICO"
+                                        "hole" -> "TALADRO CILÍNDRICO"
+                                        "bend" -> "DEFORMACIÓN / ALABEO"
+                                        "scratch" -> "RAYADURA SUPERFICIAL"
+                                        else -> feature.featureType.uppercase()
+                                    },
+                                    color = if (isDefect) Color.Red else colors.textColor,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp
+                                )
+                                Text(
+                                    "${"%.2f".format(measured)} mm",
+                                    color = if (isDefect) Color.Red else Color(0xFF059669),
+                                    fontWeight = FontWeight.Black,
+                                    fontSize = 14.sp
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                feature.featureType.uppercase(),
-                                color = colors.textColor,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
-                            )
-                            Text(
-                                "Coord: (${feature.xCoord}, ${feature.yCoord})",
+                                "Nominal: ${"%.2f".format(nominal)} ±${"%.2f".format(tol)} mm | Δ Error: ${"%.2f".format(err)} mm",
                                 color = Color.Gray,
-                                fontSize = 12.sp
+                                fontSize = 11.sp
                             )
                         }
                     }
@@ -519,19 +567,24 @@ fun DetailsScreen(
                                     ).show()
                                 }
                             },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = colors.accentColor)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0284C7)),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
                         ) {
                             Icon(
                                 Icons.Default.Description,
                                 contentDescription = null,
-                                tint = Color.White
+                                tint = Color.White,
+                                modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 stringResource(R.string.share_report),
                                 fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp,
                                 color = Color.White
                             )
                         }
@@ -554,17 +607,21 @@ fun DetailsScreen(
                             ).show()
                         }
                     },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0288D1))
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF059669)),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
                 ) {
-                    Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = Color.White)
+                    Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         if (isLearnedInDetails) stringResource(R.string.piece_registered_learning) else stringResource(
                             R.string.learn_piece_btn
                         ),
                         fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
                         color = Color.White
                     )
                 }
@@ -577,14 +634,16 @@ fun DetailsScreen(
                     onClick = {
                         Toast.makeText(context, reportSentMsg, Toast.LENGTH_SHORT).show()
                     },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, if (isDarkMode) Color.Red.copy(alpha = 0.5f) else Color.Red),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.5.dp, Color(0xFFEF4444)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFEF4444))
                 ) {
-                    Icon(Icons.Default.ReportProblem, contentDescription = null)
+                    Icon(Icons.Default.ReportProblem, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.report_anomaly))
+                    Text(stringResource(R.string.report_anomaly), fontWeight = FontWeight.Bold)
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -597,14 +656,16 @@ fun DetailsScreen(
                             navController.popBackStack()
                         }
                     },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, Color.Red.copy(alpha = 0.8f)),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.5.dp, Color(0xFFDC2626).copy(alpha = 0.8f)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFDC2626))
                 ) {
-                    Icon(Icons.Default.Cancel, contentDescription = null)
+                    Icon(Icons.Default.Cancel, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.delete_defect))
+                    Text(stringResource(R.string.delete_defect), fontWeight = FontWeight.Bold)
                 }
                 
                 Spacer(modifier = Modifier.height(40.dp))

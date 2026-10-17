@@ -356,4 +356,85 @@
     <string name="report_diagnosis_header">DIAGNOSIS / REJECTION BLUEPRINT</string>
     <string name="report_image_header">INSPECTION IMAGE WITH DEFECT BLUEPRINT</string>
 
+    <!-- Navigation & Action Abbreviations -->
+    <string name="guide_abbr">GUIDE</string>
+    <string name="print_pattern">Print Pattern</string>
+
+    <!-- Blueprint Labels -->
+    <string name="blueprint_prefix">BLUEPRINT</string>
+    <string name="blueprint_face_label">FACE</string>
+    <string name="blueprint_scale_label">SCALE</string>
+    <string name="blueprint_non_conforming">NON-CONFORMANT</string>
+    <string name="blueprint_ok">OK</string>
+    <string name="blueprint_actual_label">Actual</string>
+    <string name="blueprint_nominal_label">Nominal</string>
+    <string name="blueprint_dev_label">Dev</string>
+    <string name="blueprint_out_of_tol">OUT OF TOL</string>
+
+    <!-- Inspection Wizard Dialog -->
+    <string name="wizard_guide_title">TECHNICAL INSPECTION GUIDE</string>
+    <string name="wizard_step_indicator">Step %1$d of %2$d</string>
+    <string name="wizard_btn_prev">Previous</string>
+    <string name="wizard_btn_next">Next</string>
+    <string name="wizard_btn_finish">Understood! Start</string>
+    <string name="wizard_action_print_charuco">Print ChArUco Pattern A4</string>
+    <string name="wizard_step1_title">1. Optical Calibration with ChArUco</string>
+    <string name="wizard_step1_subtitle">Distortion correction and metric scale computation</string>
+    <string name="wizard_step1_bullet1">The camera requires intrinsic focal parameters (fx, fy) and radial distortion coefficients to measure tenths of a millimeter accurately.</string>
+    <string name="wizard_step1_bullet2">Place the ChArUco board onto an entirely flat surface.</string>
+    <string name="wizard_step1_bullet3">Hold the camera perpendicularly at 30-50 cm and capture at least 8 frames at slight angles.</string>
+    <string name="wizard_step1_bullet4">You can print the official A4 calibration pattern directly from this device.</string>
+    <string name="wizard_step1_tip">Aerospace Tip: Ensure you print the PDF at 100% scale (Do not fit to page) to preserve the exact 30.0 mm squares.</string>
+
+    <string name="wizard_step2_title">2. Face Identification: Obverse vs Reverse</string>
+    <string name="wizard_step2_subtitle">Automatic surface side detection of metal sheets</string>
+    <string name="wizard_step2_bullet1">Stamped or machined parts are non-symmetric and feature specific geometric details on each face.</string>
+    <string name="wizard_step2_bullet2">Obverse: Features conical countersink holes for flush fasteners and identification markers.</string>
+    <string name="wizard_step2_bullet3">Reverse: Flat surface or straight through-holes with chemical treatment halos.</string>
+    <string name="wizard_step2_bullet4">Computer vision identifies geometrical asymmetry or ArUco fiducials to automatically load the correct CAD blueprint face.</string>
+    <string name="wizard_step2_tip">If the part is flipped, the system dynamically switches the CAD blueprint between Obverse and Reverse.</string>
+
+    <string name="wizard_step3_title">3. Tolerance Geometric Evaluation</string>
+    <string name="wizard_step3_subtitle">Real-time inspection of edges, holes, countersinks, and Alodine</string>
+    <string name="wizard_step3_bullet1">Every entity (H1, H2, Edges, Alodine halo) has a nominal CAD value and tolerance band (e.g. ±0.05 mm).</string>
+    <string name="wizard_step3_bullet2">Subpixel contour detection computes the exact measured diameter and length.</string>
+    <string name="wizard_step3_bullet3">If all features comply with tolerances, the HUD and indicators illuminate in GREEN (OK).</string>
+    <string name="wizard_step3_bullet4">Zero operator intervention needed when the manufactured part is 100% compliant.</string>
+    <string name="wizard_step3_tip">Prevent specular glare on polished alloy sheets by using indirect diffuse illumination.</string>
+
+    <string name="wizard_step4_title">4. Defect Alerts &amp; Blueprint HUD</string>
+    <string name="wizard_step4_subtitle">RED warning and engineering callouts comparing measured vs nominal parameters</string>
+    <string name="wizard_step4_bullet1">When an edge, hole, or halo deviates outside tolerance, an immediate visual RED alarm triggers.</string>
+    <string name="wizard_step4_bullet2">The vector blueprint HUD highlights the defective entity with an illuminated pulsing ring.</string>
+    <string name="wizard_step4_bullet3">The technical badge displays: Actual value, Nominal CAD target, and Delta deviation (Δ mm).</string>
+    <string name="wizard_step4_bullet4">Inspection traceability is persisted with timestamp, operator, and batch identifier.</string>
+    <string name="wizard_step4_tip">Each out-of-tolerance entity is uniquely tagged (H1, E1, CSK1) for immediate rework identification.</string>
+
+    <string name="wizard_step5_title">5. False Positive Management</string>
+    <string name="wizard_step5_subtitle">Manual quality override by certified operators</string>
+    <string name="wizard_step5_bullet1">If metal shavings, dust, or glare trigger a false rejection on a conforming part, the operator can override it.</string>
+    <string name="wizard_step5_bullet2">In the Details view, tap \'Manual Override (Force Approval)\'.</string>
+    <string name="wizard_step5_bullet3">The part status updates to OK with an audited quality override log.</string>
+    <string name="wizard_step5_bullet4">Temporary high-resolution bitmaps are purged to conserve on-device disk storage.</string>
+    <string name="wizard_step5_tip">All manual overrides log the operator ID and shift to guarantee ISO/AS9100 audit compliance.</string>
+
+    <string name="wizard_step6_title">6. Continual Learning &amp; Inspection Reports</string>
+    <string name="wizard_step6_subtitle">Adaptive on-device memory and formal PDF/Word report exports</string>
+    <string name="wizard_step6_bullet1">Live Learning: Save approved parts to adapt the tolerance profile without model retraining.</string>
+    <string name="wizard_step6_bullet2">Instant Rollback: Undo the latest sample in 1 tap if approved accidentally.</string>
+    <string name="wizard_step6_bullet3">Technical Reports: Export Non-Conformance Reports (NCR) or Full Batch Certificates in PDF or Word (DOCX).</string>
+    <string name="wizard_step6_bullet4">Generated reports include the technical vector blueprint with all measurements and digital signatures.</string>
+    <string name="wizard_step6_tip">Share generated documents via email, cloud, or send directly to network printers.</string>
+
+    <!-- Settings: Metrology & Blueprint Plan Section -->
+    <string name="settings_metrology_section">METROLOGY &amp; QUALITY PLANS</string>
+    <string name="settings_calibration_title">Optical &amp; Target Calibration</string>
+    <string name="settings_calibration_subtitle">ChArUco / ArUco metrology board, optical distortion matrix, and subpixel mm/pixel scale.</string>
+    <string name="settings_calibration_badge">ChArUco 5×7 • A4 Printable</string>
+    <string name="settings_calibration_btn">Calibrate Camera</string>
+    <string name="settings_plan_title">CAD Blueprint &amp; Golden Sample Plan</string>
+    <string name="settings_plan_subtitle">Capture and register nominal piece blueprints, hole diameters, edge tolerances, and dual-face specs.</string>
+    <string name="settings_plan_badge">Obverse &amp; Reverse • CAD Specs</string>
+    <string name="settings_plan_btn">Manage Plans</string>
+
 </resources>

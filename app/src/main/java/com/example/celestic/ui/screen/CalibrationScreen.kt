@@ -21,10 +21,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Camera
+import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -163,6 +165,17 @@ private fun CalibrationTopBar(
             }
         },
         actions = {
+            val context = androidx.compose.ui.platform.LocalContext.current
+            IconButton(onClick = {
+                val file = com.example.celestic.utils.CalibrationPatternGenerator.generateAndShareCalibrationPdf(context)
+                com.example.celestic.utils.CalibrationPatternGenerator.openOrPrintPdf(context, file)
+            }) {
+                Icon(
+                    Icons.Default.Print,
+                    contentDescription = stringResource(R.string.print_pattern),
+                    tint = textColor
+                )
+            }
             IconButton(onClick = onReset) {
                 Icon(
                     Icons.Default.Refresh,
@@ -384,7 +397,6 @@ private fun CalibrationActions(
 }
 
 @Composable
-
 private fun CalibrationButtons(
     uiState: CalibrationState,
     accentColor: Color,
@@ -394,27 +406,28 @@ private fun CalibrationButtons(
 ) {
     Button(
         onClick = onCapture,
-        modifier = modifier.height(56.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = accentColor)
+        modifier = modifier.height(54.dp),
+        shape = RoundedCornerShape(14.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0284C7)),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
     ) {
-        Icon(Icons.Default.Camera, contentDescription = null)
+        Icon(Icons.Default.Camera, contentDescription = null, modifier = Modifier.size(20.dp))
         Spacer(modifier = Modifier.width(8.dp))
-        Text(stringResource(R.string.capture), fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.capture), fontWeight = FontWeight.Bold, fontSize = 15.sp)
     }
 
-    // El Spacer depende de si es Columna o Fila, pero podemos usar un Box o manejarlo fuera.
-    // Para simplificar, lo manejamos en el contenedor (CalibrationActions).
+    val canCalibrate = uiState.capturedFrames >= (if (uiState.maxFrames <= 10) 3 else 5) && !uiState.isCalibrating
 
     Button(
         onClick = onCalibrate,
-        enabled = uiState.capturedFrames >= (if (uiState.maxFrames <= 10) 3 else 5) && !uiState.isCalibrating,
-        modifier = modifier.height(56.dp),
-        shape = RoundedCornerShape(16.dp),
+        enabled = canCalibrate,
+        modifier = modifier.height(54.dp),
+        shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF1B263B),
-            disabledContainerColor = Color.Gray.copy(alpha = 0.3f)
-        )
+            containerColor = Color(0xFF059669),
+            disabledContainerColor = Color(0xFF334155).copy(alpha = 0.4f)
+        ),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
     ) {
         if (uiState.isCalibrating) {
             CircularProgressIndicator(
@@ -423,13 +436,34 @@ private fun CalibrationButtons(
                 strokeWidth = 2.dp
             )
         } else {
-            Icon(Icons.Default.Science, contentDescription = null)
+            Icon(Icons.Default.Science, contentDescription = null, modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 stringResource(R.string.calibrate),
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
             )
         }
+    }
+
+    val context = androidx.compose.ui.platform.LocalContext.current
+    OutlinedButton(
+        onClick = {
+            val file = com.example.celestic.utils.CalibrationPatternGenerator.generateAndShareCalibrationPdf(context)
+            com.example.celestic.utils.CalibrationPatternGenerator.openOrPrintPdf(context, file)
+        },
+        modifier = modifier.height(54.dp),
+        shape = RoundedCornerShape(14.dp),
+        border = androidx.compose.foundation.BorderStroke(1.5.dp, accentColor)
+    ) {
+        Icon(Icons.Default.Print, contentDescription = null, tint = accentColor, modifier = Modifier.size(20.dp))
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            stringResource(R.string.print_pattern),
+            color = accentColor,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp
+        )
     }
 }
 

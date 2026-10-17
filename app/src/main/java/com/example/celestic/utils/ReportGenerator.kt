@@ -575,7 +575,7 @@ fun generateExcelFromDetections(
         fillForegroundColor = if (mode == ReportMode.BATCH_APPROVAL)
             IndexedColors.LIGHT_GREEN.index else IndexedColors.ROSE.index
         fillPattern = FillPatternType.SOLID_FOREGROUND
-        font = workbook.createFont().also { it.bold = true }
+        setFont(workbook.createFont().also { it.bold = true })
     }
 
     val sheet = workbook.createSheet(

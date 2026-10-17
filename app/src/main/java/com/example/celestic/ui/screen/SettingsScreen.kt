@@ -1,6 +1,8 @@
 package com.example.celestic.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,9 +19,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.DeveloperBoard
 import androidx.compose.material.icons.filled.DisplaySettings
+import androidx.compose.material.icons.filled.ModelTraining
 import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material3.AlertDialog
@@ -115,6 +120,42 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            // ── METROLOGY & QUALITY PLANS (CALIBRATION & PLAN) ─────────────
+            Text(
+                stringResource(R.string.settings_metrology_section),
+                color = colors.accentColor,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+
+            MetrologyActionCard(
+                title = stringResource(R.string.settings_calibration_title),
+                subtitle = stringResource(R.string.settings_calibration_subtitle),
+                badge = stringResource(R.string.settings_calibration_badge),
+                buttonText = stringResource(R.string.settings_calibration_btn),
+                icon = Icons.Default.Build,
+                isDarkMode = isDarkMode,
+                accentColor = colors.accentColor,
+                textColor = colors.textColor,
+                onClick = { navController.navigate("calibration") }
+            )
+
+            MetrologyActionCard(
+                title = stringResource(R.string.settings_plan_title),
+                subtitle = stringResource(R.string.settings_plan_subtitle),
+                badge = stringResource(R.string.settings_plan_badge),
+                buttonText = stringResource(R.string.settings_plan_btn),
+                icon = Icons.Default.ModelTraining,
+                isDarkMode = isDarkMode,
+                accentColor = colors.accentColor,
+                textColor = colors.textColor,
+                onClick = { navController.navigate("golden_sample") }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             Text(
                 stringResource(R.string.units_preferences),
                 color = colors.accentColor,
@@ -442,6 +483,111 @@ private fun PrivacyComplianceSection(isDarkMode: Boolean, accentColor: Color) {
                 }
             }
         )
+    }
+}
+
+@Composable
+private fun MetrologyActionCard(
+    title: String,
+    subtitle: String,
+    badge: String,
+    buttonText: String,
+    icon: ImageVector,
+    isDarkMode: Boolean,
+    accentColor: Color,
+    textColor: Color,
+    onClick: () -> Unit
+) {
+    val cardBg = if (isDarkMode) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
+    val iconBoxBg = if (isDarkMode) Color(0xFF1B263B) else Color(0xFFD1D9E6)
+    val badgeBg = accentColor.copy(alpha = if (isDarkMode) 0.15f else 0.10f)
+
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = cardBg),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .background(iconBoxBg, RoundedCornerShape(10.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        icon,
+                        contentDescription = null,
+                        tint = accentColor,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(14.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = title,
+                        color = textColor,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Box(
+                        modifier = Modifier
+                            .background(badgeBg, RoundedCornerShape(6.dp))
+                            .border(1.dp, accentColor.copy(alpha = 0.3f), RoundedCornerShape(6.dp))
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = badge,
+                            color = accentColor,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = null,
+                    tint = accentColor.copy(alpha = 0.7f),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = subtitle,
+                color = Color.Gray,
+                fontSize = 12.sp,
+                lineHeight = 16.sp
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = onClick,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = accentColor)
+            ) {
+                Icon(icon, contentDescription = null, modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = buttonText,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.5.sp
+                )
+            }
+        }
     }
 }
 

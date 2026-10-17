@@ -248,7 +248,9 @@ data class Detection(
     val className: String,
     val confidence: Float,
     val boundingBox: Rect,
-    val roi: Mat
+    val roi: Mat,
+    val measurementMm: Double = 0.0,
+    val frameId: String = ""
 ) {
     /** Releases the ROI Mat to free memory. */
     fun release() {

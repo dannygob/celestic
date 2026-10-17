@@ -356,4 +356,85 @@
     <string name="report_diagnosis_header">DIAGNÓSTICO / PLANO DE RECHAZO</string>
     <string name="report_image_header">IMAGEN DE INSPECCIÓN CON PLANO DE DEFECTO</string>
 
+    <!-- Navigation & Action Abbreviations -->
+    <string name="guide_abbr">GUÍA</string>
+    <string name="print_pattern">Imprimir Patrón</string>
+
+    <!-- Blueprint Labels -->
+    <string name="blueprint_prefix">PLANO</string>
+    <string name="blueprint_face_label">CARA</string>
+    <string name="blueprint_scale_label">ESCALA</string>
+    <string name="blueprint_non_conforming">NO CONFORME</string>
+    <string name="blueprint_ok">OK</string>
+    <string name="blueprint_actual_label">Actual</string>
+    <string name="blueprint_nominal_label">Nominal</string>
+    <string name="blueprint_dev_label">Desv</string>
+    <string name="blueprint_out_of_tol">FUERA DE TOL</string>
+
+    <!-- Inspection Wizard Dialog -->
+    <string name="wizard_guide_title">GUÍA DE INSPECCIÓN TÉCNICA</string>
+    <string name="wizard_step_indicator">Paso %1$d de %2$d</string>
+    <string name="wizard_btn_prev">Anterior</string>
+    <string name="wizard_btn_next">Siguiente</string>
+    <string name="wizard_btn_finish">¡Entendido! Comenzar</string>
+    <string name="wizard_action_print_charuco">Imprimir Patrón ChArUco A4</string>
+    <string name="wizard_step1_title">1. Calibración Óptica con ChArUco</string>
+    <string name="wizard_step1_subtitle">Eliminación de distorsión y cálculo de escala milimétrica</string>
+    <string name="wizard_step1_bullet1">La cámara necesita conocer la distancia focal (fx, fy) y factores de distorsión radial para medir décimas de milímetro con precisión métrica.</string>
+    <string name="wizard_step1_bullet2">Coloca el tablero ChArUco sobre una superficie totalmente plana.</string>
+    <string name="wizard_step1_bullet3">Mantén la cámara perpendicular a 30-50 cm y captura al menos 8 fotogramas en diferentes ángulos leves.</string>
+    <string name="wizard_step1_bullet4">Puedes imprimir el patrón de calibración oficial A4 directamente desde este dispositivo.</string>
+    <string name="wizard_step1_tip">Consejo aeronáutico: Asegúrate de imprimir el PDF en escala 100% (sin ajustar a página) para respetar los 30 mm exactos por casilla de ajedrez.</string>
+
+    <string name="wizard_step2_title">2. Identificación: Anverso vs Reverso</string>
+    <string name="wizard_step2_subtitle">Reconocimiento automático de la cara de la chapa metálica</string>
+    <string name="wizard_step2_bullet1">Las piezas estampadas o mecanizadas no son cuadradas y tienen características específicas por cara.</string>
+    <string name="wizard_step2_bullet2">Anverso: Presenta los conos de avellanado (Countersink) para tornillos embutidos y códigos de parte.</string>
+    <string name="wizard_step2_bullet3">Reverso: Superficie plana o con orificios rectos pasantes y halos de tratamiento químico.</string>
+    <string name="wizard_step2_bullet4">La visión artificial detecta la asimetría geométrica de los taladros o el ArUco fiducial para cargar automáticamente el plano de la cara correcta.</string>
+    <string name="wizard_step2_tip">Si la pieza se gira boca abajo, el sistema cambiará automáticamente el plano de evaluación de ANVERSO a REVERSO.</string>
+
+    <string name="wizard_step3_title">3. Evaluación Geométrica de Tolerancias</string>
+    <string name="wizard_step3_subtitle">Inspección de aristas, orificios, avellanados y Alodine</string>
+    <string name="wizard_step3_bullet1">Cada elemento (H1, H2, Aristas, Halo Alodine) tiene un valor nominal en plano CAD y un margen de tolerancia (ej: ±0.05 mm o ±0.15 mm).</string>
+    <string name="wizard_step3_bullet2">El motor detecta los bordes mediante subpíxel y calcula el diámetro o longitud real.</string>
+    <string name="wizard_step3_bullet3">Si todas las características están dentro de tolerancia, el marco y los indicadores se mostrarán en VERDE (OK).</string>
+    <string name="wizard_step3_bullet4">No requiere intervención adicional si la pieza cumple al 100% las especificaciones.</string>
+    <string name="wizard_step3_tip">Evita reflejos de iluminación directa sobre el metal pulido usando iluminación difusa indirecta.</string>
+
+    <string name="wizard_step4_title">4. Alerta de Defectos y Visor Blueprint</string>
+    <string name="wizard_step4_subtitle">Señalización en ROJO y etiquetas técnicas con cota real vs nominal</string>
+    <string name="wizard_step4_bullet1">Si una arista, orificio o halo se sale de tolerancia, la pantalla emitirá una alerta visual ROJA (RECHAZO/NCR).</string>
+    <string name="wizard_step4_bullet2">El visor Blueprint vectorial saltará automáticamente destacando el elemento defectuoso con un halo pulsante.</string>
+    <string name="wizard_step4_bullet3">La etiqueta técnica muestra en tiempo real: Parámetro Actual, Parámetro Nominal y Desviación (Δ mm) que provocó el fallo.</string>
+    <string name="wizard_step4_bullet4">Se almacena la trazabilidad de la pieza con su fecha, hora y lote.</string>
+    <string name="wizard_step4_tip">Cada fallo dimensional queda etiquetado en el plano para su fácil identificación en el puesto de trabajo.</string>
+
+    <string name="wizard_step5_title">5. Gestión de Falsos Positivos</string>
+    <string name="wizard_step5_subtitle">Aprobación forzada por criterio de calidad del operario</string>
+    <string name="wizard_step5_bullet1">Si una partícula de polvo o reflejo causa una desviación pero la pieza física es conforme, el operario calificado puede invalidar el rechazo.</string>
+    <string name="wizard_step5_bullet2">En la pantalla de Detalles, pulsa \'Aprobación Forzada (Falso Positivo)\'.</string>
+    <string name="wizard_step5_bullet3">El estado de la pieza cambiará a OK, agregando una nota de auditoría formal.</string>
+    <string name="wizard_step5_bullet4">La imagen temporal pesada se purga para ahorrar almacenamiento en el dispositivo.</string>
+    <string name="wizard_step5_tip">El sistema mantiene registro del usuario u operario que autorizó el pase manual para cumplimiento de auditoría.</string>
+
+    <string name="wizard_step6_title">6. Reaprendizaje en Caliente y Reportes</string>
+    <string name="wizard_step6_subtitle">Memoria adaptativa continua y emisión de informes en PDF/Word</string>
+    <string name="wizard_step6_bullet1">Aprender en Caliente: Si una pieza aprobada tiene leves variaciones normales de lote, pulsa \'Aprender como pieza maestra\' para adaptar la memoria sin reentrenar redes neuronales.</string>
+    <string name="wizard_step6_bullet2">Rollback instantáneo: Si se memorizó una pieza erróneamente, puedes deshacer la última muestra en 1 toque.</string>
+    <string name="wizard_step6_bullet3">Reportes Técnicos: Genera con un solo clic el informe oficial de No Conformidad (NCR) o de Lote Completo en formato PDF o Word (DOCX).</string>
+    <string name="wizard_step6_bullet4">Los reportes incluyen el Blueprint técnico renderizado con todas las cotas y firmas.</string>
+    <string name="wizard_step6_tip">Los reportes generados se pueden compartir por correo electrónico o imprimir directamente en red.</string>
+
+    <!-- Settings: Metrology & Blueprint Plan Section -->
+    <string name="settings_metrology_section">METROLOGÍA Y PLANOS DE CALIDAD</string>
+    <string name="settings_calibration_title">Calibración Óptica y de Patrón</string>
+    <string name="settings_calibration_subtitle">Patrón ChArUco / ArUco, matriz de distorsión óptica y escala submétrica mm/píxel.</string>
+    <string name="settings_calibration_badge">ChArUco 5×7 • A4 Imprimible</string>
+    <string name="settings_calibration_btn">Calibrar Cámara</string>
+    <string name="settings_plan_title">Plano CAD y Muestra Patrón</string>
+    <string name="settings_plan_subtitle">Captura y registro de planos nominales de piezas, orificios, tolerancias de aristas y especificaciones bifaciales.</string>
+    <string name="settings_plan_badge">Anverso y Reverso • Cotas CAD</string>
+    <string name="settings_plan_btn">Gestionar Planos</string>
+
 </resources>

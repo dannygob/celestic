@@ -14,6 +14,7 @@ import com.example.celestic.models.Specification
 import com.example.celestic.models.SpecificationFeature
 import com.example.celestic.models.enums.DetectionStatus
 import com.example.celestic.models.enums.DetectionType
+import com.example.celestic.models.enums.Orientation
 import com.example.celestic.opencv.FrameAnalyzer
 import com.example.celestic.opencv.ImageProcessor
 import com.example.celestic.utils.saveBitmapToFile
@@ -74,6 +75,22 @@ class DashboardViewModel @Inject constructor(
     private val _onlineLearningMessage = MutableStateFlow<String?>(null)
     val onlineLearningMessage: StateFlow<String?> = _onlineLearningMessage.asStateFlow()
 
+    // Cara activa de inspección: ANVERSO (Cara A) o REVERSO (Cara B)
+    private val _currentInspectionFace = MutableStateFlow(Orientation.ANVERSO)
+    val currentInspectionFace: StateFlow<Orientation> = _currentInspectionFace.asStateFlow()
+
+    fun toggleInspectionFace() {
+        _currentInspectionFace.value = if (_currentInspectionFace.value == Orientation.ANVERSO) {
+            Orientation.REVERSO
+        } else {
+            Orientation.ANVERSO
+        }
+    }
+
+    fun setInspectionFace(face: Orientation) {
+        _currentInspectionFace.value = face
+    }
+
     fun clearOnlineLearningMessage() {
         _onlineLearningMessage.value = null
     }
@@ -82,6 +99,19 @@ class DashboardViewModel @Inject constructor(
     private var lastProcessedDetections: List<DetectionItem> = emptyList()
 
     private var currentSpecification: Specification? = null
+
+    data class EditableEdge(
+        val id: String,
+        val edgeIndex: Int,
+        val nominalMm: Double,
+        val toleranceMm: Double
+    )
+
+    private val _editableEdges = MutableStateFlow<List<EditableEdge>>(emptyList())
+    val editableEdges: StateFlow<List<EditableEdge>> = _editableEdges.asStateFlow()
+
+    private val _blueprintNameDisplay = MutableStateFlow("Pieza Conformada Irregular")
+    val blueprintNameDisplay: StateFlow<String> = _blueprintNameDisplay.asStateFlow()
 
     // Access shared state directly
     val markerType = sharedData.markerType
@@ -94,10 +124,223 @@ class DashboardViewModel @Inject constructor(
     private fun loadCurrentSpecification() {
         viewModelScope.launch {
             repository.getLatestSpecification().collect { spec ->
-                currentSpecification = spec
-                spec?.id?.let { sharedData.setSelectedSpecification(it) }
+                if (spec != null) {
+                    currentSpecification = spec
+                    _blueprintNameDisplay.value = spec.name
+                    sharedData.setSelectedSpecification(spec.id)
+                    loadEdgesForSpec(spec.id)
+                } else {
+                    bootstrapDefaultSpecification()
+                }
             }
         }
+    }
+
+    private suspend fun loadEdgesForSpec(specId: Long) {
+        val features = repository.getAllFeaturesBySpecification(specId).firstOrNull() ?: emptyList()
+        val edgeFeatures = features.filter { it.type == DetectionType.EDGE }
+            .distinctBy { it.label }
+        if (edgeFeatures.size >= 8) {
+            _editableEdges.value = edgeFeatures.mapIndexed { idx, feat ->
+                val edgeIdx = feat.label.removePrefix("ARISTA_E").removePrefix("ARISTA_").toIntOrNull() ?: (idx + 1)
+                EditableEdge(
+                    id = "E$edgeIdx",
+                    edgeIndex = edgeIdx,
+                    nominalMm = feat.diameter_mm,
+                    toleranceMm = feat.tolerance_mm
+                )
+            }.sortedBy { it.edgeIndex }
+        } else {
+            // Si la especificación tiene menos de 8 aristas o es de la versión anterior, ajustar todas al plano técnico
+            adjustAllEdgesToBlueprint()
+        }
+    }
+
+    fun adjustAllEdgesToBlueprint() {
+        val bp = blueprintMatcher.getBlueprintById("PIEZA_IRREGULAR_001")
+            ?: blueprintMatcher.getAllBlueprints().firstOrNull() ?: return
+
+        _blueprintNameDisplay.value = bp.name
+        val bpEdges = bp.expectedEdges.map {
+            EditableEdge(
+                id = it.id,
+                edgeIndex = it.edgeIndex,
+                nominalMm = it.lengthMm,
+                toleranceMm = it.toleranceMm
+            )
+        }.sortedBy { it.edgeIndex }
+
+        _editableEdges.value = bpEdges
+
+        viewModelScope.launch {
+            try {
+                val spec = currentSpecification ?: repository.getLatestSpecification().firstOrNull()
+                if (spec != null) {
+                    val allFeatures = repository.getAllFeaturesBySpecification(spec.id).firstOrNull() ?: emptyList()
+                    val nonEdgeFeatures = allFeatures.filter { it.type != DetectionType.EDGE }
+                    val newEdgeFeatures = mutableListOf<SpecificationFeature>()
+                    listOf(Orientation.ANVERSO, Orientation.REVERSO).forEach { face ->
+                        bp.expectedEdges.forEach { edge ->
+                            newEdgeFeatures.add(
+                                SpecificationFeature(
+                                    specificationId = spec.id,
+                                    face = face,
+                                    type = DetectionType.EDGE,
+                                    positionX_mm = edge.startX,
+                                    positionY_mm = edge.startY,
+                                    diameter_mm = edge.lengthMm,
+                                    tolerance_mm = edge.toleranceMm,
+                                    label = "ARISTA_${edge.id}"
+                                )
+                            )
+                        }
+                    }
+                    repository.deleteFeaturesBySpecification(spec.id)
+                    repository.insertSpecificationFeatures(nonEdgeFeatures + newEdgeFeatures)
+                    Log.d("DashboardViewModel", "Ajustadas exitosamente todas las ${bp.expectedEdges.size} aristas al plano técnico: ${bp.name}")
+                } else {
+                    bootstrapDefaultSpecification()
+                }
+            } catch (e: Exception) {
+                Log.e("DashboardViewModel", "Error al ajustar aristas al plano", e)
+            }
+        }
+    }
+
+    private fun loadDefaultEdgesFromBlueprint() {
+        adjustAllEdgesToBlueprint()
+    }
+
+    private suspend fun bootstrapDefaultSpecification() {
+        try {
+            val bp = blueprintMatcher.getBlueprintById("PIEZA_IRREGULAR_001")
+                ?: blueprintMatcher.getAllBlueprints().firstOrNull()
+                ?: return
+
+            val newSpec = Specification(
+                name = bp.name,
+                sheetType = "2_CARAS_ANVERSO_REVERSO",
+                minWidthMm = 0.0,
+                maxWidthMm = bp.dimensions.widthMm,
+                minHeightMm = 0.0,
+                maxHeightMm = bp.dimensions.heightMm,
+                expectedHoleCount = bp.expectedHoleCount,
+                holeMinDiameterMm = 5.8,
+                holeMaxDiameterMm = 6.2,
+                holeTolerance = bp.tolerances.holeDiameterToleranceMm,
+                holeNominalDiameterMm = 6.0,
+                expectedCountersinkCount = bp.expectedCountersinks.size,
+                countersinkMinDiameterMm = 9.8,
+                countersinkMaxDiameterMm = 10.2,
+                maxAllowedScratches = bp.tolerances.maxAllowedScratches,
+                maxScratchLengthMm = bp.tolerances.maxScratchLengthMm,
+                maxAllowedDeformations = 1,
+                requireAlodineHalo = bp.requiresAlodine,
+                minAlodineUniformity = 0.8,
+                linkedBlueprintId = bp.id,
+                nominalThicknessMm = 0.0,
+                thicknessToleranceMm = 0.0
+            )
+
+            val features = mutableListOf<SpecificationFeature>()
+            listOf(Orientation.ANVERSO, Orientation.REVERSO).forEach { face ->
+                bp.expectedEdges.forEach { edge ->
+                    features.add(
+                        SpecificationFeature(
+                            specificationId = 0,
+                            face = face,
+                            type = DetectionType.EDGE,
+                            positionX_mm = edge.startX,
+                            positionY_mm = edge.startY,
+                            diameter_mm = edge.lengthMm,
+                            tolerance_mm = edge.toleranceMm,
+                            label = "ARISTA_${edge.id}"
+                        )
+                    )
+                }
+                bp.expectedHoles.forEach { hole ->
+                    features.add(
+                        SpecificationFeature(
+                            specificationId = 0,
+                            face = face,
+                            type = DetectionType.HOLE,
+                            positionX_mm = hole.x,
+                            positionY_mm = hole.y,
+                            diameter_mm = hole.diameterMm,
+                            tolerance_mm = hole.toleranceMm,
+                            label = "TALADRO_${hole.id}"
+                        )
+                    )
+                }
+            }
+            bp.expectedCountersinks.forEach { cs ->
+                features.add(
+                    SpecificationFeature(
+                        specificationId = 0,
+                        face = Orientation.ANVERSO,
+                        type = DetectionType.COUNTERSINK,
+                        positionX_mm = cs.x,
+                        positionY_mm = cs.y,
+                        diameter_mm = cs.outerDiameterMm,
+                        tolerance_mm = cs.toleranceMm,
+                        requireCountersink = true,
+                        label = "AVELLANADO_${cs.id}"
+                    )
+                )
+            }
+
+            repository.saveSpecificationWithFeatures(newSpec, features)
+            loadEdgesForSpec(newSpec.id)
+            Log.d("DashboardViewModel", "Plano predeterminado inicializado con éxito: ${bp.name}")
+        } catch (e: Exception) {
+            Log.e("DashboardViewModel", "Error al inicializar especificación por defecto", e)
+        }
+    }
+
+    fun updateEdgeCota(edgeIndex: Int, newNominal: Double, newTolerance: Double) {
+        val list = _editableEdges.value.toMutableList()
+        val idx = list.indexOfFirst { it.edgeIndex == edgeIndex }
+        if (idx != -1) {
+            list[idx] = list[idx].copy(nominalMm = newNominal, toleranceMm = newTolerance)
+            _editableEdges.value = list
+        }
+    }
+
+    fun saveAdjustedEdgesToBlueprint() {
+        val spec = currentSpecification ?: return
+        val currentEdges = _editableEdges.value
+        viewModelScope.launch {
+            try {
+                val allFeatures = repository.getAllFeaturesBySpecification(spec.id).firstOrNull() ?: emptyList()
+                val nonEdgeFeatures = allFeatures.filter { it.type != DetectionType.EDGE }
+                val newEdgeFeatures = mutableListOf<SpecificationFeature>()
+                listOf(Orientation.ANVERSO, Orientation.REVERSO).forEach { face ->
+                    currentEdges.forEach { edge ->
+                        newEdgeFeatures.add(
+                            SpecificationFeature(
+                                specificationId = spec.id,
+                                face = face,
+                                type = DetectionType.EDGE,
+                                positionX_mm = 0.0,
+                                positionY_mm = 0.0,
+                                diameter_mm = edge.nominalMm,
+                                tolerance_mm = edge.toleranceMm,
+                                label = "ARISTA_${edge.id}"
+                            )
+                        )
+                    }
+                }
+                repository.deleteFeaturesBySpecification(spec.id)
+                repository.insertSpecificationFeatures(nonEdgeFeatures + newEdgeFeatures)
+                Log.d("DashboardViewModel", "Cotas de aristas guardadas exitosamente: ${currentEdges.size}")
+            } catch (e: Exception) {
+                Log.e("DashboardViewModel", "Error al guardar aristas", e)
+            }
+        }
+    }
+
+    fun resetEdgesToBlueprint() {
+        adjustAllEdgesToBlueprint()
     }
 
     fun startInspection() {
@@ -131,7 +374,12 @@ class DashboardViewModel @Inject constructor(
                 val currentMarkerType = markerType.value
                 val processResult = imageProcessor.processImage(mat, currentMarkerType)
                 val detections = processResult.detections.toMutableList()
-                val orientation = processResult.orientation
+                val orientation = if (processResult.orientation != Orientation.UNKNOWN) {
+                    processResult.orientation
+                } else {
+                    _currentInspectionFace.value
+                }
+                _currentInspectionFace.value = orientation
 
                 // 1. Automatic Blueprint Identification (Vision Artificial)
                 val blueprintMatch = blueprintMatcher.matchBlueprint(mat)
@@ -216,47 +464,37 @@ class DashboardViewModel @Inject constructor(
 
                 // 2. Validate against specification (Golden Sample DB + Blueprint Logic)
                 val specification = currentSpecification
+                val activeBlueprint = blueprintMatch?.blueprint
+                    ?: blueprintMatcher.getBlueprintById(specification?.linkedBlueprintId ?: "PIEZA_IRREGULAR_001")
+                    ?: blueprintMatcher.getAllBlueprints().firstOrNull()
+
+                val bpValidation = if (activeBlueprint != null) {
+                    blueprintMatcher.validateDetections(
+                        detections.map { it.toMLDetection() },
+                        activeBlueprint
+                    )
+                } else null
+
                 val validationResult = if (specification != null) {
                     val expectedFeatures = repository.getFeaturesBySpecificationAndFace(
                         specification.id,
                         orientation
                     ).firstOrNull() ?: emptyList()
 
-                    // If we have a blueprint match that matches our spec, we use its advanced validation
-                    if (blueprintMatch != null && blueprintMatch.blueprint.id == specification.linkedBlueprintId) {
-                        val bpValidation = blueprintMatcher.validateDetections(
-                            detections.map { it.toMLDetection() },
-                            blueprintMatch.blueprint
-                        )
-                        // Merge validation results
-                        validateAgainstSpecification(
-                            detections,
-                            specification,
-                            expectedFeatures,
-                            bpValidation,
-                            aiDefectAdded,
-                            aiResultLabel
-                        )
-                    } else {
-                        validateAgainstSpecification(
-                            detections,
-                            specification,
-                            expectedFeatures,
-                            null,
-                            aiDefectAdded,
-                            aiResultLabel
-                        )
-                    }
-                } else if (blueprintMatch != null) {
-                    // Use only blueprint if no manual spec is selected
-                    val bpValidation = blueprintMatcher.validateDetections(
-                        detections.map { it.toMLDetection() },
-                        blueprintMatch.blueprint
+                    validateAgainstSpecification(
+                        detections,
+                        specification,
+                        expectedFeatures,
+                        bpValidation,
+                        aiDefectAdded,
+                        aiResultLabel
                     )
+                } else if (activeBlueprint != null) {
+                    // Use only blueprint if no manual spec is selected
                     createBlueprintValidationResult(
                         detections,
-                        blueprintMatch.blueprint,
-                        bpValidation,
+                        activeBlueprint,
+                        bpValidation ?: com.example.celestic.ml.ValidationResult(true, emptyList()),
                         aiDefectAdded,
                         aiResultLabel
                     )
@@ -336,6 +574,68 @@ class DashboardViewModel @Inject constructor(
         // If blueprint validation exists and failed, it takes priority on geometry
         if (bpValidation != null && !bpValidation.passed) {
             violations.addAll(bpValidation.issues)
+            overallStatus = DetectionStatus.NOT_ACCEPTED
+        }
+
+        // 1. Validar aristas y bordes de la pieza irregular con sus cotas y tolerancias del plano
+        val detectedEdges = detections.filter { it.type == DetectionType.EDGE }
+        val activeReferenceEdges = _editableEdges.value.ifEmpty {
+            val bp = blueprintMatcher.getBlueprintById(specification.linkedBlueprintId ?: "PIEZA_IRREGULAR_001")
+                ?: blueprintMatcher.getAllBlueprints().firstOrNull()
+            bp?.expectedEdges?.map { EditableEdge(it.id, it.edgeIndex, it.lengthMm, it.toleranceMm) } ?: emptyList()
+        }
+
+        if (activeReferenceEdges.isNotEmpty()) {
+            if (detectedEdges.size < activeReferenceEdges.size) {
+                violations.add("Aristas incompletas en contorno: detectadas ${detectedEdges.size}, esperadas en plano ${activeReferenceEdges.size}")
+                overallStatus = DetectionStatus.NOT_ACCEPTED
+            }
+
+            activeReferenceEdges.forEach { refEdge ->
+                val matched = detectedEdges.firstOrNull { 
+                    it.frameId.contains("E${refEdge.edgeIndex}") ||
+                    it.frameId.equals("ARISTA_${refEdge.id}", ignoreCase = true)
+                }
+
+                if (matched != null && matched.measurementMm != null) {
+                    val measured = matched.measurementMm.toDouble()
+                    val delta = kotlin.math.abs(measured - refEdge.nominalMm)
+                    if (delta > refEdge.toleranceMm) {
+                        violations.add(
+                            "Arista ${refEdge.id} fuera de tolerancia: ${"%.2f".format(measured)} mm (Plano: ${"%.2f".format(refEdge.nominalMm)} ±${"%.2f".format(refEdge.toleranceMm)} mm, Δ: ${"%.2f".format(delta)} mm)"
+                        )
+                        overallStatus = DetectionStatus.NOT_ACCEPTED
+                    }
+                } else if (matched == null) {
+                    violations.add("Falta arista ${refEdge.id} del plano (${refEdge.nominalMm} mm)")
+                    overallStatus = DetectionStatus.NOT_ACCEPTED
+                }
+            }
+        }
+        // NOTA: El espesor se omite como criterio de inspección por requerimiento técnico (espesor irrelevante).
+
+        // 3. Validar Avellanados según la cara activa (Anverso vs Reverso)
+        val detectedCountersinks = detections.count { it.type == DetectionType.COUNTERSINK }
+        if (_currentInspectionFace.value == Orientation.ANVERSO) {
+            val expectedCs = if (expectedFeatures.isNotEmpty()) {
+                expectedFeatures.count { it.type == DetectionType.COUNTERSINK }
+            } else specification.expectedCountersinkCount
+            if (expectedCs > 0 && detectedCountersinks != expectedCs) {
+                violations.add("Falta avellanado en Anverso: esperados $expectedCs, detectados $detectedCountersinks")
+                overallStatus = DetectionStatus.NOT_ACCEPTED
+            }
+        } else if (_currentInspectionFace.value == Orientation.REVERSO) {
+            // En el Reverso no debe haber avellanados cónicos frontales
+            if (detectedCountersinks > 0) {
+                violations.add("Anomalía en Reverso: se detectaron $detectedCountersinks avellanados cónicos en cara posterior")
+                overallStatus = DetectionStatus.NOT_ACCEPTED
+            }
+        }
+
+        // 4. Validar deformaciones perimetrales / alabeo
+        val deformationsCount = detections.count { it.type == DetectionType.BEND }
+        if (deformationsCount > specification.maxAllowedDeformations) {
+            violations.add("Deformaciones perimetrales excesivas: detectadas $deformationsCount (máx permitido: ${specification.maxAllowedDeformations})")
             overallStatus = DetectionStatus.NOT_ACCEPTED
         }
 
@@ -429,12 +729,17 @@ class DashboardViewModel @Inject constructor(
     }
 
     private fun DetectionItem.toMLDetection(): com.example.celestic.ml.Detection {
+        val edgeIdx = if (this.type == DetectionType.EDGE) {
+            this.frameId.removePrefix("ARISTA_E").removePrefix("ARISTA_").toIntOrNull() ?: 0
+        } else 0
         return com.example.celestic.ml.Detection(
-            classId = 0, // Not critical for matcher
+            classId = edgeIdx,
             className = when (this.type) {
                 DetectionType.HOLE -> "agujero"
                 DetectionType.COUNTERSINK -> "avellanado"
                 DetectionType.SCRATCH -> "arañazo"
+                DetectionType.EDGE -> "arista"
+                DetectionType.DIMENSION -> "dimension"
                 else -> "unknown"
             },
             confidence = this.confidence,
@@ -444,7 +749,9 @@ class DashboardViewModel @Inject constructor(
                 (this.boundingBox.right - this.boundingBox.left).toInt(),
                 (this.boundingBox.bottom - this.boundingBox.top).toInt()
             ),
-            roi = Mat() // Matcher doesn't need ROI
+            roi = Mat(),
+            measurementMm = this.measurementMm?.toDouble() ?: 0.0,
+            frameId = this.frameId
         )
     }
 
@@ -479,8 +786,39 @@ class DashboardViewModel @Inject constructor(
             overallStatus = DetectionStatus.NOT_ACCEPTED
         }
 
+        // 4. Validar aristas de la pieza irregular contra las cotas del plano
+        val detectedEdges = detections.filter { it.type == DetectionType.EDGE }
+        val referenceEdges = _editableEdges.value.ifEmpty {
+            val bp = blueprintMatcher.getBlueprintById("PIEZA_IRREGULAR_001")
+                ?: blueprintMatcher.getAllBlueprints().firstOrNull()
+            bp?.expectedEdges?.map { EditableEdge(it.id, it.edgeIndex, it.lengthMm, it.toleranceMm) } ?: emptyList()
+        }
+
+        if (referenceEdges.isNotEmpty()) {
+            referenceEdges.forEach { refEdge ->
+                val matched = detectedEdges.firstOrNull { 
+                    it.frameId.contains("E${refEdge.edgeIndex}") ||
+                    it.frameId.equals("ARISTA_${refEdge.id}", ignoreCase = true)
+                }
+
+                if (matched != null && matched.measurementMm != null) {
+                    val measured = matched.measurementMm.toDouble()
+                    val delta = kotlin.math.abs(measured - refEdge.nominalMm)
+                    if (delta > refEdge.toleranceMm) {
+                        violations.add(
+                            "Arista ${refEdge.id} fuera de tolerancia: ${"%.2f".format(measured)} mm (Plano: ${"%.2f".format(refEdge.nominalMm)} ±${"%.2f".format(refEdge.toleranceMm)} mm, Δ: ${"%.2f".format(delta)} mm)"
+                        )
+                        overallStatus = DetectionStatus.NOT_ACCEPTED
+                    }
+                } else if (matched == null) {
+                    violations.add("Falta arista ${refEdge.id} del plano (${refEdge.nominalMm} mm)")
+                    overallStatus = DetectionStatus.NOT_ACCEPTED
+                }
+            }
+        }
+
         return ValidationResult(
-            isValid = !hasCriticalDefects && !aiDefectAdded && isCompliant,
+            isValid = !hasCriticalDefects && !aiDefectAdded && isCompliant && violations.isEmpty(),
             violations = violations,
             overallStatus = overallStatus
         )
@@ -539,6 +877,76 @@ class DashboardViewModel @Inject constructor(
                 )
                 val id = repository.insertDetection(validatedDetection)
                 detectionIds.add(id)
+
+                // Persistir DetectedFeature vinculada para representación técnica en BlueprintView
+                val isDefect = validatedDetection.status == DetectionStatus.NOT_ACCEPTED
+                val widthPx = kotlin.math.abs(validatedDetection.boundingBox.right - validatedDetection.boundingBox.left)
+                val heightPx = kotlin.math.abs(validatedDetection.boundingBox.bottom - validatedDetection.boundingBox.top)
+                val estimatedMm = validatedDetection.measurementMm ?: (widthPx.coerceAtLeast(6f) * 0.1f)
+                var nominalMm = when (validatedDetection.type) {
+                    DetectionType.THICKNESS -> 2.0f
+                    DetectionType.DIMENSION -> if (validatedDetection.frameId.contains("PITCH")) 80.0f else 200.0f
+                    DetectionType.COUNTERSINK -> 10.0f
+                    DetectionType.SCRATCH -> 0.0f
+                    DetectionType.BEND -> 0.0f
+                    else -> 6.0f
+                }
+                var toleranceMm = when (validatedDetection.type) {
+                    DetectionType.THICKNESS -> 0.15f
+                    DetectionType.DIMENSION -> 1.0f
+                    DetectionType.COUNTERSINK -> 0.15f
+                    DetectionType.SCRATCH -> 5.0f
+                    DetectionType.BEND -> 0.5f
+                    else -> 0.10f
+                }
+
+                if (validatedDetection.type == DetectionType.EDGE) {
+                    val edgeIndex = validatedDetection.frameId.removePrefix("ARISTA_E").removePrefix("ARISTA_").toIntOrNull()
+                    val matchedFromEditable = _editableEdges.value.firstOrNull { 
+                        it.edgeIndex == edgeIndex || validatedDetection.frameId.contains(it.id) 
+                    }
+                    val bp = blueprintMatcher.getBlueprintById(currentSpecification?.linkedBlueprintId ?: "PIEZA_IRREGULAR_001")
+                        ?: blueprintMatcher.getAllBlueprints().firstOrNull()
+                    val matchedFromBp = bp?.expectedEdges?.firstOrNull {
+                        it.edgeIndex == edgeIndex || validatedDetection.frameId.contains(it.id)
+                    }
+
+                    if (matchedFromEditable != null) {
+                        nominalMm = matchedFromEditable.nominalMm.toFloat()
+                        toleranceMm = matchedFromEditable.toleranceMm.toFloat()
+                    } else if (matchedFromBp != null) {
+                        nominalMm = matchedFromBp.lengthMm.toFloat()
+                        toleranceMm = matchedFromBp.toleranceMm.toFloat()
+                    } else {
+                        nominalMm = estimatedMm
+                        toleranceMm = 0.8f
+                    }
+                }
+
+                val deviation = kotlin.math.abs(estimatedMm - nominalMm)
+                val isOutOfTolerance = deviation > toleranceMm
+                val isDefectFinal = isDefect || isOutOfTolerance
+
+                val featureMeasurements = mutableMapOf<String, Float>(
+                    "diameter" to estimatedMm,
+                    "actual" to estimatedMm,
+                    "measured" to estimatedMm,
+                    "nominal" to nominalMm,
+                    "tolerance" to toleranceMm,
+                    "error_mm" to deviation,
+                    "is_defect" to (if (isDefectFinal) 1.0f else 0.0f)
+                )
+
+                val feature = com.example.celestic.models.calibration.DetectedFeature(
+                    detectionItemId = id,
+                    featureType = validatedDetection.type.name.lowercase(),
+                    xCoord = (validatedDetection.boundingBox.left + validatedDetection.boundingBox.right) / 2f,
+                    yCoord = (validatedDetection.boundingBox.top + validatedDetection.boundingBox.bottom) / 2f,
+                    confidence = validatedDetection.confidence,
+                    timestamp = validatedDetection.timestamp,
+                    measurements = featureMeasurements
+                )
+                repository.insertDetectedFeature(feature)
             }
         }
 

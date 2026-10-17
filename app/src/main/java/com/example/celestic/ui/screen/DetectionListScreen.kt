@@ -76,7 +76,7 @@ fun DetectionListScreen(
                     IconButton(onClick = { navController.navigate("reports") }) {
                         Icon(
                             Icons.Default.Assessment,
-                            contentDescription = "Reports",
+                            contentDescription = stringResource(R.string.reports_title),
                             tint = colors.accentColor
                         )
                     }
@@ -119,6 +119,7 @@ fun DetectionListScreen(
                         items(detections) { item ->
                             DetectionItemCard(
                                 item = item,
+                                isDarkMode = isDarkMode,
                                 onClick = {
                                     // Navegar a DetailsScreen real usando createRoute
                                     navController.navigate(
